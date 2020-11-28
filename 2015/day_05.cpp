@@ -13,7 +13,7 @@ public:
 
 class NiceString : Checker {
 private:
-  std::regex re;
+  const std::regex re;
 
   bool has_three_vowels(const std::string& candidate) {
     int vowel_counter{0};
