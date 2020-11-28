@@ -4,13 +4,13 @@ namespace utils {
   Reader::Reader(std::filesystem::path input) : input(input) {}
 
 
-  std::string Reader::to_string() {
+  std::vector<std::string> Reader::get_lines() {
     std::string line;
-    std::string result;
+    std::vector<std::string> result;
     std::ifstream input_file(input);
 
     while (std::getline (input_file, line)) {
-      result += line;
+      result.push_back(line);
     }
     input_file.close();
 

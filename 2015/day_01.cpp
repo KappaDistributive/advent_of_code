@@ -37,7 +37,7 @@ int part_two(std::string input) {
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2015/data/input_01.txt"));
-  std::string input = reader.to_string();
+  std::string input = reader.get_lines()[0];
 
   std::cout << "The answer to part one is: " << part_one(input) << std::endl;
   std::cout << "The answer to part two is: " << part_two(input) << std::endl;

@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
+#include <vector>
 
 namespace utils {
   class Reader {
@@ -17,7 +18,7 @@ namespace utils {
      */
     Reader(std::filesystem::path input);
     
-    // read input and convert it to a string
-    std::string to_string();
+    // read input and convert it to a vector of strings
+    std::vector<std::string> get_lines();
   };
 }
