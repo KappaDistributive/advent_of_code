@@ -13,6 +13,8 @@ public:
 
 class NiceString : Checker {
 private:
+  std::regex re;
+
   bool has_three_vowels(const std::string& candidate) {
     int vowel_counter{0};
 
@@ -38,13 +40,14 @@ private:
   }
 
   bool has_no_forbidden_pair(const std::string& candidate) {
-    std::regex re{"^.*(ab|cd|pq|xy).*$"};
 
     return !std::regex_match(candidate, re);
   }
 
 public:
-  NiceString() = default;
+  NiceString() {
+    re = "^.*(ab|cd|pq|xy).*$";
+  };
 
   bool is_valid (const std::string& input) override {
     return (
