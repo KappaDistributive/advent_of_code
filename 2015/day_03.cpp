@@ -75,7 +75,6 @@ int part_two(const std::string& input) {
     unique_positions.insert(position);
     
   return (int)unique_positions.size();
-  return 0;
 }
 
 int main() {
