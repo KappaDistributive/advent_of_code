@@ -45,9 +45,7 @@ private:
   }
 
 public:
-  NiceString() {
-    re = "^.*(ab|cd|pq|xy).*$";
-  };
+  NiceString() : re("^.*(ab|cd|pq|xy).*$") {}
 
   bool is_valid (const std::string& input) override {
     return (
