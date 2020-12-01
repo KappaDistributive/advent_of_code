@@ -233,8 +233,15 @@ private:
   }
 
 public:
-  // TODO: add destructor and clean up heap
   Circuit() = default;
+
+  ~Circuit() {
+    // must delete gates before deleting wires
+    for (auto gate: gates)
+      delete gate;
+    for (auto wire: wires)
+      delete wire;
+  }
   
   explicit Circuit(const std::vector<std::string>& input) :
     re("^(?:(NOT)\\s)?([\\w\\d]+)\\s?(?:(AND|OR|LSHIFT|RSHIFT)\\s)?(?:([\\w\\d]+)\\s)?-> (\\w+)$") {
