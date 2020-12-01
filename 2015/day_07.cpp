@@ -233,6 +233,7 @@ private:
   }
 
 public:
+  // TODO: add destructor and clean up heap
   Circuit() = default;
   
   explicit Circuit(const std::vector<std::string>& input) :
