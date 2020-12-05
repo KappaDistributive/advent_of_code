@@ -17,7 +17,7 @@ private:
         case 'B': return partition(new_code, lower + (upper + 1 - lower)/ 2, upper); break;
         case 'L': return partition(new_code, lower, lower - 1 + (upper + 1 - lower)/2); break;
         case 'R': return partition(new_code, lower + (upper + 1 - lower)/ 2, upper); break;
-        default: std::runtime_error("Invalid code: " + code); break;
+        default: throw std::runtime_error("Invalid code: " + code); break;
       }
     }
 
