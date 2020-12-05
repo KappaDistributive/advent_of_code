@@ -9,15 +9,11 @@ int part_one(const std::string& input)
   auto beginning = std::sregex_iterator(input.begin(), input.end(), numbers_regex);
   auto ending = std::sregex_iterator();
  
-    std::cout << "Found " 
-              << std::distance(beginning, ending) 
-              << " numbers." << std::endl;;
- 
-    for (std::sregex_iterator i = beginning; i != ending; i++)
-    {
-        std::smatch match = *i;                                                 
-        result += std::stoi(match.str()); 
-    }
+  for (std::sregex_iterator i = beginning; i != ending; i++)
+  {
+    std::smatch match = *i;                                                 
+    result += std::stoi(match.str()); 
+  }
 
   return result;
 }
@@ -25,6 +21,7 @@ int part_one(const std::string& input)
 int part_two(const std::string& input)
 {
   int result{0};
+  // TODO: solve part_two in C++
 
   return result;
 }
