@@ -24,17 +24,6 @@ private:
     return lower;
   }
 
-  int calculate_row(const std::string& code)
-  {
-    return partition(code.substr(0, 7), 0, 127);
-  }
-
-  int calculate_column(const std::string& code)
-  {
-    return partition(code.substr(7, code.size()-7), 0, 7);
-  }
-
-
 public:
   explicit BoardingPass(const std::string& code) : code(code)
   {
