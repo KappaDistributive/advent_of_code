@@ -36,7 +36,6 @@ std::vector<std::string> split_blocks(const std::string& input)
 int part_one(const std::string& input)
 {
   std::string current_input{input};
-
   for (size_t index{0}; index < 40; index++)
   {
     auto blocks = split_blocks(current_input);
@@ -52,8 +51,18 @@ int part_one(const std::string& input)
 
 int part_two(const std::string& input)
 {
-  int result{0};
-  return result;
+  std::string current_input{input};
+  for (size_t index{0}; index < 50; index++)
+  {
+    auto blocks = split_blocks(current_input);
+    current_input = "";
+    for (auto block: blocks)
+    {
+      current_input += std::to_string(block.size()) + block[0];
+    }
+  }
+
+  return current_input.size();
 }
 
 int main()
