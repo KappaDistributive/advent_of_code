@@ -7,7 +7,7 @@ class Bag
 {
 private:
   std::string description, style, color;
-  std::vector<std::pair<int, Bag*>> content;
+  std::vector<std::pair<int, std::shared_ptr<Bag>>> content;
 
 public:
   Bag() = default;
@@ -46,7 +46,7 @@ public:
     }
   }
 
-  void add_content(int amount, Bag* bag)
+  void add_content(int amount, std::shared_ptr<Bag> bag)
   {
     content.push_back(std::make_pair(amount, bag));
   }
@@ -67,14 +67,14 @@ public:
   }
 };
 
-std::map<std::string, Bag*> create_bags(const std::vector<std::string>& input)
+std::map<std::string, std::shared_ptr<Bag>> create_bags(const std::vector<std::string>& input)
 {
   std::regex root_regex{"^(pale|drab|mirrored|posh|striped|bright|dim|light|dull|dark|dotted|wavy|vibrant|shiny|muted|clear|faded|plaid)\\s(chartreuse|gold|magenta|black|yellow|aqua|silver|beige|cyan|bronze|purple|orange|coral|plum|olive|maroon|violet|salmon|teal|tan|red|crimson|indigo|green|brown|gray|lime|fuchsia|lavender|turquoise|white|tomato|blue|)\\sbags.*$"};
   std::regex content_regex{"(\\d+)\\s(pale|drab|mirrored|posh|striped|bright|dim|light|dull|dark|dotted|wavy|vibrant|shiny|muted|clear|faded|plaid)\\s(chartreuse|gold|magenta|black|yellow|aqua|silver|beige|cyan|bronze|purple|orange|coral|plum|olive|maroon|violet|salmon|teal|tan|red|crimson|indigo|green|brown|gray|lime|fuchsia|lavender|turquoise|white|tomato|blue|)\\sbag"};
   int amount;
   std::smatch matches;
   std::string style, color;
-  std::map<std::string, Bag*> bag_index;
+  std::map<std::string, std::shared_ptr<Bag>> bag_index;
 
   for (auto description: input)
   {
@@ -83,7 +83,7 @@ std::map<std::string, Bag*> create_bags(const std::vector<std::string>& input)
     style = matches[1].str();
     color = matches[2].str();
     Bag* bag = new Bag(description, style, color);
-    bag_index.insert(std::make_pair(bag->get_type(), bag));
+    bag_index.insert(std::make_pair(bag->get_type(), std::shared_ptr<Bag>(bag)));
   }
 
   for (auto [index, bag]: bag_index)
@@ -114,11 +114,6 @@ int part_one(const std::vector<std::string>& input)
     result += static_cast<int>(bag->get_type() != "shiny gold" && bag->contains("shiny gold"));
   }
 
-  for (auto [_, bag]: bags)
-  {
-    delete bag;
-  }
-
   return result;
 }
 
@@ -126,14 +121,7 @@ int part_two(const std::vector<std::string>& input)
 {
   auto bags = create_bags(input);
 
-  int result = bags.at("shiny gold")->get_bag_count();
-
-  for (auto [_, bag]: bags)
-  {
-    delete bag;
-  }
-
-  return result;
+  return bags.at("shiny gold")->get_bag_count();
 }
 
 int main()
