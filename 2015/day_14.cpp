@@ -52,14 +52,21 @@ public:
 
 };
 
-int part_one(const std::vector<std::string>& input)
+std::vector<Reindeer> create_reindeers(const std::vector<std::string>& input)
 {
-  int result{0};
   std::vector<Reindeer> reindeers;
   for (auto line: input)
   {
     reindeers.push_back(Reindeer(line));
   }
+
+  return reindeers;
+}
+
+int part_one(const std::vector<std::string>& input)
+{
+  int result{0};
+  auto reindeers = create_reindeers(input);
 
   for (size_t clock{0}; clock < 2503; clock++)
   {
@@ -81,7 +88,38 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
+  auto reindeers = create_reindeers(input);
+  std::vector<int> scores;
+  for (size_t index{0}; index < reindeers.size(); index++)
+  {
+    scores.push_back(0);
+  }
+
+  for (size_t clock{0}; clock < 2503; clock++)
+  {
+    for (size_t index{0}; index < reindeers.size(); index++)
+    {
+      reindeers[index].step();
+    }
+    size_t max_index{0};
+    for (size_t index{1}; index < reindeers.size(); index++)
+    {
+      if (reindeers[index].get_distance() > reindeers[max_index].get_distance())
+      {
+        max_index = index;
+      }
+    }
+    scores[max_index]++;
+  }
+
   int result{0};
+  for (size_t index{0}; index < scores.size(); index++)
+  {
+    if (scores[index] > result)
+    {
+      result = scores[index];
+    }
+  }
   return result;
 }
 
