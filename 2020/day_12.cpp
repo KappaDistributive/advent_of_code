@@ -26,84 +26,136 @@ class Ship
 private:
   Direction direction;
   std::pair<int, int> position;
+  std::pair<int, int> waypoint;
 
-  void turn(bool clockwise)
+  void turn(bool clockwise, bool part_two=false)
   {
-    switch (direction)
+    if (!part_two)
     {
-      case north:
-        direction = clockwise ? east : west;
-        break;
-      case east:
-        direction = clockwise ? south : north;
-        break;
-      case south:
-        direction = clockwise ? west : east;
-        break;
-      case west:
-        direction = clockwise ? north : south;
+      switch (direction)
+      {
+        case north:
+          direction = clockwise ? east : west;
+          break;
+        case east:
+          direction = clockwise ? south : north;
+          break;
+        case south:
+          direction = clockwise ? west : east;
+          break;
+        case west:
+          direction = clockwise ? north : south;
+      }
+    }
+    else
+    {
+      int x{std::get<0>(waypoint)}, y{std::get<1>(waypoint)};
+      if (clockwise)
+      {
+        waypoint = {y, -x};
+      }
+      else
+      {
+        waypoint = {-y, x};
+      }
     }
   }
 
-  void forward(int distance)
+  void forward(int distance, bool part_two=false)
   {
-    switch (direction)
+    if (!part_two)
     {
-      case north:
-        std::get<1>(position) += distance;
-        break;
-      case east:
-        std::get<0>(position) += distance;
-        break;
-      case south:
-        std::get<1>(position) -= distance;
-        break;
-      case west:
-        std::get<0>(position) -= distance;
-        break;
+      switch (direction)
+      {
+        case north:
+          std::get<1>(position) += distance;
+          break;
+        case east:
+          std::get<0>(position) += distance;
+          break;
+        case south:
+          std::get<1>(position) -= distance;
+          break;
+        case west:
+          std::get<0>(position) -= distance;
+          break;
+      }
+    }
+    else
+    {
+      std::get<0>(position) += distance * std::get<0>(waypoint);
+      std::get<1>(position) += distance * std::get<1>(waypoint);
     }
   }
 
 public:
-  Ship(): direction(east), position({0, 0})
+  Ship(): direction(east), position({0, 0}), waypoint({10, 1})
   {
   }
 
-  void turn(bool clockwise , int degrees)
+  void turn(bool clockwise , int degrees, bool part_two=false)
   {
     assert (degrees % 90 == 0);
 
     for (int count{0}; count < degrees; count+=90)
     {
-      turn(clockwise);
+      turn(clockwise, part_two);
     }
   }
 
-  void move(const std::string& instruction)
+  void move(const std::string& instruction, bool part_two = false)
   {
     int data = std::stoi(instruction.substr(1));
     switch(instruction[0])
     {
       case 'N':
-        std::get<1>(position) += data;
+        if (!part_two)
+        {
+          std::get<1>(position) += data;
+        }
+        else
+        {
+          std::get<1>(waypoint) += data;
+        }
         break;
       case 'S':
-        std::get<1>(position) -= data;
+        if (!part_two)
+        {
+          std::get<1>(position) -= data;
+        }
+        else
+        {
+          std::get<1>(waypoint) -= data;
+        }
         break;
       case 'E':
-        std::get<0>(position) += data;
+        if (!part_two)
+        {
+          std::get<0>(position) += data;
+        }
+        else
+        {
+          std::get<0>(waypoint) += data;
+        }
         break;
       case 'W':
-        std::get<0>(position) -= data;
+        if (!part_two)
+        {
+          std::get<0>(position) -= data;
+        }
+        else
+        {
+          std::get<0>(waypoint) -= data;
+        }
         break;
       case 'L':
-        turn(false, data);
+        turn(false, data, part_two);
         break;
       case 'R':
-        turn(true, data);
+        turn(true, data, part_two);
         break;
       case 'F':
-        forward(data);
+        forward(data, part_two);
         break;
       default:
         throw std::runtime_error("Unrecognized instruction: " + instruction);
@@ -135,9 +187,12 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  int result{0};
-
-  return result;
+  Ship ship;
+  for (auto instruction: input)
+  {
+    ship.move(instruction, true);
+  }
+  return std::abs(std::get<0>(ship.get_position())) + std::abs(std::get<1>(ship.get_position()));
 }
 
 int main()
