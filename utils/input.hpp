@@ -21,4 +21,6 @@ namespace utils {
     // read input and convert it to a vector of strings
     std::vector<std::string> get_lines();
   };
+
+  std::vector<std::string> split_string(const std::string& input, const char delimiter);
 }

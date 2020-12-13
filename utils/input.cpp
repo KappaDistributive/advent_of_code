@@ -16,4 +16,30 @@ namespace utils {
 
     return result;
   }
+
+
+  std::vector<std::string> split_string(const std::string& input, const char delimiter)
+  {
+    std::vector<std::string> splits;
+    std::string buffer;
+
+    for (auto character: input)
+    {
+      if (character == delimiter)
+      {
+        splits.push_back(buffer);
+        buffer = "";
+      }
+      else
+      {
+        buffer += character;
+      }
+    }
+    if (buffer.size() > 0)
+    {
+      splits.push_back(buffer);
+    }
+
+    return splits;
+  }
 }
