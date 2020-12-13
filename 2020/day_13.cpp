@@ -2,28 +2,6 @@
 
 #include "../utils/input.hpp"
 
-long long gcd(int a, int b) 
-{ 
-    if (b == 0) 
-        return a; 
-    return gcd(b, a % b); 
-} 
-  
-// Returns LCM of array elements 
-long long findlcm(std::vector<int> factors) 
-{ 
-    // Initialize result 
-    long long ans = factors[0]; 
-  
-    // ans contains LCM of arr[0], ..arr[i] 
-    // after i'th iteration, 
-    for (size_t index{1}; index < factors.size(); index++) 
-        ans = (((factors[index] * ans)) / 
-                (gcd(factors[index], ans))); 
-  
-    return ans; 
-}
-
 std::pair<long, std::vector<std::string>> prepare_input(const std::vector<std::string>& input)
 {
   long offset = std::stoi(input[0]);
