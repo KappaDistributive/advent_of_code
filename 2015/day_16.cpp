@@ -120,8 +120,18 @@ int main()
 {
   utils::Reader reader(std::filesystem::path("../2015/data/input_16.txt"));
   auto input = reader.get_lines();
-  utils::Reader reader_ticker(std::filesystem::path("../2015/data/input_16_ticker.txt"));
-  auto ticker = reader_ticker.get_lines();
+  std::vector<std::string> ticker = {
+    "children: 3",
+    "cats: 7",
+    "samoyeds: 2",
+    "pomeranians: 3",
+    "akitas: 0",
+    "vizslas: 0",
+    "goldfish: 5",
+    "trees: 3",
+    "cars: 2",
+    "perfumes: 1"
+  };
   
   std::cout << "The answer to part one is: " << part_one(input, ticker) << std::endl;
   std::cout << "The answer to part two is: " << part_two(input, ticker) << std::endl;
