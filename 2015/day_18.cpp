@@ -72,7 +72,19 @@ public:
     }
   }
 
-  void step()
+  void set(size_t x, size_t y, char value)
+  {
+    if (value == '#' || value == '.')
+    {
+      grid[y * width + x] = value;
+    }
+    else
+    {
+      throw std::invalid_argument("Invalid grid entry: " + std::to_string(grid[y * width + x]));
+    }
+  }
+
+  void step(bool part_two=false)
   {
     std::map<std::pair<size_t, size_t>, char> updates;
     for (size_t y{0}; y < height; y++)
@@ -94,6 +106,17 @@ public:
     for (auto [coords, value]: updates)
     {
       auto [x, y] = coords;
+
+      if (
+        part_two && 
+        (
+          (x == 0 && (y == 0 || y+1 == height)) || 
+          (x + 1 == width && (y == 0 || y + 1 == height))
+        )
+      )
+      {
+        continue;
+      }
       grid[y * width + x] = value;
     }
   }
@@ -127,20 +150,30 @@ public:
 int part_one(const std::vector<std::string>& input)
 {
   GameOfLights game(input);
-  std::cout << game << std::endl;
-
+  // std::cout << "\n" << game << std::endl;
   for(size_t count{0}; count < 100; count++)
   {
     game.step();
-    std::cout << game << std::endl;
+    // std::cout << game << std::endl;
   }
   return game.brightness();
 }
 
 int part_two(const std::vector<std::string>& input)
 {
-  int result{-1};
-  return result;
+  GameOfLights game(input);
+  game.set(0, 0, '#');
+  game.set(input[0].size() - 1, 0, '#');
+  game.set(input[0].size() - 1, input.size() - 1, '#');
+  game.set(0, input.size() - 1, '#');
+  // std::cout << "\n" << game << std::endl;
+
+  for(size_t count{0}; count < 100; count++)
+  {
+    game.step(true);
+    // std::cout << game << std::endl;
+  }
+  return game.brightness();
 }
 
 int main()
