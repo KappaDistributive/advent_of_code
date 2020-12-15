@@ -9,7 +9,6 @@ class Mask
 private:
   std::bitset<36> data;
   std::bitset<36> specified;
-
 public:
   Mask () : data(0), specified(0)
   {
@@ -73,7 +72,7 @@ public:
 
 class Value
 {
-private:
+protected:
   std::bitset<36> data;
 public:
   Value () = default;
@@ -93,7 +92,12 @@ public:
     }
   }
 
-  operator unsigned long long()
+  void set_bit(size_t index, bool value=true)
+  {
+    data[index] = value;
+  }
+
+  operator unsigned long long() const
   {
     unsigned long long value{0};
     for (size_t index{0}; index < 36; index++)
@@ -106,7 +110,7 @@ public:
     return value;
   }
 
-  std::string str()
+  std::string str() const
   {
     std::string result{""};
     for (size_t index{0}; index < 36; index++)
@@ -133,16 +137,64 @@ public:
   }
 };
 
-Value apply_mask(const Mask& mask, const Value& value)
+class Address: public Value
 {
-  return value;
+public:
+  Address () = default;
+  Address (const std::string& input)
+  {
+    data = std::stoull(input);
+  }
+  std::vector<Address> apply(const Mask& mask)
+  {
+    std::vector<Address> addresses;
+
+    return addresses;
+  }
+};
+
+std::vector<Address> mask_address(const Address& address, const Mask& mask)
+{
+  std::vector<Address> addresses;
+  Address template_address = address;
+  std::vector<size_t> floating_bits;
+
+  for (size_t index{0}; index < 36; index++)
+  {
+    if (mask.is_specified(index) && mask.get_bit(index))
+    {
+      template_address.set_bit(index);
+    }
+    else if (!mask.is_specified(index))
+    {
+      floating_bits.push_back(index);
+    }
+  }
+
+  for (unsigned long long noise{0}; noise < (1ull << floating_bits.size()); noise++)
+  {
+    Address copy = template_address;
+    for (size_t index{0}; index < floating_bits.size(); index++)
+    {
+      copy.set_bit(floating_bits[index], (noise & (1ull << index)) > 0);
+    }
+    addresses.push_back(copy);
+  }
+
+  if (addresses.size() == 0)
+  {
+    addresses.push_back(template_address);
+  }
+
+  return addresses;
 }
 
 unsigned long long part_one(const std::vector<std::string>& input)
 {
   Mask mask;
-  Value value, address;
-  std::map<Value, Value> memory;
+  Value value;
+  Address address;
+  std::map<Address, Value> memory;
   std::regex regex_mask{"^mask\\s=\\s([X01]{36})$"};
   std::regex regex_memory{"^mem\\[(\\d+)\\]\\s=\\s(\\d+)$"};
   std::smatch matches;
@@ -158,7 +210,7 @@ unsigned long long part_one(const std::vector<std::string>& input)
     {
       assert (std::regex_match(line, matches, regex_memory));
       assert (matches.size() == 3);
-      address = Value(matches[1].str());
+      address = Address(matches[1].str());
       value = Value(matches[2].str());
       value.apply(mask); 
       try
@@ -179,9 +231,48 @@ unsigned long long part_one(const std::vector<std::string>& input)
   return result;
 }
 
-int part_two(const std::vector<std::string>& input)
+unsigned long long part_two(const std::vector<std::string>& input)
 {
-  return 0;
+  Mask mask;
+  Value value;
+  std::vector<Address> addresses;
+  std::map<Address, Value> memory;
+  std::regex regex_mask{"^mask\\s=\\s([X01]{36})$"};
+  std::regex regex_memory{"^mem\\[(\\d+)\\]\\s=\\s(\\d+)$"};
+  std::smatch matches;
+
+  for (auto line: input)
+  {
+    if (std::regex_match(line, matches, regex_mask))
+    {
+      assert (matches.size() == 2);
+      mask = Mask(matches[1].str());
+    }
+    else
+    {
+      assert (std::regex_match(line, matches, regex_memory));
+      assert (matches.size() == 3);
+      value = Value(matches[2].str());
+      addresses = mask_address(Address(matches[1].str()), mask);
+      for (auto address: addresses)
+      {
+        try
+        {
+          memory.at(address) = value;
+        }
+        catch (const std::out_of_range& e)
+        {
+          memory.insert(std::make_pair(address, value));
+        }
+      }
+    }
+  }
+  unsigned long long result{0};
+  for (auto [_, value]: memory)
+  {
+    result += static_cast<unsigned long long>(value);
+  }
+  return result;
 }
 
 int main()
