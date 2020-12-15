@@ -147,47 +147,41 @@ public:
   }
   std::vector<Address> apply(const Mask& mask)
   {
+
     std::vector<Address> addresses;
+    Address template_address = *this;
+    std::vector<size_t> floating_bits;
+
+    for (size_t index{0}; index < 36; index++)
+    {
+      if (mask.is_specified(index) && mask.get_bit(index))
+      {
+        template_address.set_bit(index);
+      }
+      else if (!mask.is_specified(index))
+      {
+        floating_bits.push_back(index);
+      }
+    }
+
+    for (unsigned long long noise{0}; noise < (1ull << floating_bits.size()); noise++)
+    {
+      Address copy = template_address;
+      for (size_t index{0}; index < floating_bits.size(); index++)
+      {
+        copy.set_bit(floating_bits[index], (noise & (1ull << index)) > 0);
+      }
+      addresses.push_back(copy);
+    }
+
+    if (addresses.size() == 0)
+    {
+      addresses.push_back(template_address);
+    }
 
     return addresses;
   }
 };
-
-std::vector<Address> mask_address(const Address& address, const Mask& mask)
-{
-  std::vector<Address> addresses;
-  Address template_address = address;
-  std::vector<size_t> floating_bits;
-
-  for (size_t index{0}; index < 36; index++)
-  {
-    if (mask.is_specified(index) && mask.get_bit(index))
-    {
-      template_address.set_bit(index);
-    }
-    else if (!mask.is_specified(index))
-    {
-      floating_bits.push_back(index);
-    }
-  }
-
-  for (unsigned long long noise{0}; noise < (1ull << floating_bits.size()); noise++)
-  {
-    Address copy = template_address;
-    for (size_t index{0}; index < floating_bits.size(); index++)
-    {
-      copy.set_bit(floating_bits[index], (noise & (1ull << index)) > 0);
-    }
-    addresses.push_back(copy);
-  }
-
-  if (addresses.size() == 0)
-  {
-    addresses.push_back(template_address);
-  }
-
-  return addresses;
-}
 
 unsigned long long part_one(const std::vector<std::string>& input)
 {
@@ -253,7 +247,7 @@ unsigned long long part_two(const std::vector<std::string>& input)
       assert (std::regex_match(line, matches, regex_memory));
       assert (matches.size() == 3);
       value = Value(matches[2].str());
-      addresses = mask_address(Address(matches[1].str()), mask);
+      addresses = Address(matches[1].str()).apply(mask);
       for (auto address: addresses)
       {
         try
