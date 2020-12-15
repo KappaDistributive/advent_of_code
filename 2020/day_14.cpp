@@ -145,9 +145,8 @@ public:
   {
     data = std::stoull(input);
   }
-  std::vector<Address> apply(const Mask& mask)
+  std::vector<Address> apply(const Mask& mask) const
   {
-
     std::vector<Address> addresses;
     Address template_address = *this;
     std::vector<size_t> floating_bits;
