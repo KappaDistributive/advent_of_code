@@ -37,12 +37,11 @@ def part_one(raw_input: List[str]) -> int:
   rules, data = prepare_input(raw_input)
   result: int = 0
   grammar = nltk.CFG.fromstring(prepare_rules(rules))
-  print(grammar)
   parser = nltk.ChartParser(grammar)
 
   for entry in tqdm(data):
     try:
-      if len(list(parser.parse(entry))) > 0:
+      if parser.parse_one(entry) is not None:
         result += 1
     except ValueError as err:
       print(entry)
@@ -54,12 +53,11 @@ def part_two(raw_input: List[str]) -> int:
   rules, data = prepare_input(raw_input,)
   result: int = 0
   grammar = nltk.CFG.fromstring(prepare_rules(rules, True))
-  print(grammar)
   parser = nltk.ChartParser(grammar)
 
   for entry in tqdm(data):
     try:
-      if len(list(parser.parse(entry))) > 0:
+      if parser.parse_one(entry) is not None:
         result += 1
     except ValueError as err:
       print(entry)
