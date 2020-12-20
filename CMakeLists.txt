@@ -60,6 +60,9 @@ target_link_libraries(2015_17 input)
 add_executable(2015_18 2015/day_18.cpp)
 target_link_libraries(2015_18 input)
 
+add_executable(2015_19 2015/day_19.cpp)
+target_link_libraries(2015_19 input)
+
 add_executable(2020_01 2020/day_01.cpp)
 target_link_libraries(2020_01 input)
 
@@ -110,3 +113,6 @@ target_link_libraries(2020_16 input)
 
 add_executable(2020_17 2020/day_17.cpp)
 target_link_libraries(2020_17 input)
+
+add_executable(2020_18 2020/day_18.cpp)
+target_link_libraries(2020_18 input)
