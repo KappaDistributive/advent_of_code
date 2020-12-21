@@ -1,6 +1,5 @@
 #! python3
 
-import json
 from typing import Dict, List, Set, Tuple
 
 def prepare_input(raw_input: List[str]) -> List[Tuple[List[str], List[str]]]:
@@ -81,7 +80,6 @@ def part_two(formatted_input: List[Tuple[List[str], List[str]]]) -> int:
 
   updates = True
   while updates:
-    print("ping")
     updates = False
     for allergene_index in range(len(unique_allergenes)):
       if len(candidates[unique_allergenes[allergene_index]]) == 1:
