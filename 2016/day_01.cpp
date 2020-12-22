@@ -59,20 +59,39 @@ public:
         break;
     }
 
-    switch (direction)
+    for(int step{0}; step < distance; step++)
     {
-      case north: location.second += distance; break;
-      case east: location.first += distance; break;
-      case south: location.second -= distance; break;
-      case west: location.first -= distance; break;
+      switch (direction)
+      {
+        case north: location.second += 1; break;
+        case east: location.first += 1; break;
+        case south: location.second -= 1; break;
+        case west: location.first -= 1; break;
+      }
+      path.push_back(location);
     }
-    path.push_back(location);
   }
 
   std::pair<int, int> get_location() const
   {
     return location;
   }
+
+  std::pair<bool, std::pair<int, int>> first_duplicate() const
+  {
+    for (size_t left_index{0}; left_index + 1 < path.size(); left_index++)
+    {
+      for (size_t right_index{left_index+1}; right_index < path.size(); right_index++)
+      {
+        if (path[left_index] == path[right_index])
+        {
+          return std::make_pair(true, path[left_index]);
+        }
+      }
+    }
+    return std::make_pair(false, std::make_pair(0, 0));
+  }
+
 };
 
 int part_one(const std::vector<std::string>& input)
@@ -88,7 +107,14 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  return 555;
+  Path path;
+  for (auto instruction: input)
+  {
+    path.step(instruction);
+  }
+  auto [found, location] = path.first_duplicate();
+  assert (found);
+  return abs(location.first) + abs(location.second);
 }
 
 int main()
