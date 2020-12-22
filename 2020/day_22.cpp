@@ -4,11 +4,11 @@
 
 #include "../utils/input.hpp"
 
-std::array<std::deque<int>, 2> prepare_input (const std::vector<std::string>& input)
+std::pair<std::deque<int>, std::deque<int>> prepare_input (const std::vector<std::string>& input)
 {
   std::regex re{"^Player\\s(\\d+):$"};
   std::smatch matches;
-  std::array<std::deque<int>, 2> decks;
+  std::pair<std::deque<int>, std::deque<int>> decks;
 
   int turn{0};
 
@@ -23,10 +23,10 @@ std::array<std::deque<int>, 2> prepare_input (const std::vector<std::string>& in
       switch (turn)
       {
         case 1:
-          decks[0].push_back(std::stoi(line));
+          decks.first.push_back(std::stoi(line));
           break;
         case 2:
-          decks[1].push_back(std::stoi(line));
+          decks.second.push_back(std::stoi(line));
           break;
         default:
           throw std::invalid_argument("Invalid turn.");
@@ -54,24 +54,24 @@ int part_one(const std::vector<std::string>& input)
   bool player_one{true};
 
   // play the game
-  while (decks[0].size() != 0 && decks[1].size() != 0)
+  while (decks.first.size() != 0 && decks.second.size() != 0)
   {
-    if (decks[0][0] > decks[1][0])
+    if (decks.first[0] > decks.second[0])
     {
-      decks[0].push_back(decks[0][0]);
-      decks[0].push_back(decks[1][0]);
+      decks.first.push_back(decks.first[0]);
+      decks.first.push_back(decks.second[0]);
     }
     else
     {
-      decks[1].push_back(decks[1][0]);
-      decks[1].push_back(decks[0][0]);
+      decks.second.push_back(decks.second[0]);
+      decks.second.push_back(decks.first[0]);
     }
-    decks[0].pop_front();
-    decks[1].pop_front();
+    decks.first.pop_front();
+    decks.second.pop_front();
   }
 
   // calculate score
-  std::deque<int>& winner = decks[0].size() > 0 ? decks[0] : decks[1];
+  std::deque<int>& winner = decks.first.size() > 0 ? decks.first : decks.second;
   return calculate_score(winner);
 }
 
