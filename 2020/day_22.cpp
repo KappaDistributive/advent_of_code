@@ -38,11 +38,22 @@ std::array<std::deque<int>, 2> prepare_input (const std::vector<std::string>& in
   return decks;
 }
 
+int calculate_score(const std::deque<int> deck)
+{
+  int score{0};
+  for (int index{1}; index <= deck.size(); index++)
+  {
+    score += index * deck[deck.size() - index];
+  }
+  return score;
+}
+
 int part_one(const std::vector<std::string>& input)
 {
   auto decks = prepare_input(input);
   bool player_one{true};
 
+  // play the game
   while (decks[0].size() != 0 && decks[1].size() != 0)
   {
     if (decks[0][0] > decks[1][0])
@@ -57,27 +68,11 @@ int part_one(const std::vector<std::string>& input)
     }
     decks[0].pop_front();
     decks[1].pop_front();
-
-    for (auto deck: decks)
-    {
-      for (auto card: deck)
-      {
-        std::cout << card << std::endl;
-      }
-      std::cout << std::endl;
-    }
-    std::cout << std::endl;
   }
 
+  // calculate score
   std::deque<int>& winner = decks[0].size() > 0 ? decks[0] : decks[1];
-  int score{0};
-
-  for (size_t index{1}; index <= winner.size(); index++)
-  {
-    score += index * winner[winner.size() - index];
-  }
-  
-  return score;
+  return calculate_score(winner);
 }
 
 int part_two(const std::vector<std::string>& input)
