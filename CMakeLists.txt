@@ -63,6 +63,9 @@ target_link_libraries(2015_18 input)
 add_executable(2015_19 2015/day_19.cpp)
 target_link_libraries(2015_19 input)
 
+add_executable(2016_01 2016/day_01.cpp)
+target_link_libraries(2016_01 input)
+
 add_executable(2020_01 2020/day_01.cpp)
 target_link_libraries(2020_01 input)
 
@@ -114,14 +117,14 @@ target_link_libraries(2020_16 input)
 add_executable(2020_17 2020/day_17.cpp)
 target_link_libraries(2020_17 input)
 
-add_executable(2020_18 2020/day_18.cpp)
-target_link_libraries(2020_18 input)
+# add_executable(2020_18 2020/day_18.cpp)
+# target_link_libraries(2020_18 input)
 
-add_executable(2020_20 2020/day_20.cpp)
-target_link_libraries(2020_20 input)
+# add_executable(2020_20 2020/day_20.cpp)
+# target_link_libraries(2020_20 input)
 
-add_executable(2020_21 2020/day_21.cpp)
-target_link_libraries(2020_21 input)
+# add_executable(2020_21 2020/day_21.cpp)
+# target_link_libraries(2020_21 input)
 
 add_executable(2020_22 2020/day_22.cpp)
 target_link_libraries(2020_22 input)
