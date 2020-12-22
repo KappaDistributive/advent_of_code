@@ -22,16 +22,9 @@ int part_one(const std::vector<std::string>& input)
 {
   auto prepared_input = prepare_input(input);
   int counter{0};
-
   for (auto candidate: prepared_input)
   {
     std::sort(candidate.begin(), candidate.end());
-    for (auto side: candidate)
-    {
-      std::cout << side << " ";
-    }
-    std::cout << std::endl;
-
     if (candidate[0] + candidate[1] > candidate[2])
     {
       counter++;
