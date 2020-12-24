@@ -1,11 +1,14 @@
+#include <array>
+#include <map>
+
 #include "../utils/input.hpp"
 
 class Cup
 {
 private:
   int _value;
-  std::shared_ptr<Cup> _next;
-  std::shared_ptr<Cup> _prev;
+  Cup* _next;
+  Cup* _prev;
 
 public:
   Cup () = default;
@@ -19,12 +22,12 @@ public:
     return _value;
   }
 
-  std::shared_ptr<Cup>& next()
+  Cup*& next()
   {
     return _next;
   }
 
-  std::shared_ptr<Cup>& prev()
+  Cup*& prev()
   {
     return _prev;
   }
@@ -39,68 +42,34 @@ public:
 class Ring
 {
 private:
-  std::shared_ptr<Cup> current;
+  Cup* current;
+  bool verbose;
+  const int min_value, max_value;
+  std::array<Cup*, 3> buffer;
+  std::map<int, Cup*> mapper;
 
-  int get_lowest_value() const
+  Cup* get_destination() const
   {
-    int lowest_value{current->value()};
-    auto cup = current;
-    while (cup->next() != current)
-    {
-      cup = cup->next();
-      if (cup->value() < lowest_value)
-      {
-        lowest_value = cup->value();
-      }
-    }
-    return lowest_value;
-  }
-
-  int get_highest_value() const
-  {
-    int highest_value{current->value()};
-    auto cup = current;
-    while (cup->next() != current)
-    {
-      cup = cup->next();
-      if (cup->value() > highest_value)
-      {
-        highest_value = cup->value();
-      }
-    }
-    return highest_value;
-  }
-
-  std::shared_ptr<Cup> get_destination(std::vector<std::shared_ptr<Cup>> buffer) const
-  {
-    std::shared_ptr<Cup> destination;
-    int value = current->value() - 1;
-    int lowest_value = get_lowest_value();
-    int highest_value = get_highest_value();
+    Cup* destination;
+    int value = current->value() > min_value ? current->value() - 1 : max_value;
     auto cup = current;
     bool found_destination = false;
 
     while (!found_destination)
     {
-      cup = current;
-      do
+      cup = mapper.at(value);
+      if (std::find(buffer.begin(), buffer.end(), cup) == buffer.end())
       {
-        if (cup->value() == value && std::find(buffer.begin(), buffer.end(), cup) == buffer.end())
-        {
-          destination = cup;
-          found_destination = true;
-          break;
-        }
-        cup = cup->next();
+        destination = cup;
+        found_destination = true;
       }
-      while (cup != current);
-      if (value > lowest_value)
+      else if (value > min_value)
       {
         value--;
       }
       else
       {
-        value = highest_value;
+        value = max_value;
       }
     }
 
@@ -108,40 +77,50 @@ private:
   }
 
 public:
-  Ring(const std::vector<int>& input)
+  Ring(const std::vector<int>& input, int min_value, int max_value, bool verbose = false)
+    : verbose(verbose), min_value(min_value), max_value(max_value)
   {
-    current = std::make_shared<Cup>(input[0]);
+    current = new Cup(input[0]);
     auto target = current;
     for (size_t index{1}; index < input.size(); index++)
     {
-      auto new_target = std::make_shared<Cup>(input[index]);
+      auto new_target = new Cup(input[index]);
       target->next() = new_target;
       new_target->prev() = target;
       target = new_target;
-      std::cout << *target << std::endl;
     }
     target->next() = current;
     current->prev() = target;
+
+    auto cup = current;
+    mapper.insert(std::make_pair(current->value(), current));
+    while (cup->next() != current)
+    {
+      cup = cup->next();
+      mapper.insert(std::make_pair(cup->value(), cup));
+    }
   }
 
   void step()
   {
-    std::vector<std::shared_ptr<Cup>> buffer;
     auto cup = this->current;
     for (size_t index{0}; index < 3; index++)
     {
       cup = cup->next();
-      buffer.push_back(cup);
+      buffer[index] = cup;
     }
-    auto destination = get_destination(buffer);
-    std::cout << "cups: " << *this << std::endl;
-    std::cout << "pick up: ";
-    for (auto c: buffer)
+    auto destination = get_destination();
+    if (verbose)
     {
-      std::cout << *c << " ";
+      std::cout << "cups: " << *this << std::endl;
+      std::cout << "pick up: ";
+      for (auto c: buffer)
+      {
+        std::cout << *c << " ";
+      }
+      std::cout << std::endl;
+      std::cout << "destination: " << *destination << std::endl;
     }
-    std::cout << std::endl;
-    std::cout << "destination: " << *destination << std::endl;
 
     assert (buffer.size() == 3);
     auto before_buffer = buffer[0]->prev();
@@ -153,12 +132,13 @@ public:
     destination->next() = buffer[0];
     buffer[0]->prev() = destination;
     current = current->next();
+
   }
 
-  std::shared_ptr<Cup> get_by_value(int value)
+  Cup* get_by_value(int value)
   {
     auto cup = current;
-    std::shared_ptr<Cup> result;
+    Cup* result;
     do
     {
       if (cup->value() == value)
@@ -199,12 +179,33 @@ std::vector<int> prepare_input(const std::string& raw_input)
 
 int part_one(const std::string& input)
 {
-  Ring ring(prepare_input(input));
-  std::cout << ring << std::endl;
+  bool verbose = false;
+  auto prepared_input = prepare_input(input);
+  int min_value{prepared_input[0]};
+  int max_value{prepared_input[0]};
+  for (auto value: prepared_input)
+  {
+    if (value < min_value)
+    {
+      min_value = value;
+    }
+    if (value > max_value)
+    {
+      max_value = value;
+    }
+  }
+  Ring ring(prepare_input(input), min_value, max_value, verbose);
+  if (verbose)
+  {
+    std::cout << ring << std::endl;
+  }
   for (size_t round{0}; round < 100; round++)
   {
     ring.step();
-    std::cout << ring << std::endl;
+    if (verbose)
+    {
+      std::cout << ring << std::endl;
+    }
   }
 
   auto cup_1 = ring.get_by_value(1);
@@ -220,9 +221,41 @@ int part_one(const std::string& input)
   return std::stoi(result);
 }
 
-int part_two(const std::string& input)
+long part_two(const std::string& input)
 {
-  return -3;
+  bool verbose = false;
+  auto prepared_input = prepare_input(input);
+  int max_value{0};
+  for (auto value: prepared_input)
+  {
+    if (value > max_value)
+    {
+      max_value = value;
+    }
+  }
+
+  for (int value{max_value+1}; value <= 1000000; value++)
+  {
+    prepared_input.push_back(value);
+  }
+  Ring ring(prepared_input, 1, 1000000, verbose);
+  if (verbose)
+  {
+    std::cout << ring << std::endl;
+  }
+  for (size_t round{0}; round < 10000000; round++)
+  {
+    ring.step();
+    if (verbose)
+    {
+      std::cout << ring << std::endl;
+    }
+  }
+
+  auto cup = ring.get_by_value(1)->next();
+  long result{static_cast<long>(cup->value())};
+  result *= static_cast<long>(cup->next()->value());
+  return result;
 }
 
 int main()
