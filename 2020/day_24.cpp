@@ -1,4 +1,6 @@
 #include <array>
+#include <set>
+
 #include "../utils/input.hpp"
 
 enum Direction
@@ -152,6 +154,59 @@ public:
     return location;
   }
 
+  void update()
+  {
+    std::set<std::pair<int, int>> flips;
+    int num_blacks;
+    std::vector<std::pair<int, int>> offsets = {
+      { 1,  0}, // east
+      { 1, -1}, // southeast
+      { 0, -1}, // southwest
+      {-1,  0}, // west
+      {-1,  1}, // northwest
+      { 0,  1}, // northeast
+    };
+    size_t x_lower, x_upper, y_lower, y_upper;
+
+    for (size_t y{0}; y < height; y++)
+    {
+      for (size_t x{0}; x < width; x++)
+      {
+        num_blacks = 0;
+
+        for (auto offset: offsets)
+        {
+          if (
+            static_cast<int>(y) + offset.second >= 0 && 
+            static_cast<int>(y) + offset.second < height && 
+            static_cast<int>(x) + offset.first >= 0 && 
+            static_cast<int>(x) + offset.first < width
+            )
+          {
+            if (!grid[(static_cast<int>(y) + offset.second) * width + (static_cast<int>(x) + offset.first)])
+            {
+              num_blacks++;
+            }
+          } 
+        }
+        
+        if (!grid[y * width + x] && (num_blacks == 0 || num_blacks > 2))
+        {
+          flips.insert({x, y});
+        }
+        else if (grid[y * width + x] && num_blacks == 2)
+        {
+          flips.insert({x, y});
+        }
+      }
+    }
+
+    for (auto location: flips)
+    {
+      grid[location.second * width + location.first] = !grid[location.second * width + location.first];
+    }
+  }
+
   bool& operator[] (std::pair<int, int> location)
   {
     check_if_location_is_in_bounds(location);
@@ -242,7 +297,34 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  return -110;
+  bool verbose = false;
+  auto directions = prepare_input(input);
+  Hexgrid<151, 151> hexgrid;
+  std::pair<int, int> location{0, 0};
+
+  for (auto direction: directions)
+  {
+    for (auto step: direction)
+    {
+      location = hexgrid.step(step);
+    }
+    hexgrid.flip(location);
+    hexgrid.to_origin();
+  }
+  if (verbose)
+  {
+    std::cout << "\n" << hexgrid << std::endl;
+  }
+  for (size_t day{1}; day <= 100; day++)
+  {
+    hexgrid.update();
+    if (verbose)
+    {
+      std::cout << "Day " << day << ": " << hexgrid.count_blacks() << std::endl;
+      std::cout << "\n" << hexgrid << std::endl;
+    }
+  }
+  return hexgrid.count_blacks();
 }
 
 int main()
