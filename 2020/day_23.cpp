@@ -7,12 +7,12 @@ class Cup
 {
 private:
   int _value;
-  Cup* _next;
-  Cup* _prev;
+  std::shared_ptr<Cup> _next;
+  std::shared_ptr<Cup> _prev;
 
 public:
   Cup () = default;
-  explicit Cup (int value, Cup* next=nullptr, Cup* prev=nullptr)
+  explicit Cup (int value, std::shared_ptr<Cup> next=nullptr, std::shared_ptr<Cup> prev=nullptr)
     : _value(value), _next(next), _prev(prev)
   {
   }
@@ -22,12 +22,12 @@ public:
     return _value;
   }
 
-  Cup*& next()
+  std::shared_ptr<Cup>& next()
   {
     return _next;
   }
 
-  Cup*& prev()
+  std::shared_ptr<Cup>& prev()
   {
     return _prev;
   }
@@ -42,15 +42,15 @@ public:
 class Ring
 {
 private:
-  Cup* current;
+  std::shared_ptr<Cup> current;
   bool verbose;
   const int min_value, max_value;
-  std::array<Cup*, 3> buffer;
-  std::map<int, Cup*> mapper;
+  std::array<std::shared_ptr<Cup>, 3> buffer;
+  std::map<int, std::shared_ptr<Cup>> mapper;
 
-  Cup* get_destination() const
+  std::shared_ptr<Cup> get_destination() const
   {
-    Cup* destination;
+    std::shared_ptr<Cup> destination;
     int value = current->value() > min_value ? current->value() - 1 : max_value;
     auto cup = current;
     bool found_destination = false;
@@ -80,11 +80,11 @@ public:
   Ring(const std::vector<int>& input, int min_value, int max_value, bool verbose = false)
     : verbose(verbose), min_value(min_value), max_value(max_value)
   {
-    current = new Cup(input[0]);
+    current = std::make_shared<Cup>(input[0]);
     auto target = current;
     for (size_t index{1}; index < input.size(); index++)
     {
-      auto new_target = new Cup(input[index]);
+      auto new_target = std::make_shared<Cup>(input[index]);
       target->next() = new_target;
       new_target->prev() = target;
       target = new_target;
@@ -135,10 +135,10 @@ public:
 
   }
 
-  Cup* get_by_value(int value)
+  std::shared_ptr<Cup> get_by_value(int value)
   {
     auto cup = current;
-    Cup* result;
+    std::shared_ptr<Cup> result;
     do
     {
       if (cup->value() == value)
