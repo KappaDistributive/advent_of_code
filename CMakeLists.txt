@@ -141,5 +141,8 @@ target_link_libraries(2020_22 input)
 add_executable(2020_23 2020/day_23.cpp)
 target_link_libraries(2020_23 input)
 
+add_executable(2020_24 2020/day_24.cpp)
+target_link_libraries(2020_24 input)
+
 add_executable(2020_25 2020/day_25.cpp)
 target_link_libraries(2020_25 input)
