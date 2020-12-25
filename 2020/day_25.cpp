@@ -3,8 +3,8 @@
 long part_one(const std::vector<std::string>& input)
 {
   const long subject_number{7};
-  const long card_public_key{8458505};
-  const long door_public_key{16050997};
+  const long card_public_key{std::stoi(input[0])};
+  const long door_public_key{std::stoi(input[1])};
   const long divider{20201227};
 
   long a{1}, b{1};
