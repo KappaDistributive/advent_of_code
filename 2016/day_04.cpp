@@ -93,6 +93,18 @@ public:
   }
 };
 
+std::string rot(const std::string& input, int rotation)
+{
+  assert (rotation >= 0);
+  std::string result;
+  for (auto character: input)
+  {
+    assert (character >= 'a' && character <= 'z');
+    result += 'a' + ((character - 'a' + rotation) % ('z' + 1 - 'a'));
+  }
+  return result;
+}
+
 int part_one(const std::vector<std::string>& input)
 {
   int result{0};
@@ -109,7 +121,21 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  return -38;
+  int result{-1};
+  bool verbose{true};
+  for (auto code: input)
+  {
+    Room room(code);
+    if (verbose)
+    {
+      std::cout << room.get_sector_id() << ": " << rot(room.get_name(), room.get_sector_id()) << std::endl;
+    }
+    if (rot(room.get_name(), room.get_sector_id()) == "northpoleobjectstorage")
+    {
+      result = room.get_sector_id();
+    }
+  }
+  return result; 
 }
 
 int main()
