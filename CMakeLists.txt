@@ -78,6 +78,9 @@ target_link_libraries(2016_04 input)
 add_executable(2016_05 2016/day_05.cpp)
 target_link_libraries(2016_05 input md5)
 
+add_executable(2016_06 2016/day_06.cpp)
+target_link_libraries(2016_06 input md5)
+
 add_executable(2020_01 2020/day_01.cpp)
 target_link_libraries(2020_01 input)
 
