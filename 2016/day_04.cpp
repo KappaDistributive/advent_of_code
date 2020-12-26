@@ -122,7 +122,7 @@ int part_one(const std::vector<std::string>& input)
 int part_two(const std::vector<std::string>& input)
 {
   int result{-1};
-  bool verbose{true};
+  bool verbose{false};
   for (auto code: input)
   {
     Room room(code);
