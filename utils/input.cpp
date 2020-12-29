@@ -1,6 +1,7 @@
 #include "input.hpp"
 
-namespace utils {
+namespace utils
+{
   Reader::Reader(std::filesystem::path input) : input(input) {}
 
 
@@ -41,5 +42,34 @@ namespace utils {
     }
 
     return splits;
+  }  
+
+  template<typename T>
+  std::vector<T> rotate_vector(const std::vector<T>& input, const int& rotation)
+  {
+    std::vector<T> result;
+    size_t size = input.size();
+    result.resize(size);
+    int steps;
+    if (rotation>= 0)
+    {
+      steps = rotation % size;
+      for (size_t index{0}; index < size; index ++)
+      {
+        result[(index + steps) % size] = input[index];
+      }
+    }
+    else
+    {
+      steps = -rotation % size;
+      for (size_t index{0}; index < size; index ++)
+      {
+        result[index] = input[(index + steps) % size];
+      }
+    }
+    return result;
   }
+
+  template std::vector<int> rotate_vector<int> (const std::vector<int>&, const int&);
+  template std::vector<bool> rotate_vector<bool> (const std::vector<bool>&, const int&);
 }
