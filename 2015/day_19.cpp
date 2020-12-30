@@ -127,8 +127,10 @@ int main()
   utils::Reader reader(std::filesystem::path("../2015/data/input_19.txt"));
   const auto input = reader.get_lines();
  
-  std::cout << "The answer to part one is: " << part_one(input) << std::endl;
-  std::cout << "The answer to part two is: " << part_two(input) << std::endl;
+  auto answer_one = part_one(input);
+  std::cout << "The answer to part one is: " << answer_one << std::endl;
+  auto answer_two = part_two(input);
+  std::cout << "The answer to part two is: " << answer_two << std::endl;
 
   return 0;
 }
