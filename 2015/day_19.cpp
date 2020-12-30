@@ -10,15 +10,24 @@ class Replacement
   std::string target;
 
 public:
-  explicit Replacement (std::string description)
+  explicit Replacement (std::string description, bool inverted=false)
   {
     std::smatch matches;
     std::regex re{"(\\w+)\\s=>\\s(\\w+)"};
     std::regex_match(description, matches, re);
     assert (matches.size() == 3);
-    source_pattern = matches[1].str();
-    source_regex = std::regex{"(" + matches[1].str() + ")"};
-    target = matches[2].str();
+    if (inverted)
+    {
+      source_pattern = matches[2].str();
+      source_regex = std::regex{"(" + matches[2].str() + ")"};
+      target = matches[1].str();
+    }
+    else
+    {
+      source_pattern = matches[1].str();
+      source_regex = std::regex{"(" + matches[1].str() + ")"};
+      target = matches[2].str();
+    }
   }
 
   std::vector<std::string> apply(const std::string& input) const
@@ -46,7 +55,7 @@ public:
   }
 };
 
-std::pair<std::vector<Replacement>, std::string> prepare_input(const std::vector<std::string>& input)
+std::pair<std::vector<Replacement>, std::string> prepare_input(const std::vector<std::string>& input, bool inverted=false)
 {
   std::string molecule;
   std::vector<Replacement> replacements;
@@ -60,7 +69,7 @@ std::pair<std::vector<Replacement>, std::string> prepare_input(const std::vector
     }
     else if (first_section)
     {
-      replacements.push_back(Replacement(line));
+      replacements.push_back(Replacement(line, inverted));
     }
     else
     {
@@ -94,19 +103,30 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  return 5;
+  auto [replacements, molecule] = prepare_input(input, true);
+  int stage{0};
+
+  while (molecule != "e")
+  {
+    stage++;
+    for (auto replacement: replacements)
+    {
+      auto new_molecules = replacement.apply(molecule);
+      if (new_molecules.size() > 0)
+      {
+        molecule = new_molecules[0]; // greedy decoding
+        break;
+      }
+    }
+  }
+  return stage;
 }
 
 int main()
 {
   utils::Reader reader(std::filesystem::path("../2015/data/input_19.txt"));
   const auto input = reader.get_lines();
-
-  // for (auto line: input)
-  // {
-  //   std::cout << line << std::endl;
-  // }
-  
+ 
   std::cout << "The answer to part one is: " << part_one(input) << std::endl;
   std::cout << "The answer to part two is: " << part_two(input) << std::endl;
 
