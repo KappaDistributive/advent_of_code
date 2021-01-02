@@ -300,16 +300,12 @@ bool fight(const Character& first, const Character& second)
 int part_one(const std::vector<std::string>& input)
 {
   auto [armor, rings, weapons] = init_shop();
-
   std::vector<Ring> ring_list;
-
   for (auto ring: rings)
   {
     ring_list.push_back(ring);
   }
-
   std::vector<int> wins;
-
   for (auto weapon: weapons)
   {
     for (auto armor: armor)
@@ -353,7 +349,51 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  return 9;
+  auto [armor, rings, weapons] = init_shop();
+  std::vector<Ring> ring_list;
+  for (auto ring: rings)
+  {
+    ring_list.push_back(ring);
+  }
+  std::vector<int> losses;
+  for (auto weapon: weapons)
+  {
+    for (auto armor: armor)
+    {
+      for (bool include_armor: {0, 1})
+      {
+        for (size_t left_ring{0}; left_ring <= ring_list.size(); left_ring++)
+        {
+          for (size_t right_ring{left_ring + 1}; right_ring <= ring_list.size() + 1; right_ring++)
+          {
+            std::optional<Armor> hero_armor = {};
+            std::optional<Ring> hero_left_ring = {};
+            std::optional<Ring> hero_right_ring = {};
+            if (include_armor)
+            {
+              hero_armor = armor;
+            }
+            if (left_ring < ring_list.size())
+            {
+              hero_left_ring = ring_list[left_ring];
+            }
+            if (right_ring < ring_list.size())
+            {
+              hero_right_ring = ring_list[right_ring];
+            }
+            Character hero("Hero", 100, weapon, hero_armor, hero_left_ring , hero_right_ring);
+
+            auto villain = init_villain(input);
+            if(!fight(hero, villain))
+            {
+              losses.push_back(hero.get_worth());
+            }
+          }
+        }
+      }
+    }
+  }
+  return *std::max_element(losses.begin(), losses.end());
 }
 
 int main(int argc, char** argv)
