@@ -32,7 +32,31 @@ long part_one(const std::string& input)
 
 int part_two(const std::string& input)
 {
-  return -111;
+  long target{std::stol(input)};
+  long house;
+  long elf_exhaustion{1};
+
+  std::array<long, UPPER_BOUND> houses = std::array<long, UPPER_BOUND>();
+  for (long elf{1}; elf < UPPER_BOUND; elf++)
+  {
+    house = elf;
+    elf_exhaustion = 1;
+    while (house <= UPPER_BOUND && elf_exhaustion <= 50)
+    {
+      houses[house - 1] += 11 * elf;
+      house += elf;
+      elf_exhaustion++;
+    }
+  }
+
+  for (size_t index{0}; index < houses.size(); index++)
+  {
+    if (houses[index] >= target)
+    {
+      return index + 1;
+    }
+  }
+  return -1;
 }
 
 int main()
