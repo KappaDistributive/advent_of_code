@@ -235,6 +235,7 @@ public:
     return os;
   }
 };
+
 int part_one(const std::vector<std::string>& input)
 {
   CPU cpu(input);
