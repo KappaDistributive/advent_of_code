@@ -215,12 +215,99 @@ int part_one(const std::vector<std::string>& input)
       }
     }
   }
-  return 4;
+  return -1;
 }
 
 int part_two(const std::vector<std::string>& input)
 {
-  return 44;
+  std::vector<Bot> bots;
+  std::vector<int> outputs;
+
+  for (size_t index{0}; index < input.size(); index++)
+  {
+    bots.push_back(Bot());
+    outputs.push_back(-1);
+  }
+  bool searching{true};
+  auto instructions = prepare_input(input);
+  std::regex assignment_regex{"^value\\s(\\d+)\\sgoes\\sto\\sbot\\s(\\d+)$"};
+  std::regex transition_regex{"^bot\\s(\\d+)\\sgives\\slow\\sto\\s(bot|output)\\s(\\d+)\\sand\\shigh\\sto\\s(bot|output)\\s(\\d+)$"};
+  std::smatch matches;
+
+  while (searching)
+  { 
+    searching = false;
+    for (size_t index{0}; index < instructions.size(); index++)
+    {
+      auto [instruction, done] =  instructions[index];
+      if (!done)
+      {
+        searching = true;
+        if (std::regex_match(instruction, matches, assignment_regex))
+        {
+          int value = std::stoi(matches[1].str());
+          int bot_index = std::stoi(matches[2].str());
+          bots[bot_index].add(value);
+          std::cout << bot_index << " -> " << bots[bot_index] << std::endl;
+          instructions[index] = {instruction, true};
+        }
+        else if (std::regex_match(instruction, matches, transition_regex))
+        {
+          int sender_index = std::stoi(matches[1].str());
+          if (bots[sender_index].is_ready())
+          {
+            bool low_receiver_is_bot;
+            if (matches[2].str() == "bot")
+            {
+              low_receiver_is_bot = true;
+            }
+            else
+            {
+              assert (matches[2].str() == "output");
+              low_receiver_is_bot = false;
+            }
+            int low_index = std::stoi(matches[3].str());
+            bool high_receiver_is_bot;
+            if (matches[4].str() == "bot")
+            {
+              high_receiver_is_bot = true;
+            }
+            else
+            {
+              assert (matches[4].str() == "output");
+              high_receiver_is_bot = false;
+            }
+            int high_index = std::stoi(matches[5].str());
+
+            if (low_receiver_is_bot)
+            {
+              bots[low_index].add(bots[sender_index].low(true));
+              std::cout << low_index << " -> " << bots[low_index] << std::endl;
+            }
+            else
+            {
+              outputs[low_index] = bots[sender_index].low(true);
+            }
+            if (high_receiver_is_bot)
+            {
+              bots[high_index].add(bots[sender_index].high(true));
+              std::cout << high_index << " -> " << bots[high_index] << std::endl;
+            }
+            else
+            {
+              outputs[high_index] = bots[sender_index].high(true);
+            }
+            instructions[index] = {instruction, true};
+          }
+        }
+        else
+        {
+          throw std::runtime_error("Invalid instruction:\n" + instruction);
+        }
+      }
+    }
+  }
+  return outputs[0] * outputs[1] * outputs[2];
 }
 
 int main()
