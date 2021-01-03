@@ -144,7 +144,6 @@ int part_one(const std::vector<std::string>& input)
           int value = std::stoi(matches[1].str());
           int bot_index = std::stoi(matches[2].str());
           bots[bot_index].add(value);
-          std::cout << bot_index << " -> " << bots[bot_index] << std::endl;
           instructions[index] = {instruction, true};
           if (bots[bot_index].low() == 17 && bots[bot_index].high() == 61)
           {
@@ -182,7 +181,6 @@ int part_one(const std::vector<std::string>& input)
             if (low_receiver_is_bot)
             {
               bots[low_index].add(bots[sender_index].low(true));
-              std::cout << low_index << " -> " << bots[low_index] << std::endl;
               if (bots[low_index].low() == 17 && bots[low_index].high() == 61)
               {
                 return low_index;
@@ -195,7 +193,6 @@ int part_one(const std::vector<std::string>& input)
             if (high_receiver_is_bot)
             {
               bots[high_index].add(bots[sender_index].high(true));
-              std::cout << high_index << " -> " << bots[high_index] << std::endl;
               if (bots[high_index].low() == 17 && bots[high_index].high() == 61)
               {
                 return high_index;
@@ -248,7 +245,6 @@ int part_two(const std::vector<std::string>& input)
           int value = std::stoi(matches[1].str());
           int bot_index = std::stoi(matches[2].str());
           bots[bot_index].add(value);
-          std::cout << bot_index << " -> " << bots[bot_index] << std::endl;
           instructions[index] = {instruction, true};
         }
         else if (std::regex_match(instruction, matches, transition_regex))
@@ -282,7 +278,6 @@ int part_two(const std::vector<std::string>& input)
             if (low_receiver_is_bot)
             {
               bots[low_index].add(bots[sender_index].low(true));
-              std::cout << low_index << " -> " << bots[low_index] << std::endl;
             }
             else
             {
@@ -291,7 +286,6 @@ int part_two(const std::vector<std::string>& input)
             if (high_receiver_is_bot)
             {
               bots[high_index].add(bots[sender_index].high(true));
-              std::cout << high_index << " -> " << bots[high_index] << std::endl;
             }
             else
             {
