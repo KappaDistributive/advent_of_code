@@ -206,6 +206,11 @@ public:
     return this->instruction_pointer < this->instructions.size();
   }
 
+  void set_memory(char address, int value)
+  {
+    this->memory.insert_or_assign(address, value);
+  }
+
   std::map<char, int> get_memory() const
   {
     return this->memory;
@@ -239,7 +244,10 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  return -13;
+  CPU cpu(input);
+  cpu.set_memory('a', 1);
+  cpu.run();
+  return cpu.get_memory().at('b');
 }
 
 int main(int argc, char** argv)
