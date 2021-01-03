@@ -4,30 +4,31 @@
 
 static const std::regex RE{"\\((\\d+)x(\\d+)\\)"};
 
-std::string decompress(std::string input)
+size_t decompress(std::string input, bool recursive = false)
 {
   std::smatch matches;
-  std::string result;
   std::regex_search(input, matches, RE);
 
   if (matches[1].str().size() > 0)
   {
     size_t sequence_length = std::stoi(matches[1].str());
     size_t repetitions = std::stoi(matches[2].str());
+    size_t size{0};
     std::string chunk = matches.suffix().str().substr(0, sequence_length);
     std::string tail = matches.suffix().str().substr(sequence_length);
-    result = matches.prefix().str();
-    for (size_t index{0}; index < repetitions; index++)
+    size += matches.prefix().str().size();
+    if (recursive)
     {
-      result += chunk;
+      size += repetitions * decompress(chunk, recursive);
+      return size + decompress(tail, recursive);
     }
-    result += decompress(tail);
+    else
+    {
+      size += repetitions * chunk.size();
+      return size += decompress(tail);
+    }
   }
-  else
-  {
-    result = input;
-  }
-  return result;
+  return input.size();
 }
 
 long part_one(const std::vector<std::string>& input)
@@ -35,14 +36,19 @@ long part_one(const std::vector<std::string>& input)
   long result{0};
   for (auto line: input)
   {
-    result += decompress(line).size();
+    result += decompress(line);
   }
   return result;
 }
 
-int part_two(const std::vector<std::string>& input)
+long part_two(const std::vector<std::string>& input)
 {
-  return 3;
+  long result{0};
+  for (auto line: input)
+  {
+    result += decompress(line, true);
+  }
+  return result;
 }
 
 int main()
