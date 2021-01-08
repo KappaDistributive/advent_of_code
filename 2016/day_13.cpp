@@ -15,18 +15,30 @@ bool is_wall(const size_t& offset, const size_t& x, const size_t& y)
 
 void show_maze(const size_t offset, const size_t& max_x, const size_t& max_y, std::vector<std::pair<size_t, size_t>> path)
 {
-  std::cout << "  ";
-  for (size_t x{0}; x <= max_x; x++)
-  {
-    std::cout << x;
-  }
-  std::cout << std::endl;
   for (size_t y{0}; y < max_y; y++)
   {
-    std::cout << y << " ";
     for (size_t x{0}; x < max_x; x++)
     {
       if (std::find(path.begin(), path.end(), std::make_pair(x, y)) != path.end())
+      {
+        std::cout << 'O';
+      }
+      else
+      {
+        std::cout << (is_wall(offset, x, y) ? '#': '.');
+      }
+    }
+    std::cout << std::endl;
+  }
+}
+
+void show_maze(const size_t offset, const size_t& max_x, const size_t& max_y, std::set<std::pair<size_t, size_t>> locations)
+{
+  for (size_t y{0}; y < max_y; y++)
+  {
+    for (size_t x{0}; x < max_x; x++)
+    {
+      if (locations.count(std::make_pair(x, y)) > 0)
       {
         std::cout << 'O';
       }
@@ -67,6 +79,7 @@ std::set<std::pair<size_t, size_t>> path_extensions(const size_t& offset, const 
 
 int part_one(const size_t& input)
 {
+  bool verbose{true};
   const size_t target_x{31}, target_y{39};
   std::set<std::vector<std::pair<size_t, size_t>>> paths = {{{1, 1}}};
   std::vector<std::pair<size_t, size_t>> shortest_path;
@@ -93,13 +106,42 @@ int part_one(const size_t& input)
     }
     paths = new_paths;
   }
-  show_maze(input, 50, 50, shortest_path);
+  if (verbose)
+  {
+    show_maze(input, 50, 50, shortest_path);
+  }
   return shortest_path.size() - 1;
 }
 
 int part_two(const int& input)
 {
-  return 4321;
+  bool verbose{true};
+  const size_t target_x{31}, target_y{39};
+  std::set<std::vector<std::pair<size_t, size_t>>> paths{{{{1, 1}}}};
+  std::set<std::pair<size_t, size_t>> visited_locations{{1, 1}};
+  bool found{false};
+  for (size_t step{0}; step < 50; step++)
+  {
+    std::set<std::vector<std::pair<size_t, size_t>>> new_paths;
+    for (auto path: paths)
+    {
+      auto [x, y] = path.back();
+      auto extensions = path_extensions(input, path);
+      for (auto extension: extensions)
+      {
+        auto path_copy = path;
+        visited_locations.insert(extension);
+        path_copy.push_back(extension);
+        new_paths.insert(path_copy);
+      }
+    }
+    paths = new_paths;
+  }
+  if (verbose)
+  {
+    show_maze(input, 50, 50, visited_locations);
+  }
+  return visited_locations.size();
 }
 
 int main()
