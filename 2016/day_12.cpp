@@ -117,6 +117,11 @@ public:
   {
     return registers.at(name);
   }
+
+  void set_register(const char& name, const int& value)
+  {
+    registers.insert_or_assign(name, value);
+  }
 };
 
 std::vector<Instruction> prepare_input (const std::vector<std::string>& input)
@@ -182,7 +187,14 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  return 2222;
+
+  auto instructions = prepare_input(input);
+  CPU cpu(instructions);
+  cpu.set_register('c', 1);
+  while (cpu.step())
+  {
+  }
+  return cpu.read_register('a');
 }
 
 int main()
