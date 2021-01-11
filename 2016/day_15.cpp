@@ -15,7 +15,7 @@ public:
 
   }
 
-  size_t get_position(size_t time)
+  size_t get_position(size_t time) const
   {
     return (this->initial_position + time) % this->size;
   }
@@ -41,12 +41,10 @@ std::vector<Disc> prepare_input (const std::vector<std::string>& input)
   return discs;
 }
 
-size_t part_one(const std::vector<std::string>& input)
+size_t find_first_opportune_moment(const std::vector<Disc>& discs)
 {
-  auto discs = prepare_input(input);
   size_t global_time{0}, local_time{0};
   bool searching{true};
-
   while (searching)
   {
     local_time = global_time;
@@ -65,9 +63,17 @@ size_t part_one(const std::vector<std::string>& input)
   return global_time - 1;
 }
 
+size_t part_one(const std::vector<std::string>& input)
+{
+  auto discs = prepare_input(input);
+  return find_first_opportune_moment(discs);
+}
+
 int part_two(const std::vector<std::string>& input)
 {
-  return -63;
+  auto discs = prepare_input(input);
+  discs.push_back(Disc(discs.size(), 11, 0));
+  return find_first_opportune_moment(discs);
 }
 
 int main()
