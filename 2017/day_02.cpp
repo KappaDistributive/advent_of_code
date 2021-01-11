@@ -29,7 +29,28 @@ long part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  return 7;
+  auto data = prepare_input(input);
+  long result{0};
+  for (auto row: data)
+  {
+    for (size_t left_index{0}; left_index + 1 < row.size(); left_index++)
+    {
+      for (size_t right_index{left_index+1}; right_index < row.size(); right_index++)
+      {
+        if (row[left_index] % row[right_index] == 0)
+        {
+          result += row[left_index] / row[right_index];
+          break;
+        }
+        else if (row[right_index] % row[left_index] == 0)
+        {
+          result += row[right_index] / row[left_index];
+          break;
+        }
+      }
+    }
+  }
+  return result;
 }
 
 int main()
