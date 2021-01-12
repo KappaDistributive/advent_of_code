@@ -47,27 +47,35 @@ template <size_t _height, size_t _width>
 class SpiralGrid
 {
 private:
-  std::array<int, _height * _width> data;
+  std::array<int, _height * _width>* data;
+  std::pair<int, int> position;
+  Direction direction;
+  std::vector<std::pair<int, int>> path;
+  size_t path_index;
   const size_t height, width;
   const std::pair<size_t, size_t> center;
 
 public:
-  SpiralGrid ()
-    : height(_height), width(_width), center({_height / 2, _width / 2}), data(std::array<int, _height * _width>())
+  SpiralGrid (bool part_two = false)
+    : height(_height), width(_width), center({_height / 2, _width / 2}), data(new std::array<int, _height * _width>()), position({0, 0}), direction(south), path({{0, 0}}), path_index(0)
   {
-    build_spiral();
+    build_spiral(part_two);
+  }
+
+  void reset ()
+  {
+    this->position = {0, 0};
+    this->direction = south;
   }
 
   int* operator[] (std::pair<int, int> position)
   {
-    try
+    size_t index{(center.second - position.second) * this->width + center.first + position.first};
+    if (index < this->data->size())
     {
-      return &this->data[
-        (center.second - position.second) * this->width +
-        center.first + position.first
-      ];
+      return &(this->data->operator[](index));
     }
-    catch (std::out_of_range& e)
+    else
     {
       return nullptr;
     }
@@ -77,7 +85,7 @@ public:
   {
     size_t padding{0};
     size_t current_length;
-    for (auto entry: grid.data)
+    for (auto entry: *grid.data)
     {
       current_length = std::to_string(entry).size() + 1;
       if (current_length > padding)
@@ -93,7 +101,7 @@ public:
         {
           os << GREEN;
         }
-        os << std::setw(padding) << grid.data[y * grid.width + x] << std::setw(1);
+        os << std::setw(padding) << grid.data->operator[](y * grid.width + x) << std::setw(1);
         if (y == grid.height / 2 && x == grid.height / 2)
         {
           os << RESET;
@@ -109,64 +117,55 @@ public:
     return this->center;
   }
 
-  void build_spiral()  // only works for uneven _height, _width
+  std::pair<int, int> step()
   {
-    std::pair<int, int> position{0, 0};
-    int value{1};
-    Direction direction{south};
-    for (size_t step{0}; step < _height * _width; step++)
+    // update direction
+    switch (this->direction)
     {
-      if (this->operator[](position) != nullptr)
-      {
-        *this->operator[](position) = value;
-      }
-      value++;
-      // turn direction if we have reached an edge
-      switch (direction)
-      {
-        case north:
-          if (this->operator[](position + std::make_pair(-1, 0)) == nullptr || *this->operator[](position + std::make_pair(-1, 0)) == 0)
-          {
-            direction = west;
-          }
-          break;
-        case east:
-          if (this->operator[](position + std::make_pair(0, 1)) == nullptr || *this->operator[](position + std::make_pair(0, 1)) == 0)
-          {
-            direction = north;
-          }
-          break;
-        case south:
-          if (this->operator[](position + std::make_pair(1, 0)) == nullptr || *this->operator[](position + std::make_pair(1, 0)) == 0)
-          {
-            direction = east;
-          }
-          break;
-        case west:
-          if (this->operator[](position + std::make_pair(0, -1)) == nullptr || *this->operator[](position + std::make_pair(0, -1)) == 0)
-          {
-            direction = south;
-          }
-          break;
-      }
-
-      // take a step 
-      switch (direction)
-      {
-        case north:
-          position += std::make_pair(0, 1);
-          break;
-        case east:
-          position += std::make_pair(1, 0);
-          break;
-        case south:
-          position += std::make_pair(0, -1);
-          break;
-        case west:
-          position += std::make_pair(-1, 0);
-          break;
-      }
+      case north:
+        if (this->operator[](position + std::make_pair(-1, 0)) == nullptr || *this->operator[](position + std::make_pair(-1, 0)) == 0)
+        {
+          this->direction = west;
+        }
+        break;
+      case east:
+        if (this->operator[](position + std::make_pair(0, 1)) == nullptr || *this->operator[](position + std::make_pair(0, 1)) == 0)
+        {
+          this->direction = north;
+        }
+        break;
+      case south:
+        if (this->operator[](position + std::make_pair(1, 0)) == nullptr || *this->operator[](position + std::make_pair(1, 0)) == 0)
+        {
+          this->direction = east;
+        }
+        break;
+      case west:
+        if (this->operator[](position + std::make_pair(0, -1)) == nullptr || *this->operator[](position + std::make_pair(0, -1)) == 0)
+        {
+          this->direction = south;
+        }
+        break;
     }
+
+    // take a step 
+    switch (direction)
+    {
+      case north:
+        this->position += std::make_pair(0, 1);
+        break;
+      case east:
+        this->position += std::make_pair(1, 0);
+        break;
+      case south:
+        this->position += std::make_pair(0, -1);
+        break;
+      case west:
+        this->position += std::make_pair(-1, 0);
+        break;
+    }
+    this->path.push_back(this->position);
+    return this->position;
   }
 
   std::optional<std::pair<int, int>> find(const int& value)
@@ -185,22 +184,70 @@ public:
     }
     return std::nullopt;
   }
-};
 
+  std::vector<std::pair<int, int>> get_path () const
+  {
+    return this->path;
+  }
+
+  void build_spiral(bool part_two = false)  // only works for uneven _height, _width
+  {
+    int value{1};
+    while (this->operator[](this->position) != nullptr)
+    {
+      if (part_two && this->position != std::make_pair(0, 0))
+      {
+        value = 0;
+        for (int offset_y{-1}; offset_y <= 1; offset_y++)
+        {
+          for (int offset_x{-1}; offset_x <= 1; offset_x++)
+          {
+            if (offset_y != 0 || offset_x != 0)
+            {
+              auto pointer = this->operator[](this->position + std::make_pair(offset_x, offset_y));
+              if (pointer != nullptr)
+              {
+                value += *pointer;
+              }
+            }
+            *this->operator[](this->position) = value;
+          }
+        }
+      }
+      else
+      {
+        if (this->operator[](this->position) != nullptr)
+        {
+          *(this->operator[](this->position)) = value;
+        }
+        value++;
+      }
+      step();
+    }
+  }
+};
 
 int part_one(const int& input)
 {
   SpiralGrid<1001, 1001> grid;
-  //std::cout << grid << std::endl;
   auto position = grid.find(input).value();
-  //std::cout << position << std::endl;
-
   return abs(position.first) + abs(position.second);
 }
 
 int part_two(const int& input)
 {
-  return 117;
+  SpiralGrid<1001, 1001> grid(true);
+  auto path = grid.get_path();
+  int value;
+  for (auto position: path)
+  {
+    value = *grid[position];
+    if (value > input)
+    {
+      break;
+    }
+  }
+  return value;
 }
 
 int main()
