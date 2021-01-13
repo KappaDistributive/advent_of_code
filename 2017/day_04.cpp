@@ -21,7 +21,31 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  return 1111;
+  int result{0};
+  for (auto line: input)
+  {
+    auto splits = utils::split_string(line, ' ');
+    std::vector<std::string> splits_vector;
+    std::set<std::string> splits_set;
+    for (auto split: splits)
+    {
+      std::vector<char> characters;
+      for (auto character: split)
+      {
+        characters.push_back(character);
+      }
+      std::sort(characters.begin(), characters.end());
+      std::string word;
+      for (auto character: characters)
+      {
+        word += character;
+      }
+      splits_set.insert(word);
+    }
+    result += splits_set.size() == splits.size();
+
+  }
+  return result;
 }
 
 int main()
