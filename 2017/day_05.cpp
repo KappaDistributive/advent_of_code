@@ -15,8 +15,6 @@ long part_one(const std::vector<std::string>& input)
   auto jumps = prepare_input(input);
   int position{0};
   long step{0};
-  int jump_value;
-
   do
   {
     position += jumps[position]++;
@@ -28,7 +26,26 @@ long part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  return 8;
+  auto jumps = prepare_input(input);
+  int position{0};
+  long step{0};
+  int jump_value;
+  do
+  {
+    jump_value = jumps[position];
+    if (jump_value >= 3)
+    {
+      jumps[position]--;
+    }
+    else
+    {
+      jumps[position]++;
+    }
+    position += jump_value;
+    step++;
+  }
+  while (0 <= position && position < jumps.size());
+  return step;
 }
 
 int main()
