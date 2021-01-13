@@ -10,49 +10,57 @@ std::vector<int> prepare_input(const std::vector<std::string>& input)
   return blocks;
 }
 
-int part_one(const std::vector<std::string>& input)
+std::vector<std::vector<int>> get_loop(const std::vector<int> initial_state)
 {
-  auto blocks = prepare_input(input);
-  std::vector<std::vector<int>> states{{blocks}};
-  size_t cycle{0};
+  auto state = initial_state;
+  std::vector<std::vector<int>> states{{initial_state}};
   size_t index_max;
   int max;
 
   while (true)
   {
-    max = blocks[0];
+    max = state[0];
     index_max = 0;
-    for (size_t index{0}; index < blocks.size(); index++)
+    for (size_t index{0}; index < state.size(); index++)
     {
-      if (blocks[index] > max)
+      if (state[index] > max)
       {
         index_max = index;
-        max = blocks[index_max];
+        max = state[index_max];
       }
     }
-    blocks[index_max] = 0;
+    state[index_max] = 0;
     while (max > 0)
     {
-      index_max = (index_max + 1) % blocks.size();
-      blocks[index_max]++;
+      index_max = (index_max + 1) % state.size();
+      state[index_max]++;
       max--;
     }
-    cycle++;
-    if (std::find(states.begin(), states.end(), blocks) == states.end())
+    if (std::find(states.begin(), states.end(), state) != states.end())
     {
-      states.push_back(blocks);
+      states.push_back(state);
+      break;
     }
     else
     {
-      break;
+      states.push_back(state);
     }
   }
-  return cycle;
+  return states;
+}
+
+int part_one(const std::vector<std::string>& input)
+{
+  auto blocks = prepare_input(input);
+  auto loop = get_loop(blocks);
+  return loop.size() - 1;
 }
 
 int part_two(const std::vector<std::string>& input)
 {
-  return 77;
+  auto blocks = get_loop(prepare_input(input)).back();
+  auto loop = get_loop(blocks);
+  return loop.size() - 1;
 }
 
 int main()
