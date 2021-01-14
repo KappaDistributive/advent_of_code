@@ -89,7 +89,6 @@ std::string operator_to_string(const Operator& op)
   }
 }
 
-
 bool compare(const int& lhs, const Comparator& comparator, const int& rhs)
 {
   switch (comparator)
