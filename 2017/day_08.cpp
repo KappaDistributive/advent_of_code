@@ -200,7 +200,21 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  return 2211;
+  int result{INT_MIN};
+  auto instructions = prepare_input(input);
+  CPU cpu(instructions);
+  do {
+    auto registers = cpu.get_registers();
+    for (auto [_, value]: registers)
+    {
+      if (value > result)
+      {
+        result = value;
+      }
+    }
+  } while (cpu.step());
+
+  return result;
 }
 
 int main()
