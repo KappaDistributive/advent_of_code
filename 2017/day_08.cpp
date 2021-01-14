@@ -1,3 +1,4 @@
+#include <map>
 #include <regex>
 
 #include "../utils/input.hpp"
@@ -144,14 +145,57 @@ std::vector<Instruction> prepare_input(const std::vector<std::string>& input)
   return instructions;
 }
 
+class CPU
+{
+private:
+  const std::vector<Instruction> instructions;
+  std::map<std::string, int> registers;
+  size_t instruction_pointer;
+
+public:
+  explicit CPU (const std::vector<Instruction>& instructions)
+    : instructions(instructions), instruction_pointer(0)
+  {
+  }
+
+  bool step ()
+  {
+    auto [target, op, data, lhs, cmp, rhs] = instructions[instruction_pointer];
+    registers.emplace(lhs, 0);
+    if (compare(registers.at(lhs), cmp, rhs))
+    {
+      registers.emplace(target, 0);
+      switch (op)
+      {
+        case increment: registers.at(target) += data; break;
+        case decrement: registers.at(target) -= data; break;
+      }
+    }
+    return ++instruction_pointer < instructions.size();
+  }
+
+  std::map<std::string, int> get_registers () const
+  {
+    return registers;
+  }
+};
+
 int part_one(const std::vector<std::string>& input)
 {
   auto instructions = prepare_input(input);
-  for (auto instruction: instructions)
+  CPU cpu(instructions);
+  do {} while (cpu.step());
+  auto registers = cpu.get_registers();
+
+  int result{INT_MIN};
+  for (auto [_, value]: registers)
   {
-    std::cout << instruction << std::endl;
+    if (value > result)
+    {
+      result = value;
+    }
   }
-  return 1122;
+  return result;
 }
 
 int part_two(const std::vector<std::string>& input)
