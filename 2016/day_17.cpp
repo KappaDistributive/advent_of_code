@@ -127,7 +127,6 @@ std::string part_one(const std::string& input)
             Path new_path(path);
             new_path.step(direction);
             new_paths.push_back(new_path);
-            std::cout << new_path.path_to_string() << std::endl;
             if (new_path.get_position() == std::pair<size_t, size_t>({3, 3}))
             {
               assert (shortest_path == "");
@@ -148,9 +147,58 @@ std::string part_one(const std::string& input)
   return shortest_path;
 }
 
-std::string part_two(const std::string& input)
+size_t part_two(const std::string& input)
 {
-  return "part two";
+  std::string longest_path;
+  std::vector<Path> paths{{Path(input)}};
+  const std::vector<Direction> directions = {up, down, left, right};
+  bool searching{true};
+  bool stuck{false};
+  std::vector<Path> new_paths;
+  std::vector<Path> finished_paths;
+  auto path = paths[0];
+  while (searching)
+  {
+    new_paths = {};
+    stuck = true;
+    for (auto path: paths)
+    {
+      if (searching)
+      {
+        for (auto direction: directions)
+        {
+          if (path.valid_move(direction))
+          {
+            stuck = false;
+            Path new_path(path);
+            new_path.step(direction);
+            if (new_path.get_position() == std::pair<size_t, size_t>({3, 3}))
+            {
+              finished_paths.push_back(new_path);
+            }
+            else
+            {
+              new_paths.push_back(new_path);
+            }
+          }
+        }
+      }
+    }
+    if (stuck)
+    {
+      searching = false;
+    }
+    paths = new_paths;
+  }
+
+  for (auto path: finished_paths)
+  {
+    if (path.path_to_string().size() > longest_path.size())
+    {
+      longest_path = path.path_to_string();
+    }
+  }
+  return longest_path.size();
 }
 
 int main()
