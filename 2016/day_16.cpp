@@ -45,9 +45,15 @@ std::string part_one(const std::string& input)
   return checksum(dragon_checksum, true);
 }
 
-int part_two(const std::string& input)
+std::string part_two(const std::string& input)
 {
-  return INT_MAX;
+  std::string dragon_checksum = input;
+  while (dragon_checksum.size() < 35651584)
+  {
+    dragon_checksum = dragon(dragon_checksum);
+  }
+  dragon_checksum = dragon_checksum.substr(0, 35651584);
+  return checksum(dragon_checksum, true);
 }
 
 int main()
