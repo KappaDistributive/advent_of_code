@@ -61,9 +61,23 @@ int part_one(const std::string& input)
   return safe_tile_counter;
 }
 
-int part_two(const std::string& input)
+long part_two(const std::string& input)
 {
-  return 789;
+  std::vector<std::string> rows{{input}};
+  // It would suffice to calculate a single period and extrapolate from there. But this is still plenty fast.
+  while (rows.size() < 400000)
+  {
+    rows.push_back(calculate_row(rows.back()));
+  }
+  long safe_tile_counter{0};
+  for (auto row: rows)
+  {
+    for (auto tile: row)
+    {
+      safe_tile_counter += tile == SAFE_TILE;
+    }
+  }
+  return safe_tile_counter;
 }
 
 int main()
