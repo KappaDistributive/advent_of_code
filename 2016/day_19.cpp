@@ -2,6 +2,20 @@
 
 #include "../utils/input.hpp"
 
+std::list<std::pair<size_t, long>>::iterator rotate (const std::list<std::pair<size_t, long>>::iterator& it,std::list<std::pair<size_t, long>>& list, const size_t& amount = 1)
+{
+  std::list<std::pair<size_t, long>>::iterator result = it;
+  for (size_t index{0}; index < amount; index++)
+  {
+    result = std::next(result);
+    if (result == list.end())
+    {
+      result = list.begin();
+    }
+  }
+  return result;
+}
+
 long part_one(const std::string& input)
 {
   std::list<std::pair<size_t, long>> elves;
@@ -13,28 +27,35 @@ long part_one(const std::string& input)
 
   while (elves.size() > 1)
   {
-    auto right_neighbor = std::next(elf);
-    if (right_neighbor == elves.end())
-    {
-      right_neighbor = elves.begin();
-    }
-
-    // std::cout << elf->first << ": " << elf->second << " <- " << right_neighbor->first << ": " << right_neighbor->second << std::endl;
+    auto right_neighbor = rotate(elf, elves);
     elf->second += right_neighbor->second;
     elves.erase(right_neighbor);
-    elf = std::next(elf);
-    if (elf == elves.end())
-    {
-      elf = elves.begin();
-    }
+    elf = rotate(elf, elves);
   }
 
   return elves.front().first;
 }
 
-int part_two(const std::string& input)
+long part_two(const std::string& input)
 {
-  return 9;
+  std::list<std::pair<size_t, long>> elves;
+  for (size_t elf{1}; elf <= std::stoi(input); elf++)
+  {
+    elves.push_back({elf, 1});
+  }
+  auto elf = elves.begin();
+  auto opponent = rotate(elf, elves, elves.size() / 2);
+
+  while (elves.size() > 2)
+  {
+    elf->second += opponent->second;
+    auto old_opponent = opponent;
+    opponent = rotate(opponent, elves, 1 + (elves.size() % 2));
+    elves.erase(old_opponent);
+    elf = rotate(elf, elves);
+  }
+
+  return elf->first;
 }
 
 int main()
