@@ -126,6 +126,9 @@ target_link_libraries(2016_18 input )
 add_executable(2016_19 2016/day_19.cpp)
 target_link_libraries(2016_19 input )
 
+add_executable(2016_20 2016/day_20.cpp)
+target_link_libraries(2016_20 input )
+
 add_executable(2017_01 2017/day_01.cpp)
 target_link_libraries(2017_01 input)
 
