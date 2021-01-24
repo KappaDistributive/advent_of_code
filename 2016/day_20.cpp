@@ -1,5 +1,7 @@
 #include <algorithm>
 #include <functional>
+#include <limits>
+#include <list>
 #include <unordered_set>
 
 #include "../utils/input.hpp"
@@ -110,9 +112,52 @@ unsigned int part_one(const std::vector<std::string>& input)
   return result;
 }
 
-int part_two(const std::vector<std::string>& input)
+unsigned int part_two(const std::vector<std::string>& input)
 {
-  return INT_MAX;
+  std::vector<ClosedInterval> sorted_intervals;
+  for (auto line: input)
+  {
+    sorted_intervals.push_back(ClosedInterval(line));
+  }
+  std::sort(
+    sorted_intervals.begin(), sorted_intervals.end(),
+    [](const ClosedInterval& lhs, const ClosedInterval& rhs) -> bool
+    {
+      return lhs.get_lower_bound() < rhs.get_lower_bound();
+    }
+  );
+
+  for (size_t index{0}; index+1 < sorted_intervals.size(); index++)
+  {
+    assert (sorted_intervals[index].get_lower_bound() < sorted_intervals[index+1].get_lower_bound());
+  }
+
+  unsigned int result{0};
+  unsigned int lowest_available{0};
+  unsigned int highest_bound{0};
+
+  for (auto interval: sorted_intervals)
+  {
+    if (interval.get_lower_bound() > lowest_available)
+    {
+      result += interval.get_lower_bound() - lowest_available;
+    }
+    if (lowest_available <= interval.get_upper_bound())
+    {
+      lowest_available = interval.get_upper_bound();
+      highest_bound = interval.get_upper_bound();
+      if (lowest_available < std::numeric_limits<unsigned int>::max())
+      {
+        lowest_available++;
+      }
+    }
+  }
+  if (highest_bound < std::numeric_limits<unsigned int>::max())
+  {
+    result += std::numeric_limits<unsigned int>::max() - highest_bound;
+  }
+
+  return result;
 }
 
 int main()
