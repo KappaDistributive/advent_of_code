@@ -23,7 +23,19 @@ int part_one (const std::vector<std::string>& input)
 
 int part_two (const std::vector<std::string>& input)
 {
-  return 17;
+
+  auto modules = prepare_input(input);
+  int mass{0};
+  for (auto module: modules)
+  {
+    int fuel{(module / 3) - 2};
+    while (fuel > 0)
+    {
+      mass += fuel;
+      fuel = (fuel / 3) - 2;
+    }
+  }
+  return mass;
 }
 
 int main ()
