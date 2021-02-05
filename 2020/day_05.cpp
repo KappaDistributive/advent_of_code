@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <cassert>
+
 #include "../utils/input.hpp"
 
 class BoardingPass

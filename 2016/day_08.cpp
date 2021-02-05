@@ -1,4 +1,5 @@
 #include <array>
+#include <cassert>
 #include <regex>
 
 #include "../utils/input.hpp"

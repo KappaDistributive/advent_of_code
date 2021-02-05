@@ -1,7 +1,8 @@
-#include "../utils/input.hpp"
-
+#include <cassert>
 #include <map>
 #include <optional>
+
+#include "../utils/input.hpp"
 
 enum Operation
 {

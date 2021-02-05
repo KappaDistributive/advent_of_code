@@ -1,3 +1,4 @@
+#include <cassert>
 #include <optional>
 #include <map>
 #include <regex>

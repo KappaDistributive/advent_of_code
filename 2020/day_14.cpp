@@ -1,4 +1,5 @@
 #include <bitset>
+#include <cassert>
 #include <map>
 #include <regex>
 

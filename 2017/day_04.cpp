@@ -1,3 +1,4 @@
+#include <algorithm>
 #include<set>
 
 #include "../utils/input.hpp"

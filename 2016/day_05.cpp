@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "../includes/md5.hpp"
 #include "../utils/input.hpp"
 

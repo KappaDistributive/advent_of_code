@@ -1,4 +1,5 @@
 #include <array>
+#include <cassert>
 #include <set>
 
 #include "../utils/input.hpp"

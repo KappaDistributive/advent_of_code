@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <array>
+#include <cassert>
 
 #include "../utils/input.hpp"
 

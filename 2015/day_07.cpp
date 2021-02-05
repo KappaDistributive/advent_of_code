@@ -1,3 +1,4 @@
+#include <cassert>
 #include <cstdint>
 #include <regex>
 #include <vector>

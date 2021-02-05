@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "../utils/input.hpp"
 
 std::vector<int> prepare_input(const std::vector<std::string>& input)

@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "../utils/input.hpp"
 
 class Password

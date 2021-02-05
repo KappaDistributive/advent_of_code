@@ -1,3 +1,4 @@
+#include <limits>
 #include <map>
 #include <regex>
 
@@ -56,6 +57,7 @@ std::string comparator_to_string(const Comparator& comparator)
     case greater_or_equal: return ">="; break;
     case greater: return ">"; break;
   }
+  return "error";
 }
 
 enum Operator
@@ -87,6 +89,7 @@ std::string operator_to_string(const Operator& op)
     case increment: return "inc"; break;
     case decrement: return "dec"; break;
   }
+  return "error";
 }
 
 bool compare(const int& lhs, const Comparator& comparator, const int& rhs)
@@ -112,6 +115,7 @@ bool compare(const int& lhs, const Comparator& comparator, const int& rhs)
       return lhs > rhs;
       break;
   }
+  return false;
 }
 
 typedef std::tuple<std::string, Operator, int, std::string, Comparator, int> Instruction;
@@ -186,7 +190,7 @@ int part_one(const std::vector<std::string>& input)
   do {} while (cpu.step());
   auto registers = cpu.get_registers();
 
-  int result{INT_MIN};
+  int result{std::numeric_limits<int>::min()};
   for (auto [_, value]: registers)
   {
     if (value > result)
@@ -199,7 +203,7 @@ int part_one(const std::vector<std::string>& input)
 
 int part_two(const std::vector<std::string>& input)
 {
-  int result{INT_MIN};
+  int result{std::numeric_limits<int>::min()};
   auto instructions = prepare_input(input);
   CPU cpu(instructions);
   do {

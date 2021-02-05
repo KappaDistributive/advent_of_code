@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "../utils/input.hpp"
 
 std::pair<std::vector<int>, std::vector<int>> gather_answers(const std::vector<std::string>& input)

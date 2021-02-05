@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "../utils/input.hpp"
 
 std::vector<long> prepare_input(const std::vector<std::string>& input) {
