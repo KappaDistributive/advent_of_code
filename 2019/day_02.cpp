@@ -1,10 +1,12 @@
+#include <algorithm>
+
 #include "../utils/input.hpp"
 
 std::vector<int> prepare_input(const std::vector<std::string>& input) {
     std::vector<int> intcodes;
-    for (auto line: input) {
-        intcodes.push_back(std::stoi(line));
-    }
+    std::transform(input.begin(), input.end(), std::back_inserter(intcodes),
+        [](std::string code) -> int { return std::stoi(code); }
+    );
     return intcodes;
 }
 
