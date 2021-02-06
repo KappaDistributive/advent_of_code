@@ -8,46 +8,98 @@ std::vector<int> prepare_input(const std::vector<std::string>& input) {
     return intcodes;
 }
 
-int part_one(const std::vector<std::string>& input) {
-    auto intcodes = prepare_input(input);
-    auto max_element = std::max_element(intcodes.begin(), intcodes.end());
-    assert (max_element != intcodes.end());
-    while (intcodes.size() < *max_element + 1)
-    {
-        intcodes.push_back(-1);
-    }
-    intcodes[1] = 12;
-    intcodes[2] = 2;
-    size_t position{0};
-    auto current_intcode = intcodes[0];
+struct Instruction
+{
+    int opcode;
+    std::vector<int> parameters; 
+};
+class CPU
+{
+private:
+    std::vector<int> memory;
+    size_t instruction_pointer;
 
-    while (current_intcode != 99)
+public:
+    explicit CPU(const std::vector<int>& intcodes)
+        : memory(intcodes), instruction_pointer(0)
     {
-        for (auto intcode: intcodes) std::cout << intcode << ", ";
-        std::cout << std::endl;
-        switch (current_intcode)
+
+    }
+
+    bool execute (const Instruction& instruction)
+    {
+        bool halting{false};
+        switch (instruction.opcode)
         {
             case 1:
-                intcodes[intcodes[position + 3]] = intcodes[intcodes[position + 1]] + intcodes[intcodes[position + 2]];
+                assert (instruction.parameters.size() == 3);
+                memory[instruction.parameters[2]] = memory[instruction.parameters[0]] + memory[instruction.parameters[1]];
                 break;
             case 2:
-                intcodes[intcodes[position + 3]] = intcodes[intcodes[position + 1]] * intcodes[intcodes[position + 2]];
+                assert (instruction.parameters.size() == 3);
+                memory[instruction.parameters[2]] = memory[instruction.parameters[0]] * memory[instruction.parameters[1]];
+                break;
+            case 99:
+                halting = true;
                 break;
             default:
-                throw std::runtime_error("Invalid intcode: " + std::to_string(current_intcode));
+                throw std::runtime_error("Encountered invalid opcode: " + std::to_string(instruction.opcode)); break;
         }
-        position += 4;
-        current_intcode = intcodes[position];
+        this->instruction_pointer += 4;
+        return halting;
     }
 
-    for (auto intcode: intcodes) std::cout << intcode << ", ";
-    std::cout << std::endl;
-    return intcodes[0];
+    bool execute ()
+    {
+        Instruction instruction {
+            .opcode = this->memory[this->instruction_pointer],
+            .parameters = {this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2], this->memory[this->instruction_pointer+3]}
+        };
+        return execute(instruction);
+    }
+
+    int run ()
+    {
+        while (!execute()) {}
+        return this->memory[0];
+    }
+
+    void set_memory(size_t location, int value)
+    {
+        this->memory[location] = value;
+    }
+
+    std::vector<int> get_memory() const
+    {
+        return this->memory;
+    }
+};
+
+int part_one(const std::vector<std::string>& input) {
+    auto intcodes = prepare_input(input);
+    CPU cpu(intcodes);
+    cpu.set_memory(1, 12);
+    cpu.set_memory(2, 2);
+    return cpu.run();
 }
 
 int part_two(const std::vector<std::string>& input) {
     auto intcodes = prepare_input(input);
-    return -7;
+    const int target{19690720};
+    for (int noun{0}; noun < 100; noun++)
+    {
+        for (int verb{0}; verb < 100; verb++)
+        {
+            CPU cpu(intcodes);
+            cpu.set_memory(1, noun);
+            cpu.set_memory(2, verb);
+            if (cpu.run() == target)
+            {
+                return 100 * noun + verb;
+            }
+        }
+    }
+    return -1;
 }
 
 int main() {
