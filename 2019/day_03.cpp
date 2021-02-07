@@ -15,6 +15,38 @@ std::vector<std::pair<char, int>> parse_line(const std::string& line)
     return result;
 }
 
+void walk_the_line(const std::vector<std::pair<char, int>>& line, std::map<std::pair<int, int>, std::pair<bool, bool>>& visits, bool first = true)
+{
+    std::pair<int, int> position{0, 0}, step{0, 0};
+    
+    for (auto [direction, distance]: line)
+    {
+        switch (direction)
+        {
+            case 'U': step = {0, 1}; break;
+            case 'D': step = {0, -1}; break;
+            case 'L': step = {-1, 0}; break;
+            case 'R': step = {1, 0}; break;
+            default: throw std::runtime_error("Invalid direction: " + direction); break;
+        }
+        for (int index{0}; index < distance; index++)
+        {
+            position.first += step.first;
+            position.second += step.second;
+            visits.emplace(position, std::make_pair(false, false));
+            if (first)
+            {
+                visits.at(position).first = true;
+            }
+            else
+            {
+                visits.at(position).second = true;
+            }
+            
+        }
+    }
+}
+
 int part_one(const std::vector<std::string>& input) {
     std::vector<std::vector<std::pair<char, int>>> lines;
     std::transform(input.begin(), input.end(), std::back_insert_iterator(lines),
@@ -24,64 +56,19 @@ int part_one(const std::vector<std::string>& input) {
     auto second = lines[1];
     std::map<std::pair<int, int>, std::pair<bool, bool>> visits;
     visits.insert(std::make_pair(std::make_pair(0,0), std::make_pair(true, true)));
-    std::pair<int, int> position{0,0}, step{0, 0};
 
-    for (auto [direction, distance]: first)
-    {
-        switch (direction)
-        {
-            case 'U': step = {0, 1}; break;
-            case 'D': step = {0, -1}; break;
-            case 'L': step = {-1, 0}; break;
-            case 'R': step = {1, 0}; break;
-            default: throw std::runtime_error("Invalid direction: " + direction); break;
-        }
-        for (int index{0}; index < distance; index++)
-        {
-            position.first += step.first;
-            position.second += step.second;
-            visits.emplace(position, std::make_pair(false, false));
-            visits.at(position).first = true;
-        }
-    }
-
-    position = {0, 0};
-    for (auto [direction, distance]: second)
-    {
-        switch (direction)
-        {
-            case 'U': step = {0, 1}; break;
-            case 'D': step = {0, -1}; break;
-            case 'L': step = {-1, 0}; break;
-            case 'R': step = {1, 0}; break;
-            default: throw std::runtime_error("Invalid direction: " + direction); break;
-        }
-        for (int index{0}; index < distance; index++)
-        {
-            position.first += step.first;
-            position.second += step.second;
-            visits.emplace(position, std::make_pair(false, false));
-            visits.at(position).second = true;
-        }
-    }
+    walk_the_line(first, visits, true);
+    walk_the_line(second, visits, false);
 
     std::set<std::pair<int, int>> intersections;
-
+    int result{std::numeric_limits<int>::max()};
     for (auto [key, value]: visits)
     {
         if (value.first && value.second && key != std::make_pair(0, 0))
         {
-            intersections.insert(key);
+            result = std::min(result, abs(key.first) + abs(key.second));
         }
     }
-
-    int result{std::numeric_limits<int>::max()};
-    for (auto intersection: intersections)
-    {
-        result = std::min(result, abs(intersection.first) + abs(intersection.second));
-        // std::cout << "(" << intersection.first << ", " << intersection.second << ")" << std::endl;
-    }
-
     return result;
 }
 
