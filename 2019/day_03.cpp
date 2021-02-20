@@ -15,9 +15,10 @@ std::vector<std::pair<char, int>> parse_line(const std::string& line)
     return result;
 }
 
-void walk_the_line(const std::vector<std::pair<char, int>>& line, std::map<std::pair<int, int>, std::pair<bool, bool>>& visits, bool first = true)
+void walk_the_line(const std::vector<std::pair<char, int>>& line, std::map<std::pair<int, int>, std::tuple<bool, bool, int, int>>& visits, bool first = true)
 {
     std::pair<int, int> position{0, 0}, step{0, 0};
+    int steps{0};
     
     for (auto [direction, distance]: line)
     {
@@ -31,18 +32,20 @@ void walk_the_line(const std::vector<std::pair<char, int>>& line, std::map<std::
         }
         for (int index{0}; index < distance; index++)
         {
+            steps++;
             position.first += step.first;
             position.second += step.second;
-            visits.emplace(position, std::make_pair(false, false));
-            if (first)
+            visits.emplace(position, std::tuple(false, false, -1, -1));
+            if (first && !std::get<0>(visits.at(position)))
             {
-                visits.at(position).first = true;
+                std::get<0>(visits.at(position)) = true;
+                std::get<2>(visits.at(position)) = steps;
             }
-            else
+            else if (!first && !std::get<1>(visits.at(position)))
             {
-                visits.at(position).second = true;
+                std::get<1>(visits.at(position)) = true;
+                std::get<3>(visits.at(position)) = steps;
             }
-            
         }
     }
 }
@@ -54,17 +57,16 @@ int part_one(const std::vector<std::string>& input) {
     );
     auto first = lines[0];
     auto second = lines[1];
-    std::map<std::pair<int, int>, std::pair<bool, bool>> visits;
-    visits.insert(std::make_pair(std::make_pair(0,0), std::make_pair(true, true)));
+    std::map<std::pair<int, int>, std::tuple<bool, bool, int, int>> visits;
+    visits.insert(std::make_pair(std::make_pair(0,0), std::make_tuple(true, true, -1, -1)));
 
     walk_the_line(first, visits, true);
     walk_the_line(second, visits, false);
 
-    std::set<std::pair<int, int>> intersections;
     int result{std::numeric_limits<int>::max()};
     for (auto [key, value]: visits)
     {
-        if (value.first && value.second && key != std::make_pair(0, 0))
+        if (std::get<0>(value) && std::get<1>(value) && key != std::make_pair(0, 0))
         {
             result = std::min(result, abs(key.first) + abs(key.second));
         }
@@ -73,7 +75,28 @@ int part_one(const std::vector<std::string>& input) {
 }
 
 int part_two(const std::vector<std::string>& input) {
-    return -111;
+    std::vector<std::vector<std::pair<char, int>>> lines;
+    std::transform(input.begin(), input.end(), std::back_insert_iterator(lines),
+        [] (const std::string& line) -> std::vector<std::pair<char, int>> { return parse_line(line);}
+    );
+    auto first = lines[0];
+    auto second = lines[1];
+    std::map<std::pair<int, int>, std::tuple<bool, bool, int, int>> visits;
+    visits.insert(std::make_pair(std::make_pair(0,0), std::make_tuple(true, true, 0, 0)));
+
+    walk_the_line(first, visits, true);
+    walk_the_line(second, visits, false);
+
+    int result{std::numeric_limits<int>::max()};
+    for (auto [key, value]: visits)
+    {
+        if (std::get<0>(value) && std::get<1>(value) && key != std::make_pair(0, 0))
+        {
+            assert (std::get<2>(value) > 0 && std::get<3>(value) > 0);
+            result = std::min(result, std::get<2>(value) + std::get<3>(value));
+        }
+    }
+    return result;
 }
 
 int main() {
