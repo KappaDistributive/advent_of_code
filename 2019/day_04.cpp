@@ -1,6 +1,6 @@
 #include "../utils/input.hpp"
 
-bool has_pair(const int& candidate)
+bool has_pair(const int& candidate, bool strict = false)
 {
     auto code = std::to_string(candidate);
 
@@ -8,7 +8,20 @@ bool has_pair(const int& candidate)
     {
         if (code[index] == code[index+1])
         {
-            return true;
+            if (strict)
+            {
+                if (
+                    (index == 0 || code[index-1] != code[index])  && // check lower part
+                    (index + 2 >= code.size() || code[index+2] != code[index]) // check upper part
+                   )
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 
@@ -32,7 +45,7 @@ bool never_decreasing(const int& candidate)
 
 size_t part_one(const int& min, const int& max) {
     size_t valid_passwords{0};
-    
+
     for (int candidate{min}; candidate <= max; candidate++)
     {
         valid_passwords += has_pair(candidate) && never_decreasing(candidate);
@@ -42,7 +55,14 @@ size_t part_one(const int& min, const int& max) {
 }
 
 int part_two(const int& min, const int& max) {
-    return max;
+    size_t valid_passwords{0};
+
+    for (int candidate{min}; candidate <= max; candidate++)
+    {
+        valid_passwords += has_pair(candidate, true) && never_decreasing(candidate);
+    }
+
+    return valid_passwords;
 }
 
 int main() {
