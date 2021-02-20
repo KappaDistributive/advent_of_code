@@ -16,7 +16,7 @@ namespace utils {
      * 
      * @param input Path to text file containing the puzzle input.
      */
-    Reader (std::filesystem::path input);
+    explicit Reader (std::filesystem::path input);
     
     // read input and convert it to a vector of strings
     std::vector<std::string> get_lines ();
