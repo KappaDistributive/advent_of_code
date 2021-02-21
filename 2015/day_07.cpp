@@ -22,15 +22,15 @@ std::ostream& operator<<(std::ostream& os, gate_type type) {
 
 
 class Wire {
-private:
+ private:
   std::string name;
   uint16_t value;
   bool set;
 
-public:
+ public:
   Wire() : name(""), value(0), set(false) {}
 
-  Wire(std::string name, bool allow_conversion = true) : name(name), value(0), set(false) {
+  explicit Wire(std::string name, bool allow_conversion = true) : name(name), value(0), set(false) {
     if (allow_conversion && name.size() > 0 && std::all_of(name.begin(), name.end(), ::isdigit)) {
       this->set_value(std::stoi(name));
       this->name = "const_" + name;
@@ -45,7 +45,7 @@ public:
     return name;
   }
 
-  uint16_t get_value () const {
+  uint16_t get_value() const {
     return value;
   }
 
@@ -58,7 +58,6 @@ public:
     set = false;
     this->value = 0;
   }
-
 };
 
 int part_one(std::string input) {
@@ -73,22 +72,21 @@ std::ostream& operator<< (std::ostream& os, const Wire& wire) {
   os << wire.get_name() << ": ";
   if (wire.is_set()) {
     os << wire.get_value();
-  }
-  else {
+  } else {
     os << "N/A";
   }
   return os;
 }
 
 class Gate {
-private:
+ private:
   std::vector<Wire*> inputs;
   Wire* output;
   const gate_type type;
 
-public:
+ public:
   Gate(std::vector<Wire*>& inputs, Wire* output, const gate_type type) : inputs(inputs), output(output), type(type) {
-    assert(output!=nullptr);
+    assert(output != nullptr);
     switch (type) {
       case assignment_op: assert(inputs.size() == 1); break;
       case not_op: assert(inputs.size() == 1); break;
@@ -102,13 +100,13 @@ public:
   void evaluate() {
     assert(this->is_ready());
 
-    switch(type) {
+    switch (type) {
       case assignment_op: output->set_value(inputs[0]->get_value()); break;
       case not_op: output->set_value(~inputs[0]->get_value()); break;
       case and_op: output->set_value(inputs[0]->get_value() & inputs[1]->get_value()); break;
       case or_op: output->set_value(inputs[0]->get_value() | inputs[1]->get_value()); break;
-      case lshift_op: output->set_value(inputs[0]->get_value()<<inputs[1]->get_value()); break;
-      case rshift_op: output->set_value(inputs[0]->get_value()>>inputs[1]->get_value()); break;
+      case lshift_op: output->set_value(inputs[0]->get_value() << inputs[1]->get_value()); break;
+      case rshift_op: output->set_value(inputs[0]->get_value() >> inputs[1]->get_value()); break;
     }
   }
 
@@ -140,7 +138,6 @@ public:
   const gate_type get_type() const {
     return type;
   }
-
 };
 
 std::ostream& operator<< (std::ostream& os, const Gate& gate) {
@@ -153,7 +150,7 @@ std::ostream& operator<< (std::ostream& os, const Gate& gate) {
 }
 
 class Circuit {
-private:
+ private:
   std::vector<Wire*> wires;
   std::vector<Gate*> gates;
   std::regex re;
@@ -233,7 +230,7 @@ private:
     return nullptr;
   }
 
-public:
+ public:
   Circuit() = default;
 
   ~Circuit() {
@@ -243,7 +240,7 @@ public:
     for (auto wire: wires)
       delete wire;
   }
-  
+
   explicit Circuit(const std::vector<std::string>& input) :
     re("^(?:(NOT)\\s)?([\\w\\d]+)\\s?(?:(AND|OR|LSHIFT|RSHIFT)\\s)?(?:([\\w\\d]+)\\s)?-> (\\w+)$") {
 
@@ -260,8 +257,7 @@ public:
       if (get_wire(wire->get_name()) == nullptr) {
         wires.push_back(wire);
         gate_inputs.push_back(wire);
-      }
-      else {
+      } else {
         gate_inputs.push_back(get_wire(wire->get_name()));
         delete wire;
       }
@@ -269,8 +265,7 @@ public:
     Wire* output = create_output(matches);
     if (get_wire(output->get_name()) == nullptr) {
       wires.push_back(output);
-    }
-    else {
+    } else {
       delete output;
       output = get_wire(output->get_name());
     }
@@ -296,8 +291,7 @@ public:
       if (gate->get_output()->get_name() == name) {
         if (gate->is_ready()) {
           return std::pair<bool, int>{true, gate->get_output()->get_value()};
-        }
-        else {
+        } else {
           return std::pair<bool, int>{false, 0};
         }
       }
@@ -305,9 +299,9 @@ public:
     return std::pair<bool, int>{false, 0};
   }
 };
- 
+
 std::ostream& operator<<(std::ostream& os, const Circuit& circuit) {
-  for(auto gate: circuit.get_gates())
+  for (auto gate: circuit.get_gates())
     os << *gate << "\n";
 
   return os;
