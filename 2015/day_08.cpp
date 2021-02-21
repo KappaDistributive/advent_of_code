@@ -3,34 +3,24 @@
 
 #include "../utils/input.hpp"
 
-class Entry
-{
-private:
+class Entry {
+ private:
   std::string raw;
   std::vector<int> codes;
   std::string decoded;
 
-  std::vector<int> expand(std::string entry)
-  {
+  std::vector<int> expand(std::string entry) {
     std::vector<int> result;
-    for (size_t index{0}; index < entry.size(); index++)
-    {
-      if (entry[index] != '\\')
-      {
+    for (size_t index{0}; index < entry.size(); index++) {
+      if (entry[index] != '\\') {
         result.push_back(entry[index]);
-      }
-      else if (index+1 < entry.size() && entry[index+1] != 'x')
-      {
+      } else if (index+1 < entry.size() && entry[index+1] != 'x') {
         result.push_back(entry[index+1]);
         index++;
-      }
-      else if (index+3 < entry.size())
-      {
+      } else if (index+3 < entry.size()) {
         result.push_back(std::stoi(entry.substr(index+2, 2), 0, 16));
         index += 3;
-      }
-      else
-      {
+      } else {
         throw std::runtime_error("This should never happen.");
       }
     }
@@ -38,21 +28,14 @@ private:
     return result;
   }
 
-  std::string decode(std::string raw)
-  {
+  std::string decode(std::string raw) {
     std::string result{"\""};
-    for (auto character: raw)
-    {
-      if (character == '\\')
-      {
+    for (auto character: raw) {
+      if (character == '\\') {
         result += "\\\\";
-      }
-      else if (character == '\"')
-      {
+      } else if (character == '\"') {
         result += "\\\"";
-      }
-      else
-      {
+      } else {
         result += character;
       }
     }
@@ -60,36 +43,29 @@ private:
     return result;
   }
 
-public:
-  Entry(std::string entry): raw(entry)
-  {
+ public:
+  explicit Entry(std::string entry): raw(entry) {
     codes = expand(raw.substr(1, raw.size()-2));
     decoded = decode(raw);
   }
 
-  std::string get_raw() const
-  {
+  std::string get_raw() const {
     return raw;
   }
 
-  std::vector<int> get_codes() const
-  {
+  std::vector<int> get_codes() const {
     return codes;
   }
 
-  std::string get_decoded() const
-  {
+  std::string get_decoded() const {
     return decoded;
   }
-
 };
 
-std::ostream& operator<< (std::ostream& os, const Entry& entry)
-{
+std::ostream& operator<< (std::ostream& os, const Entry& entry) {
   os << "Raw     : " << entry.get_raw() << "\n"
      << "Expanded: [ ";
-  for (auto code: entry.get_codes())
-  {
+  for (auto code: entry.get_codes()) {
     os << code << ",";
   }
   os << " ]\n";
@@ -98,44 +74,37 @@ std::ostream& operator<< (std::ostream& os, const Entry& entry)
   return os;
 }
 
-std::vector<Entry> parse_input(std::vector<std::string> input)
-{
+std::vector<Entry> parse_input(std::vector<std::string> input) {
   std::vector<Entry> result;
 
-  for (auto entry: input)
-  {
+  for (auto entry: input) {
     result.push_back(Entry(entry));
   }
 
   return result;
 }
 
-int part_one(std::vector<std::string> input)
-{
+int part_one(std::vector<std::string> input) {
   auto entries = parse_input(input);
   int result{0};
 
-  for (auto entry: entries)
-  {
+  for (auto entry: entries) {
     result += static_cast<int>(entry.get_raw().size()) - static_cast<int>(entry.get_codes().size());
   }
   return result;
 }
 
-int part_two(std::vector<std::string> input)
-{
+int part_two(std::vector<std::string> input) {
   auto entries = parse_input(input);
   int result{0};
 
-  for (auto entry: entries)
-  {
+  for (auto entry: entries) {
     result += static_cast<int>(entry.get_decoded().size()) - static_cast<int>(entry.get_raw().size());
   }
   return result;
 }
 
-int main()
-{
+int main() {
   utils::Reader reader(std::filesystem::path("../2015/data/input_08.txt"));
   auto input = reader.get_lines();
 
@@ -144,3 +113,4 @@ int main()
 
   return 0;
 }
+
