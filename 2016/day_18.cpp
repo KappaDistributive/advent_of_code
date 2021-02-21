@@ -3,12 +3,11 @@
 #include "../utils/input.hpp"
 
 const char SAFE_TILE = '.';
-const char TRAP_TILE= '^';
+const char TRAP_TILE = '^';
 
-std::tuple<char, char, char> get_predeseccors(const std::string& previous_row, size_t index)
-{
-  assert (previous_row.size() > 0);
-  assert (index < previous_row.size());
+std::tuple<char, char, char> get_predeseccors(const std::string& previous_row, size_t index) {
+  assert(previous_row.size() > 0);
+  assert(index < previous_row.size());
 
   char left, center, right;
   left = index == 0 ? SAFE_TILE : previous_row[index-1];
@@ -17,79 +16,65 @@ std::tuple<char, char, char> get_predeseccors(const std::string& previous_row, s
   return {left, center, right};
 }
 
-char calculate_tile(const std::string& previous_row, size_t index)
-{
+char calculate_tile(const std::string& previous_row, size_t index) {
   auto [left, center, right] = get_predeseccors(previous_row, index);
   if (
     (left == TRAP_TILE && center == TRAP_TILE && right == SAFE_TILE) ||
     (left == SAFE_TILE && center == TRAP_TILE && right == TRAP_TILE) ||
     (left == TRAP_TILE && center == SAFE_TILE && right == SAFE_TILE) ||
     (left == SAFE_TILE && center == SAFE_TILE && right == TRAP_TILE)
-  )
-  {
+  ) {
     return TRAP_TILE;
-  }
-  else
-  {
+  } else {
     return SAFE_TILE;
   }
 }
 
-std::string calculate_row(const std::string& previous_row)
-{
+std::string calculate_row(const std::string& previous_row) {
   std::string row;
-  for (size_t index{0}; index < previous_row.size(); index++)
-  {
+  for (size_t index{0}; index < previous_row.size(); index++) {
     row += calculate_tile(previous_row, index);
   }
   return row;
 }
 
-int part_one(const std::string& input)
-{
+int part_one(const std::string& input) {
   std::vector<std::string> rows{{input}};
-  while (rows.size() < 40)
-  {
+  while (rows.size() < 40) {
     rows.push_back(calculate_row(rows.back()));
   }
   int safe_tile_counter{0};
-  for (auto row: rows)
-  {
-    for (auto tile: row)
-    {
+  for (auto row: rows) {
+    for (auto tile: row) {
       safe_tile_counter += tile == SAFE_TILE;
     }
   }
   return safe_tile_counter;
 }
 
-long part_two(const std::string& input)
-{
+uint64_t part_two(const std::string& input) {
   std::vector<std::string> rows{{input}};
   // It would suffice to calculate a single period and extrapolate from there. But this is still plenty fast.
-  while (rows.size() < 400000)
-  {
+  while (rows.size() < 400000) {
     rows.push_back(calculate_row(rows.back()));
   }
-  long safe_tile_counter{0};
-  for (auto row: rows)
-  {
-    for (auto tile: row)
-    {
+  uint64_t safe_tile_counter{0};
+  for (auto row: rows) {
+    for (auto tile: row) {
       safe_tile_counter += tile == SAFE_TILE;
     }
   }
   return safe_tile_counter;
 }
 
-int main()
-{
+int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_18.txt"));
   auto input = reader.get_lines()[0];
-  
+
   auto answer_one =  part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
   auto answer_two =  part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
+
