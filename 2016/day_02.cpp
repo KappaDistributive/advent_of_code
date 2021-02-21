@@ -3,33 +3,45 @@
 
 #include "../utils/input.hpp"
 
-class Keypad
-{
-private:
+class Keypad {
+ private:
   const std::array<int, 9> keypad = {1, 2, 3, 4, 5, 6, 7, 8, 9};
   const int width{3}, height{3};
   std::pair<int, int> position{1, 1};
 
-public:
+ public:
   Keypad() = default;
 
-  int step(char direction)
-  {
-    switch (direction)
-    {
-      case 'U': if (position.second > 0) position.second--; break;
-      case 'D': if (position.second + 1 < height) position.second++; break;
-      case 'L': if (position.first > 0) position.first--; break;
-      case 'R': if (position.first + 1 < width) position.first++; break;
+  int step(char direction) {
+    switch (direction) {
+      case 'U':
+          if (position.second > 0) {
+              position.second--;
+          }
+          break;
+      case 'D':
+          if (position.second + 1 < height) {
+              position.second++;
+          }
+          break;
+      case 'L':
+          if (position.first > 0) {
+              position.first--;
+          }
+          break;
+      case 'R':
+          if (position.first + 1 < width) {
+              position.first++;
+          }
+          break;
       default: throw std::invalid_argument("Invalid direction."); break;
     }
     return keypad[position.second * width + position.first];
   }
 };
 
-class FancyKeypad
-{
-private:
+class FancyKeypad {
+ private:
   const std::array<char, 25> keypad = {
     'X', 'X', '1', 'X', 'X',
     'X', '2', '3', '4', 'X',
@@ -40,20 +52,17 @@ private:
   const int width{5}, height{5};
   std::pair<int, int> position{2, 2};
 
-public:
+ public:
   FancyKeypad() = default;
 
-  char get (int x, int y) const
-  {
-    assert (x >= 0 && y >= 0);
+  char get(int x, int y) const {
+    assert(x >= 0 && y >= 0);
     return keypad[(y % height) * width + (x % width)];
   }
 
-  int step(char direction)
-  {
-    switch (direction)
-    {
-      case 'U': 
+  int step(char direction) {
+    switch (direction) {
+      case 'U':
         if (position.second > 0 && get(position.first, position.second -1) != 'X') position.second--;
         break;
       case 'D':
@@ -73,16 +82,13 @@ public:
   }
 };
 
-int part_one(const std::vector<std::string>& input)
-{
+int part_one(const std::vector<std::string>& input) {
   Keypad keypad;
   int data;
   std::string result;
 
-  for (auto line: input)
-  {
-    for (auto direction: line)
-    {
+  for (auto line: input) {
+    for (auto direction: line) {
       data = keypad.step(direction);
     }
     result += std::to_string(data);
@@ -90,16 +96,13 @@ int part_one(const std::vector<std::string>& input)
   return std::stoi(result);
 }
 
-std::string part_two(const std::vector<std::string>& input)
-{
+std::string part_two(const std::vector<std::string>& input) {
   FancyKeypad keypad;
   char data;
   std::string result;
 
-  for (auto line: input)
-  {
-    for (auto direction: line)
-    {
+  for (auto line: input) {
+    for (auto direction: line) {
       data = keypad.step(direction);
     }
     result += data;
@@ -107,12 +110,12 @@ std::string part_two(const std::vector<std::string>& input)
   return result;
 }
 
-int main()
-{
+int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_02.txt"));
   auto input = reader.get_lines();
-  
+
   std::cout << "The answer to part one is: " << part_one(input) << std::endl;
   std::cout << "The answer to part two is: " << part_two(input) << std::endl;
   return 0;
 }
+
