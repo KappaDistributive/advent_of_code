@@ -27,4 +27,6 @@ namespace utils {
 
   template<typename T>
   std::vector<T> rotate_vector (const std::vector<T>& input, const int& rotation);
+
+  int pow (int base, int exponent);
 }

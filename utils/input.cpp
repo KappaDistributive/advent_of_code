@@ -72,4 +72,17 @@ namespace utils
 
   template std::vector<int> rotate_vector<int> (const std::vector<int>&, const int&);
   template std::vector<bool> rotate_vector<bool> (const std::vector<bool>&, const int&);
+  
+  int pow (int base, int exponent)
+  {
+    assert (exponent >= 0);
+    if (exponent == 0)
+    {
+      return 1;
+    }
+    else
+    {
+      return base * pow(base, exponent-1);
+    }
+  }
 }
