@@ -2,31 +2,25 @@
 
 #include "../utils/input.hpp"
 
-std::list<std::pair<size_t, long>>::iterator rotate (const std::list<std::pair<size_t, long>>::iterator& it,std::list<std::pair<size_t, long>>& list, const size_t& amount = 1)
-{
-  std::list<std::pair<size_t, long>>::iterator result = it;
-  for (size_t index{0}; index < amount; index++)
-  {
+std::list<std::pair<size_t, uint64_t>>::iterator rotate(const std::list<std::pair<size_t, uint64_t>>::iterator& it, std::list<std::pair<size_t, uint64_t>>& list, const size_t& amount = 1) {
+  std::list<std::pair<size_t, uint64_t>>::iterator result = it;
+  for (size_t index{0}; index < amount; index++) {
     result = std::next(result);
-    if (result == list.end())
-    {
+    if (result == list.end()) {
       result = list.begin();
     }
   }
   return result;
 }
 
-long part_one(const std::string& input)
-{
-  std::list<std::pair<size_t, long>> elves;
-  for (size_t elf{1}; elf <= std::stoi(input); elf++)
-  {
+uint64_t part_one(const std::string& input) {
+  std::list<std::pair<size_t, uint64_t>> elves;
+  for (size_t elf{1}; elf <= std::stoi(input); elf++) {
     elves.push_back({elf, 1});
   }
   auto elf = elves.begin();
 
-  while (elves.size() > 1)
-  {
+  while (elves.size() > 1) {
     auto right_neighbor = rotate(elf, elves);
     elf->second += right_neighbor->second;
     elves.erase(right_neighbor);
@@ -36,18 +30,15 @@ long part_one(const std::string& input)
   return elves.front().first;
 }
 
-long part_two(const std::string& input)
-{
-  std::list<std::pair<size_t, long>> elves;
-  for (size_t elf{1}; elf <= std::stoi(input); elf++)
-  {
+uint64_t part_two(const std::string& input) {
+  std::list<std::pair<size_t, uint64_t>> elves;
+  for (size_t elf{1}; elf <= std::stoi(input); elf++) {
     elves.push_back({elf, 1});
   }
   auto elf = elves.begin();
   auto opponent = rotate(elf, elves, elves.size() / 2);
 
-  while (elves.size() > 2)
-  {
+  while (elves.size() > 2) {
     elf->second += opponent->second;
     auto old_opponent = opponent;
     opponent = rotate(opponent, elves, 1 + (elves.size() % 2));
@@ -58,11 +49,10 @@ long part_two(const std::string& input)
   return elf->first;
 }
 
-int main()
-{
+int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_19.txt"));
   auto input = reader.get_lines()[0];
-  
+
   auto answer_one =  part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
   auto answer_two =  part_two(input);
