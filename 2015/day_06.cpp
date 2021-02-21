@@ -5,43 +5,38 @@
 #include "../utils/input.hpp"
 
 class Interpreter {
-public:
+ public:
   Interpreter() = default;
   virtual ~Interpreter() = default;
-  virtual void execute (const std::string& command, std::vector<int>& grid) = 0;
+  virtual void execute(const std::string& command, std::vector<int>& grid) = 0;
 };
 
 class LegacyInterpreter : public Interpreter {
-private:
+ private:
   std::regex re;
   std::smatch match;
 
-public:
+ public:
   LegacyInterpreter() : re("^(toggle|turn)(?:\\s(on|off))?\\s(\\d+),(\\d+) through (\\d+),(\\d+)$") {}
   ~LegacyInterpreter() override = default;
 
-  void execute (const std::string& command, std::vector<int>& grid) override {
+  void execute(const std::string& command, std::vector<int>& grid) override {
     std::regex_match(command, match, re);
     std::pair<int, int> start, end;
     start = std::pair<size_t, size_t>{std::stoi(match[3].str()), std::stoi(match[4].str())};
     end = std::pair<size_t, size_t>{std::stoi(match[5].str()), std::stoi(match[6].str())};
 
-    if(match[1] == "toggle") {
+    if (match[1] == "toggle") {
       toggle(start, end, grid);
-    }
-    else if(match[1] == "turn") {
+    } else if (match[1] == "turn") {
       if (match[2] == "on") {
         turn_on(start, end, grid);
-      }
-      else if (match[2] == "off") {
+      } else if (match[2] == "off") {
         turn_off(start, end, grid);
-      }
-      else {
+      } else {
         throw std::runtime_error("This should never happen.");
       }
-
-    }
-    else {
+    } else {
       throw std::runtime_error("This should never happen.");
     }
   }
@@ -77,41 +72,35 @@ public:
         grid[column + 1000 * row] = 0;
       }
     }
-    
   }
 };
 
 class NewInterpreter : public Interpreter {
-private:
+ private:
   std::regex re;
   std::smatch match;
-  
-public:
+
+ public:
   NewInterpreter() : re("^(toggle|turn)(?:\\s(on|off))?\\s(\\d+),(\\d+) through (\\d+),(\\d+)$") {}
   ~NewInterpreter() override = default;
-  
-  void execute (const std::string& command, std::vector<int>& grid) override {
+
+  void execute(const std::string& command, std::vector<int>& grid) override {
     std::regex_match(command, match, re);
     std::pair<int, int> start, end;
     start = std::pair<size_t, size_t>{std::stoi(match[3].str()), std::stoi(match[4].str())};
     end = std::pair<size_t, size_t>{std::stoi(match[5].str()), std::stoi(match[6].str())};
 
-    if(match[1] == "toggle") {
+    if (match[1] == "toggle") {
       toggle(start, end, grid);
-    }
-    else if(match[1] == "turn") {
+    } else if (match[1] == "turn") {
       if (match[2] == "on") {
         turn_on(start, end, grid);
-      }
-      else if (match[2] == "off") {
+      } else if (match[2] == "off") {
         turn_off(start, end, grid);
-      }
-      else {
+      } else {
         throw std::runtime_error("This should never happen.");
       }
-
-    }
-    else {
+    } else {
       throw std::runtime_error("This should never happen.");
     }
   }
@@ -148,16 +137,15 @@ public:
           grid[column + 1000 * row]--;
       }
     }
-    
   }
 };
 
 class Lights {
-private:
+ private:
   std::vector<int> grid;
   Interpreter* interpreter;
 
-public:
+ public:
   explicit Lights(Interpreter * interpreter) : interpreter(interpreter) {
     grid.reserve(1000000);
     for (size_t index{0}; index < 1000000; index ++)
@@ -207,3 +195,4 @@ int main() {
 
   return 0;
 }
+

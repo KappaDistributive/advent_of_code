@@ -3,25 +3,23 @@
 #include "../utils/input.hpp"
 
 class Checker {
-private:
-
-public:
+ public:
   Checker() = default;
 
   virtual bool is_valid(const std::string& candidate) = 0;
 };
 
 class NiceString : Checker {
-private:
+ private:
   const std::regex re;
 
   bool has_three_vowels(const std::string& candidate) {
     int vowel_counter{0};
 
     for (auto character: candidate) {
-      vowel_counter += (int)(
+      vowel_counter += static_cast<int>(
         character == 'a' ||
-        character == 'e' || 
+        character == 'e' ||
         character == 'i' ||
         character == 'o' ||
         character == 'u'
@@ -44,10 +42,10 @@ private:
     return !std::regex_match(candidate, re);
   }
 
-public:
+ public:
   NiceString() : re("^.*(ab|cd|pq|xy).*$") {}
 
-  bool is_valid (const std::string& input) override {
+  bool is_valid(const std::string& input) override {
     return (
       has_three_vowels(input) &&
       has_pair(input) &&
@@ -57,11 +55,11 @@ public:
 };
 
 class SuperNiceString : Checker {
-private:
+ private:
   bool has_pair(const std::string& candidate) {
     for (size_t left{0}; left + 3 < candidate.length(); left++) {
       for (size_t right{left+2}; right + 1 < candidate.length(); right++) {
-        if(candidate[left] == candidate[right] && candidate[left+1] == candidate[right+1])
+        if (candidate[left] == candidate[right] && candidate[left+1] == candidate[right+1])
           return true;
       }
     }
@@ -76,10 +74,10 @@ private:
     return false;
   }
 
-public:
+ public:
   SuperNiceString() = default;
 
-  bool is_valid (const std::string& candidate) override {
+  bool is_valid(const std::string& candidate) override {
     return has_clamp(candidate) && has_pair(candidate);
   }
 };
@@ -88,7 +86,7 @@ int part_one(const std::vector<std::string>& input) {
   int nice_counter{0};
   NiceString checker;
   for (auto candidate: input)
-    nice_counter += (int)checker.is_valid(candidate);
+    nice_counter += static_cast<int>(checker.is_valid(candidate));
 
   return nice_counter;
 }
@@ -97,7 +95,7 @@ int part_two(const std::vector<std::string>& input) {
   int nice_counter{0};
   SuperNiceString checker;
   for (auto candidate: input)
-    nice_counter += (int)checker.is_valid(candidate);
+    nice_counter += static_cast<int>(checker.is_valid(candidate));
 
   return nice_counter;
 }
@@ -111,3 +109,4 @@ int main() {
 
   return 0;
 }
+
