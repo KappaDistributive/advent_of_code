@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "../utils/input.hpp"
 
 bool has_pair(const int& candidate, bool strict = false)

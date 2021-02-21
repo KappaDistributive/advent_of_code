@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <cmath>
+#include <cassert>
 
 #include "../utils/input.hpp"
 
