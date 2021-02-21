@@ -5,10 +5,10 @@
 #include "../utils/input.hpp"
 
 class Box {
-private:
+ private:
   int length, width, height;
 
-public:
+ public:
   // description example: "4x23x21"
   explicit Box(std::string description) {
     std::regex re("^(\\d+)x(\\d+)x(\\d+)$");
@@ -51,7 +51,7 @@ public:
 };
 
 std::vector<Box> get_boxes(std::vector<std::string> input) {
-  std::vector<Box> boxes; 
+  std::vector<Box> boxes;
   for (auto description: input)
     boxes.push_back(Box(description));
 
