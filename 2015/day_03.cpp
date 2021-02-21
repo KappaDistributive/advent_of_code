@@ -4,12 +4,12 @@
 #include "../utils/input.hpp"
 
 class Walker {
-private:
+ private:
   std::pair<int, int> position;
   std::vector<std::pair<int, int>> path;
 
-public:
-  Walker() : position(std::pair<int,int>{0,0}), path({std::pair<int,int>{0,0}}) {}
+ public:
+  Walker() : position(std::pair<int, int>{0, 0}), path({std::pair<int, int>{0, 0}}) {}
 
   const std::vector<std::pair<int, int>>& get_path() const {
     return path;
@@ -46,10 +46,10 @@ int part_one(const std::string& input) {
     santa.step(direction);
 
   std::set<std::pair<int, int>> unique_positions;
-  for (auto position: santa.get_path()) 
+  for (auto position: santa.get_path())
     unique_positions.insert(position);
 
-  return (int)unique_positions.size();
+  return static_cast<int>(unique_positions.size());
 }
 
 int part_two(const std::string& input) {
@@ -60,7 +60,7 @@ int part_two(const std::string& input) {
   int counter{0};
 
   for (auto direction: directions) {
-    switch(counter % 2) {
+    switch (counter % 2) {
       case 0: santa.step(direction); break;
       case 1: robo.step(direction); break;
       default: throw std::invalid_argument("This should never happen."); break;
@@ -69,12 +69,12 @@ int part_two(const std::string& input) {
   }
 
   std::set<std::pair<int, int>> unique_positions;
-  for (auto position: santa.get_path()) 
+  for (auto position: santa.get_path())
     unique_positions.insert(position);
-  for (auto position: robo.get_path()) 
+  for (auto position: robo.get_path())
     unique_positions.insert(position);
-    
-  return (int)unique_positions.size();
+
+  return static_cast<int>(unique_positions.size());
 }
 
 int main() {
