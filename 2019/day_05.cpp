@@ -70,7 +70,7 @@ public:
                 break;
             case 4:
                 assert (instruction.parameters.size() == 1);
-                std::cout << "Output: " << memory[instruction.parameters[0]] << std::endl;
+                std::cout << "Output: " << get_parameter(instruction, 0) << std::endl;
                 break;
             case 99:
                 halting = true;
