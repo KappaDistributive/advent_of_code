@@ -16,7 +16,7 @@ int find_offset(const std::string& input, size_t zeros) {
       }
     }
   }
-  return offset; 
+  return offset;
 }
 
 int part_one(const std::string& input) {
@@ -36,3 +36,4 @@ int main() {
 
   return 0;
 }
+
