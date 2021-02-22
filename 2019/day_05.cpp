@@ -11,30 +11,24 @@ std::vector<int> prepare_input(const std::vector<std::string>& input) {
     return intcodes;
 }
 
-struct Instruction
-{
+struct Instruction {
     int opcode;
     std::vector<int> parameters;
 };
 
-class CPU
-{
-private:
+class CPU {
+ private:
     std::vector<int> memory;
     size_t instruction_pointer;
 
-public:
+ public:
     explicit CPU(const std::vector<int>& intcodes)
-        : memory(intcodes), instruction_pointer(0)
-    {
-
+        : memory(intcodes), instruction_pointer(0) {
     }
-    
-    int get_parameter(const Instruction& instruction, const size_t& index)
-    {
+
+    int get_parameter(const Instruction& instruction, const size_t& index) {
         int mode{(instruction.opcode / utils::pow(10, 2 + index)) % 10};
-        switch (mode)
-        {
+        switch (mode) {
             case 0:  // position mode
                 return memory[instruction.parameters[index]];
                 break;
@@ -43,33 +37,31 @@ public:
                 break;
             default:
                 throw std::runtime_error("Invalid parameter mode " + std::to_string(mode));
-                break; 
+                break;
         }
     }
 
-    bool execute (const Instruction& instruction)
-    {
+    bool execute(const Instruction& instruction) {
         bool halting{false};
         std::string input{""};
 
-        switch (instruction.opcode % 100)
-        {
+        switch (instruction.opcode % 100) {
             case 1:
-                assert (instruction.parameters.size() == 3);
+                assert(instruction.parameters.size() == 3);
                 memory[instruction.parameters[2]] = get_parameter(instruction, 0) + get_parameter(instruction, 1);
                 break;
             case 2:
-                assert (instruction.parameters.size() == 3);
+                assert(instruction.parameters.size() == 3);
                 memory[instruction.parameters[2]] = get_parameter(instruction, 0) * get_parameter(instruction, 1);
                 break;
             case 3:
-                assert (instruction.parameters.size() == 1);
+                assert(instruction.parameters.size() == 1);
                 std::cout << "Input required:" << std::endl;
                 std::cin >> input;
                 memory[instruction.parameters[0]] = std::stoi(input);
                 break;
             case 4:
-                assert (instruction.parameters.size() == 1);
+                assert(instruction.parameters.size() == 1);
                 std::cout << "Output: " << get_parameter(instruction, 0) << std::endl;
                 break;
             case 99:
@@ -82,14 +74,12 @@ public:
         return halting;
     }
 
-    bool execute ()
-    {
+    bool execute() {
         int opcode = this->memory[this->instruction_pointer];
         Instruction instruction;
         instruction.opcode = opcode;
         std::vector<int> parameters;
-        switch (opcode % 100)
-        {
+        switch (opcode % 100) {
             case 1:
                 parameters = { this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2], this->memory[this->instruction_pointer+3] };
                 break;
@@ -110,19 +100,16 @@ public:
         return execute(instruction);
     }
 
-    int run ()
-    {
+    int run() {
         while (!execute()) {}
         return this->memory[0];
     }
 
-    void set_memory(size_t location, int value)
-    {
+    void set_memory(size_t location, int value) {
         this->memory[location] = value;
     }
 
-    std::vector<int> get_memory() const
-    {
+    std::vector<int> get_memory() const {
         return this->memory;
     }
 };
@@ -147,3 +134,4 @@ int main() {
     std::cout << "The answer to part two is: " << answer_two << std::endl;
     return 0;
 }
+
