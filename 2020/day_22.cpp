@@ -4,24 +4,18 @@
 
 #include "../utils/input.hpp"
 
-std::pair<std::deque<int>, std::deque<int>> prepare_input (const std::vector<std::string>& input)
-{
+std::pair<std::deque<int>, std::deque<int>> prepare_input(const std::vector<std::string>& input) {
   std::regex re{"^Player\\s(\\d+):$"};
   std::smatch matches;
   std::pair<std::deque<int>, std::deque<int>> decks;
 
   int turn{0};
 
-  for (auto line: input)
-  {
-    if (std::regex_match(line, matches, re))
-    {
+  for (auto line: input) {
+    if (std::regex_match(line, matches, re)) {
       turn = std::stoi(matches[1].str());
-    }
-    else if (line.size() != 0)
-    {
-      switch (turn)
-      {
+    } else if (line.size() != 0) {
+      switch (turn) {
         case 1:
           decks.first.push_back(std::stoi(line));
           break;
@@ -38,31 +32,24 @@ std::pair<std::deque<int>, std::deque<int>> prepare_input (const std::vector<std
   return decks;
 }
 
-int calculate_score(const std::deque<int> deck)
-{
+int calculate_score(const std::deque<int> deck) {
   int score{0};
-  for (int index{1}; index <= deck.size(); index++)
-  {
+  for (int index{1}; index <= deck.size(); index++) {
     score += index * deck[deck.size() - index];
   }
   return score;
 }
 
-int part_one(const std::vector<std::string>& input)
-{
+int part_one(const std::vector<std::string>& input) {
   auto decks = prepare_input(input);
   bool player_one{true};
 
   // play the game
-  while (decks.first.size() != 0 && decks.second.size() != 0)
-  {
-    if (decks.first[0] > decks.second[0])
-    {
+  while (decks.first.size() != 0 && decks.second.size() != 0) {
+    if (decks.first[0] > decks.second[0]) {
       decks.first.push_back(decks.first[0]);
       decks.first.push_back(decks.second[0]);
-    }
-    else
-    {
+    } else {
       decks.second.push_back(decks.second[0]);
       decks.second.push_back(decks.first[0]);
     }
@@ -75,18 +62,17 @@ int part_one(const std::vector<std::string>& input)
   return calculate_score(winner);
 }
 
-int part_two(const std::vector<std::string>& input)
-{
+int part_two(const std::vector<std::string>& input) {
   return 3;
 }
 
-int main()
-{
+int main() {
   utils::Reader reader(std::filesystem::path("../2020/data/input_22.txt"));
   const std::vector<std::string> input = reader.get_lines();
-  
+
   std::cout << "The answer to part one is: " << part_one(input) << std::endl;
   std::cout << "The answer to part two is: " << part_two(input) << std::endl;
- 
+
   return 0;
 }
+
