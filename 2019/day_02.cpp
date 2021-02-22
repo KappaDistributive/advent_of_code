@@ -11,35 +11,30 @@ std::vector<int> prepare_input(const std::vector<std::string>& input) {
     return intcodes;
 }
 
-struct Instruction
-{
+struct Instruction {
     int opcode;
-    std::vector<int> parameters; 
+    std::vector<int> parameters;
 };
-class CPU
-{
-private:
+
+class CPU {
+ private:
     std::vector<int> memory;
     size_t instruction_pointer;
 
-public:
+ public:
     explicit CPU(const std::vector<int>& intcodes)
-        : memory(intcodes), instruction_pointer(0)
-    {
-
+        : memory(intcodes), instruction_pointer(0) {
     }
 
-    bool execute (const Instruction& instruction)
-    {
+    bool execute(const Instruction& instruction) {
         bool halting{false};
-        switch (instruction.opcode)
-        {
+        switch (instruction.opcode) {
             case 1:
-                assert (instruction.parameters.size() == 3);
+                assert(instruction.parameters.size() == 3);
                 memory[instruction.parameters[2]] = memory[instruction.parameters[0]] + memory[instruction.parameters[1]];
                 break;
             case 2:
-                assert (instruction.parameters.size() == 3);
+                assert(instruction.parameters.size() == 3);
                 memory[instruction.parameters[2]] = memory[instruction.parameters[0]] * memory[instruction.parameters[1]];
                 break;
             case 99:
@@ -52,8 +47,7 @@ public:
         return halting;
     }
 
-    bool execute ()
-    {
+    bool execute() {
         Instruction instruction {
             .opcode = this->memory[this->instruction_pointer],
             .parameters = {this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2], this->memory[this->instruction_pointer+3]}
@@ -61,19 +55,16 @@ public:
         return execute(instruction);
     }
 
-    int run ()
-    {
+    int run() {
         while (!execute()) {}
         return this->memory[0];
     }
 
-    void set_memory(size_t location, int value)
-    {
+    void set_memory(size_t location, int value) {
         this->memory[location] = value;
     }
 
-    std::vector<int> get_memory() const
-    {
+    std::vector<int> get_memory() const {
         return this->memory;
     }
 };
@@ -89,15 +80,12 @@ int part_one(const std::vector<std::string>& input) {
 int part_two(const std::vector<std::string>& input) {
     auto intcodes = prepare_input(input);
     const int target{19690720};
-    for (int noun{0}; noun < 100; noun++)
-    {
-        for (int verb{0}; verb < 100; verb++)
-        {
+    for (int noun{0}; noun < 100; noun++) {
+        for (int verb{0}; verb < 100; verb++) {
             CPU cpu(intcodes);
             cpu.set_memory(1, noun);
             cpu.set_memory(2, verb);
-            if (cpu.run() == target)
-            {
+            if (cpu.run() == target) {
                 return 100 * noun + verb;
             }
         }
@@ -115,3 +103,4 @@ int main() {
     std::cout << "The answer to part two is: " << answer_two << std::endl;
     return 0;
 }
+
