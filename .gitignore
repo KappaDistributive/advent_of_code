@@ -3,6 +3,7 @@ tags
 build/
 .ccls
 .ccls-cache
+.mypy_cache  
 .venv
 
 **/.DS_Store
