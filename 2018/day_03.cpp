@@ -69,7 +69,6 @@ std::vector<Claim> prepare_claims(const std::vector<std::string>& input) {
 }
 
 size_t part_one(const std::vector<std::string>& input) {
-
     auto claims = prepare_claims(input);
     std::map<Point, std::set<Claim>> claimed_areas;
 
@@ -93,6 +92,32 @@ size_t part_one(const std::vector<std::string>& input) {
 }
 
 size_t part_two(const std::vector<std::string>& input) {
+    auto claims = prepare_claims(input);
+    std::map<Point, std::set<Claim>> claimed_areas;
+
+    for (auto claim: claims) {
+        for (auto point: claim.get_area()) {
+            if (claimed_areas.count(point) == 0) {
+                claimed_areas.insert(std::make_pair(point, std::set<Claim>()));
+            }
+            claimed_areas.at(point).insert(claim);
+        }
+    }
+
+    for (auto claim: claims) {
+        bool has_overlap{false};
+
+        for (auto point: claim.get_area()) {
+            if (claimed_areas.at(point).size() > 1) {
+                has_overlap = true;
+                break;
+            }
+        }
+        if (!has_overlap) {
+            return claim.get_id();
+        }
+    }
+
     return 0;
 }
 
