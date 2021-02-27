@@ -44,6 +44,7 @@ class CPU {
     bool execute(const Instruction& instruction) {
         bool halting{false};
         std::string input{""};
+        bool update_instruction_pointer{true};
 
         switch (instruction.opcode % 100) {
             case 1:
@@ -64,13 +65,39 @@ class CPU {
                 assert(instruction.parameters.size() == 1);
                 std::cout << "Output: " << get_parameter(instruction, 0) << std::endl;
                 break;
+            case 5:
+                assert(instruction.parameters.size() == 2);
+                if (get_parameter(instruction, 0) != 0) {
+                    this->instruction_pointer = get_parameter(instruction, 1);
+                    update_instruction_pointer = false;
+                }
+                break;
+            case 6:
+                assert(instruction.parameters.size() == 2);
+                if (get_parameter(instruction, 0) == 0) {
+                    this->instruction_pointer = get_parameter(instruction, 1);
+                    update_instruction_pointer = false;
+                }
+                break;
+            case 7:
+                assert(instruction.parameters.size() == 3);
+                memory[instruction.parameters[2]] = static_cast<int>(get_parameter(instruction, 0) < get_parameter(instruction, 1));
+                break;
+            case 8:
+                assert(instruction.parameters.size() == 3);
+                memory[instruction.parameters[2]] = static_cast<int>(get_parameter(instruction, 0) == get_parameter(instruction, 1));
+                break;
             case 99:
                 halting = true;
                 break;
             default:
                 throw std::runtime_error("Encountered invalid opcode: " + std::to_string(instruction.opcode)); break;
         }
-        this->instruction_pointer += 1 + instruction.parameters.size();
+
+        if (update_instruction_pointer) {
+            this->instruction_pointer += 1 + instruction.parameters.size();
+        }
+
         return halting;
     }
 
@@ -91,6 +118,18 @@ class CPU {
                 break;
             case 4:
                 parameters = {this->memory[this->instruction_pointer+1]};
+                break;
+            case 5:
+                parameters = {this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2]};
+                break;
+            case 6:
+                parameters = {this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2]};
+                break;
+            case 7:
+                parameters = { this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2], this->memory[this->instruction_pointer+3] };
+                break;
+            case 8:
+                parameters = { this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2], this->memory[this->instruction_pointer+3] };
                 break;
             default:
                 parameters = {};
@@ -121,7 +160,9 @@ int part_one(const std::vector<std::string>& input) {
 }
 
 int part_two(const std::vector<std::string>& input) {
-    return -1;
+    auto intcodes = prepare_input(input);
+    CPU cpu(intcodes);
+    return cpu.run();
 }
 
 int main() {
