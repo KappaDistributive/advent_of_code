@@ -93,7 +93,26 @@ size_t part_one(const std::vector<std::string>& input) {
 }
 
 size_t part_two(const std::vector<std::string>& input) {
-    return 0;
+    auto sleeping_patterns = calculate_sleeping_patterns(input);
+    int guard_id{-1};
+    int guard_score{-1};
+    int sleepy_minute{-1};
+
+    for (auto [id, sleeping_pattern]: sleeping_patterns) {
+        std::array<int, 60> sleeping_minutes{0};
+        for (auto time: sleeping_pattern) {
+            sleeping_minutes[std::stoi(time.substr(15, 2))]++;
+        }
+
+        for (size_t index{0}; index< sleeping_minutes.size(); index++) {
+            if (sleeping_minutes[index] > guard_score) {
+                sleepy_minute = index;
+                guard_id = id;
+                guard_score = sleeping_minutes[index];
+            }
+        }
+    }
+    return guard_id * sleepy_minute;
 }
 
 
