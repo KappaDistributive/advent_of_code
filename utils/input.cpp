@@ -39,6 +39,12 @@ namespace utils {
     return splits;
   }
 
+  void replace_all_substrings(std::string& input, const std::string& search, const std::string& replacement) {
+    while (input.find(search) != std::string::npos) {
+        input.replace(input.find(search), search.size(), replacement);
+    }
+  }
+
   template<typename T>
   std::vector<T> rotate_vector(const std::vector<T>& input, const int& rotation) {
     std::vector<T> result;

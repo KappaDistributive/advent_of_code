@@ -25,7 +25,20 @@ size_t part_one(const std::string& input) {
 }
 
 size_t part_two(const std::string& input) {
-    return 8;
+    size_t score{std::numeric_limits<size_t>::max()};
+    for (char c{'a'}; c <= 'z'; c++) {
+        auto polymer = input;
+        utils::replace_all_substrings(polymer, std::string(1, c), "");
+        utils::replace_all_substrings(polymer, std::string(1, c + 'A' - 'a'), "");
+
+        do {
+        } while (react(polymer));
+
+        if (polymer.size() < score) {
+            score = polymer.size();
+        }
+    }
+    return score;
 }
 
 
