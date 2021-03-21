@@ -65,8 +65,9 @@ namespace utils {
     return result;
   }
 
-  template std::vector<int> rotate_vector<int> (const std::vector<int>&, const int&);
   template std::vector<bool> rotate_vector<bool> (const std::vector<bool>&, const int&);
+  template std::vector<char> rotate_vector<char> (const std::vector<char>&, const int&);
+  template std::vector<int> rotate_vector<int> (const std::vector<int>&, const int&);
 
   int pow(int base, int exponent) {
     assert(exponent >= 0);
