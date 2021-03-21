@@ -2,6 +2,7 @@
 #include <cassert>
 #include <regex>
 #include <stdexcept>
+#include <thread>
 
 #include "../utils/input.hpp"
 
@@ -113,18 +114,47 @@ std::string apply_rule(const std::string& input, const std::string& rule) {
 
 std::string part_one(const std::vector<std::string>& input) {
     std::string result{"abcdefgh"};
-    std::cout << result << "\n" << std::endl;
     for (auto rule: input) {
         result = apply_rule(result, rule);
-        std::cout << rule << std::endl;
-        std::cout << result << "\n" << std::endl;
-
     }
     return result;
 }
 
-int part_two(const std::vector<std::string>& input) {
-    return 4;
+bool test_candidate(const std::string& candidate, const std::string& target, const std::vector<std::string>& input) {
+    std::string temp = candidate;
+    for (auto rule: input) {
+        temp = apply_rule(temp, rule);
+    }
+    return temp == target;
+}
+
+std::string part_two(const std::vector<std::string>& input) {
+    const std::string& target{"fbgdceah"};
+    // There are 8! = 40_320 possible permutations.
+    // Therefore, the following brute-force-approach is barely feasible:
+    std::vector<char> permutation{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+    size_t round{0};
+    std::vector<std::string> candidates;
+
+    do {
+        std::string candidate;
+        for (auto c: permutation) {
+            candidate += c;
+        }
+        std::cout << "Round: " << ++round << "; testing " << candidate << std::endl;
+        for (auto rule: input) {
+            candidate = apply_rule(candidate, rule);
+        }
+        if (candidate == target) {
+            candidate = "";
+            for (auto c: permutation) {
+                candidate += c;
+            }
+            return candidate;
+        }
+    } while (std::next_permutation(permutation.begin(), permutation.end()));
+
+    throw std::runtime_error("Failed to find a suitable permutation!");
 }
 
 int main() {
