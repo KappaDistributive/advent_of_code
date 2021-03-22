@@ -137,7 +137,24 @@ size_t part_one(const std::vector<std::string>& input) {
 }
 
 size_t part_two(const std::vector<std::string>& input) {
-    return 2;
+    auto coordinates = prepare_input(input);
+    size_t area{0};
+    for (int y{-10000}; y <= 10000; y++) {
+        if (y % 1000 == 0) {
+            std::cout << "y=" << y << std::endl;
+        }
+        for (int x{-10000}; x <= 10000; x++) {
+            int total_distance{0};
+            for (auto coordinate: coordinates) {
+                total_distance += distance({x, y}, coordinate);
+                if (total_distance > 10000) {
+                    break;
+                }
+            }
+            area += static_cast<size_t>(total_distance <= 10000);
+        }
+    }
+    return area;
 }
 
 
