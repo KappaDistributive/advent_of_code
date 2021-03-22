@@ -40,15 +40,6 @@ std::vector<char> prepare_alphabet(const std::vector<std::string>& input) {
 }
 
 
-size_t fac(size_t n) {
-    if (n <= 1) {
-        return 1;
-    } else {
-        return n * fac(n-1);
-    }
-}
-
-
 std::set<char> available_tasks(const std::vector<char>& alphabet,
                                const std::set<std::pair<char, char>>& restrictions,
                                const std::string& done_tasks,

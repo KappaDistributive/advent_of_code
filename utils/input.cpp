@@ -65,11 +65,12 @@ namespace utils {
     return result;
   }
 
-  template std::vector<bool> rotate_vector<bool> (const std::vector<bool>&, const int&);
-  template std::vector<char> rotate_vector<char> (const std::vector<char>&, const int&);
-  template std::vector<int> rotate_vector<int> (const std::vector<int>&, const int&);
+  template std::vector<bool> rotate_vector<bool>(const std::vector<bool>&, const int&);
+  template std::vector<char> rotate_vector<char>(const std::vector<char>&, const int&);
+  template std::vector<int> rotate_vector<int>(const std::vector<int>&, const int&);
 
-  int pow(int base, int exponent) {
+  template<typename T>
+  T pow(T base, T exponent) {
     assert(exponent >= 0);
     if (exponent == 0) {
       return 1;
@@ -77,4 +78,20 @@ namespace utils {
       return base * pow(base, exponent-1);
     }
   }
+
+  template int pow<int>(int, int);
+
+  template<typename T>
+  T factorial(T n) {
+    if (n <= 1) {
+      return 1;
+    } else {
+      return n * factorial(n-1);
+    }
+  }
+
+  template int factorial<int>(int);
+  template long factorial<long>(long);
+  template size_t factorial<size_t>(size_t);
+
 } // namespace utils

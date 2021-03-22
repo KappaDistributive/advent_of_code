@@ -30,6 +30,10 @@ void replace_all_substrings(std::string& input, const std::string& search, const
 template<typename T>
 std::vector<T> rotate_vector(const std::vector<T>& input, const int& rotation);
 
-int pow(int base, int exponent);
+template<typename T>
+T pow(T base, T exponent);
+
+template<typename T>
+T factorial(T n);
 
 } // namespace utils
