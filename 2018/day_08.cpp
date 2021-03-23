@@ -12,7 +12,7 @@ std::tuple<int, int, std::vector<int>> parse_data(const std::vector<int>& data) 
 
     for (size_t child_index{0}; child_index < num_children; child_index++) {
         auto update = parse_data(tail);
-        meta_sum +=  std::get<0>(update);
+        meta_sum += std::get<0>(update);
         scores.push_back(std::get<1>(update));
         tail = std::get<2>(update);
     }
@@ -30,8 +30,9 @@ std::tuple<int, int, std::vector<int>> parse_data(const std::vector<int>& data) 
             }
         }
     }
-        tail = std::vector<int>(tail.begin() + num_meta, tail.end());
-        return {meta_sum, score, tail};
+
+    tail = std::vector<int>(tail.begin() + num_meta, tail.end());
+    return {meta_sum, score, tail};
 }
 
 
