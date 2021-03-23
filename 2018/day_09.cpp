@@ -45,7 +45,7 @@ class Game {
                 if (marble_it == marbles.begin()) {
                     marble_it = marbles.end();
                 }
-                marble_it = std::prev(marble_it);
+                marble_it--;;
             }
             score(current_player) += *marble_it;
             marble_it = marbles.erase(marble_it);
