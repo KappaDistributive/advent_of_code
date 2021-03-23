@@ -1,3 +1,4 @@
+#include <list>
 #include <regex>
 
 #include "../utils/input.hpp"
@@ -11,8 +12,8 @@ class Game {
     const size_t num_players, last_marble;
     size_t current_player{0};
     size_t current_marble{0};
-    size_t marble_index{0};
-    std::vector<size_t> marbles = {0};
+    std::list<size_t> marbles = {0};
+    std::list<size_t>::iterator marble_it = marbles.begin();
     std::vector<size_t> scores;
 
  public:
@@ -40,25 +41,33 @@ class Game {
 
         if (current_marble % 23 == 0) {
             score(current_player) += current_marble;
-            marble_index = (marble_index + 7 * marbles.size() - 7) % marbles.size();
-            score(current_player) += marbles[marble_index];
-            std::vector<size_t> new_marbles = std::vector<size_t>(marbles.begin(), marbles.begin() + marble_index);
-            for (size_t index{marble_index + 1}; index < marbles.size(); index++) {
-                new_marbles.push_back(marbles[index]);
+            for (size_t index{0}; index < 7; index++) {
+                if (marble_it == marbles.begin()) {
+                    marble_it = marbles.end();
+                }
+                marble_it = std::prev(marble_it);
             }
-            marbles = new_marbles;
+            score(current_player) += *marble_it;
+            marble_it = marbles.erase(marble_it);
         } else {
-            size_t insert_index = ((marble_index + 1) % (marbles.size())) + 1;
-            std::vector<size_t> new_marbles;
-            for (size_t index{0}; index < insert_index; index++) {
-                new_marbles.push_back(marbles[index]);
+            if (marbles.size() == 1) {
+                marbles.insert(marbles.end(), current_marble);
+                marble_it = std::next(marbles.begin());
+            } else if (marbles.size() == 2) {
+                marbles.insert(marble_it, current_marble);
+                marble_it = std::next(marbles.begin());
+            } else if (std::next(marble_it) == marbles.end()) {
+                marbles.insert(std::next(marbles.begin()), current_marble);
+                marble_it = std::next(marbles.begin());
+            } else if (std::next(std::next(marble_it)) == marbles.end()) {
+                marbles.insert(marbles.end(), current_marble);
+                marble_it = std::prev(marbles.end());
+            } else {
+                marble_it++;
+                marble_it++;
+                marbles.insert(marble_it, current_marble);
+                marble_it--;
             }
-            new_marbles.push_back(current_marble);
-            for (size_t index{insert_index}; index < marbles.size(); index++) {
-                new_marbles.push_back(marbles[index]);
-            }
-            marbles = new_marbles;
-            marble_index = insert_index;
         }
 
         return true;
@@ -76,13 +85,13 @@ class Game {
             os << "-";
         }
         os << "] ";
-        for (size_t index{0}; index < game.marbles.size(); index++) {
-            if (index == game.marble_index) {
-                os << BOLDWHITE << "(" << game.marbles[index] << ")" << RESET;
+        for (auto it=game.marbles.begin(); it != game.marbles.end(); it++) {
+            if (it == game.marble_it) {
+                os << BOLDWHITE << "(" << *it << ")" << RESET;
             } else {
-                os << game.marbles[index];
+                os << *it;
             }
-            if (index + 1 < game.marbles.size()) {
+            if (std::next(it) != game.marbles.end()) {
                 os << " ";
             }
         }
@@ -91,12 +100,11 @@ class Game {
     }
 };
 
-int part_one(size_t num_players, size_t last_marble, bool verbose = false) {
+size_t part_one(size_t num_players, size_t last_marble, bool verbose = false) {
     Game game(num_players, last_marble);
     if (verbose) {
         std::cout << game << std::endl;
     }
-
     while (game.play()) {
         if (verbose) {
             std::cout << game << std::endl;
@@ -107,8 +115,8 @@ int part_one(size_t num_players, size_t last_marble, bool verbose = false) {
 }
 
 
-int part_two(size_t num_players, size_t last_marble) {
-    return 98;
+size_t part_two(size_t num_players, size_t last_marble, bool verbose = false) {
+    return part_one(num_players, last_marble * 100, verbose);
 }
 
 
