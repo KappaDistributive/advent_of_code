@@ -36,4 +36,7 @@ T pow(T base, T exponent);
 template<typename T>
 T factorial(T n);
 
+template<typename T>
+std::string stringify(T input);
+
 } // namespace utils
