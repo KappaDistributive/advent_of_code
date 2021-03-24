@@ -96,7 +96,7 @@ class Starfield {
 };
 
 
-void part_one(const std::vector<std::string>& input, bool verbose = false) {
+long align_stars(const std::vector<std::string>& input, bool verbose = false) {
     Starfield starfield(input);
     std::vector<long> areas;
     long min_area = std::numeric_limits<long>::max();
@@ -120,12 +120,9 @@ void part_one(const std::vector<std::string>& input, bool verbose = false) {
 
     auto [x_min, y_min, x_max, y_max] = starfield.border(time_at_min_area);
     starfield.plot(x_min, y_min, x_max, y_max, time_at_min_area);
+    return time_at_min_area;
 }
 
-
-int part_two(const std::vector<std::string>& input) {
-    return 4;
-}
 
 
 int main() {
@@ -133,8 +130,7 @@ int main() {
   auto input = reader.get_lines();
 
   std::cout << "The answer to part one is:" << std::endl;
-  part_one(input);
-  auto answer_two =  part_two(input);
-  std::cout << "The answer to part two is: " << answer_two << std::endl;
+  auto time = align_stars(input);
+  std::cout << "The answer to part two is: " << time << std::endl;
   return 0;
 }
