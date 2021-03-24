@@ -96,7 +96,7 @@ class Starfield {
 };
 
 
-long align_stars(const std::vector<std::string>& input, bool verbose = false) {
+int align_stars(const std::vector<std::string>& input, bool verbose = false) {
     Starfield starfield(input);
     std::vector<long> areas;
     long min_area = std::numeric_limits<long>::max();
@@ -122,7 +122,6 @@ long align_stars(const std::vector<std::string>& input, bool verbose = false) {
     starfield.plot(x_min, y_min, x_max, y_max, time_at_min_area);
     return time_at_min_area;
 }
-
 
 
 int main() {
