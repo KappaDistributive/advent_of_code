@@ -72,6 +72,7 @@ class Grid {
     }
 };
 
+
 std::string part_one(const int& input) {
     Grid grid(input);
     size_t coord_x{0}, coord_y{0};
@@ -93,8 +94,27 @@ std::string part_one(const int& input) {
 }
 
 
-size_t part_two(const int& input) {
-    return 5;
+std::string part_two(const int& input) {
+    Grid grid(input);
+    size_t coord_x{0}, coord_y{0};
+    int max_power{std::numeric_limits<int>::min()};
+    size_t max_size{0};
+    for (size_t grid_size{1}; grid_size <= 300; grid_size++) {
+        for (size_t y{1}; y + grid_size - 1 <= 300; y++) {
+            for (size_t x{1}; x + grid_size - 1 <= 300; x++) {
+                auto power = grid.total_power(x, y, grid_size, grid_size);
+                if (power > max_power) {
+                    max_power = power;
+                    coord_x = x;
+                    coord_y = y;
+                    max_size = grid_size;
+                }
+            }
+        }
+    }
+    std::stringstream ss;
+    ss << coord_x << "," << coord_y << "," << max_size;
+    return ss.str();
 }
 
 
