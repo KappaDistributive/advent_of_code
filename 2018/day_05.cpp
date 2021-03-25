@@ -2,13 +2,21 @@
 
 #include "../utils/input.hpp"
 
-bool react(std::string& polymer) {
-    for (size_t index{0}; index + 1 < polymer.size(); index++) {
+
+bool react(std::string* polymer) {
+    for (size_t index{0}; index + 1 < polymer->size(); index++) {
         if (
-            ('a' <= polymer[index] && polymer[index] <= 'z' && polymer[index] + 'A' - 'a' == polymer[index+1]) ||
-            ('A' <= polymer[index] && polymer[index] <= 'Z' && polymer[index+1] + 'A' - 'a' == polymer[index])
+            ('a' <= polymer->operator[](index) &&
+             polymer->operator[](index) <= 'z' &&
+             polymer->operator[](index) + 'A' - 'a' ==
+             polymer->operator[](index+1)) ||
+            ('A' <= polymer->operator[](index) &&
+             polymer->operator[](index) <= 'Z' &&
+             polymer->operator[](index+1) + 'A' - 'a' ==
+             polymer->operator[](index))
         ) {
-            polymer = polymer.substr(0, index) + polymer.substr(index + 2, std::string::npos);
+            *polymer = polymer->substr(0, index) +
+                      polymer->substr(index + 2, std::string::npos);
             return true;
         }
     }
@@ -19,20 +27,25 @@ bool react(std::string& polymer) {
 size_t part_one(const std::string& input) {
     auto polymer = input;
     do {
-    } while (react(polymer));
+    } while (react(&polymer));
 
     return polymer.size();
 }
+
 
 size_t part_two(const std::string& input) {
     size_t score{std::numeric_limits<size_t>::max()};
     for (char c{'a'}; c <= 'z'; c++) {
         auto polymer = input;
-        utils::replace_all_substrings(polymer, std::string(1, c), "");
-        utils::replace_all_substrings(polymer, std::string(1, c + 'A' - 'a'), "");
+        utils::replace_all_substrings(
+            polymer,
+             std::string(1, c), "");
+        utils::replace_all_substrings(
+            polymer,
+            std::string(1, c + 'A' - 'a'), "");
 
         do {
-        } while (react(polymer));
+        } while (react(&polymer));
 
         if (polymer.size() < score) {
             score = polymer.size();
@@ -40,7 +53,6 @@ size_t part_two(const std::string& input) {
     }
     return score;
 }
-
 
 
 int main() {
@@ -53,4 +65,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-
