@@ -3,6 +3,7 @@
 
 #include "../utils/input.hpp"
 
+
 std::vector<int> prepare_input(const std::vector<std::string>& input) {
   std::vector<int> changes;
   for (auto line : input) {
@@ -10,6 +11,7 @@ std::vector<int> prepare_input(const std::vector<std::string>& input) {
   }
   return changes;
 }
+
 
 int part_one(const std::vector<std::string>& input) {
   auto changes = prepare_input(input);
@@ -19,6 +21,7 @@ int part_one(const std::vector<std::string>& input) {
   }
   return frequency;
 }
+
 
 int part_two(const std::vector<std::string>& input) {
   auto changes = prepare_input(input);
@@ -36,6 +39,7 @@ int part_two(const std::vector<std::string>& input) {
   return std::numeric_limits<int>::min();
 }
 
+
 int main() {
   utils::Reader reader(std::filesystem::path("../2018/data/input_01.txt"));
   auto input = reader.get_lines();
@@ -46,4 +50,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-
