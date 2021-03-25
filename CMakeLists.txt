@@ -6,6 +6,15 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(input utils/input.cpp)
 add_library(md5 includes/md5.cpp)
 
+find_package(GTest REQUIRED)
+if (GTEST_FOUND)
+  enable_testing()
+  include_directories(${GTEST_INCLUDE_DIRS})
+  add_executable(UtilsUnitTests tests/UtilsUnitTests.cpp)
+  target_link_libraries(UtilsUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
+  GTEST_DISCOVER_TESTS(UtilsUnitTests)
+endif()
+
 add_executable(2015_01 2015/day_01.cpp)
 target_link_libraries(2015_01 input)
 
