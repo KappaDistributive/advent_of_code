@@ -38,10 +38,10 @@ size_t part_two(const std::string& input) {
     for (char c{'a'}; c <= 'z'; c++) {
         auto polymer = input;
         utils::replace_all_substrings(
-            polymer,
+            &polymer,
              std::string(1, c), "");
         utils::replace_all_substrings(
-            polymer,
+            &polymer,
             std::string(1, c + 'A' - 'a'), "");
 
         do {

@@ -23,13 +23,16 @@ std::vector<std::string> Reader::get_lines() {
 }
 
 
-std::vector<std::string> split_string(const std::string& input, const char delimiter) {
+std::vector<std::string>
+split_string(const std::string& input, const char& delimiter) {
   std::vector<std::string> splits;
   std::string buffer;
 
-  for (auto character: input) {
+  for (auto character : input) {
     if (character == delimiter) {
-      splits.push_back(buffer);
+      if (buffer.size() > 0) {
+        splits.push_back(buffer);
+      }
       buffer = "";
     } else {
       buffer += character;
@@ -42,9 +45,11 @@ std::vector<std::string> split_string(const std::string& input, const char delim
   return splits;
 }
 
-void replace_all_substrings(std::string& input, const std::string& search, const std::string& replacement) {
-  while (input.find(search) != std::string::npos) {
-      input.replace(input.find(search), search.size(), replacement);
+void replace_all_substrings(std::string* input,
+                            const std::string& search,
+                            const std::string& replacement) {
+  while (input->find(search) != std::string::npos) {
+      input->replace(input->find(search), search.size(), replacement);
   }
 }
 

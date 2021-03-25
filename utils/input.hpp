@@ -22,9 +22,12 @@ class Reader {
      std::vector<std::string> get_lines();
 };
 
-std::vector<std::string> split_string(const std::string& input, const char delimiter);
+std::vector<std::string>
+split_string(const std::string& input, const char& delimiter);
 
-void replace_all_substrings(std::string& input, const std::string& search, const std::string& replacement);
+void replace_all_substrings(std::string* input,
+                            const std::string& search,
+                            const std::string& replacement);
 
 
 template<typename T>
