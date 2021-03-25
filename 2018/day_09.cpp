@@ -1,3 +1,4 @@
+#include <cassert>
 #include <list>
 #include <regex>
 
@@ -17,9 +18,11 @@ class Game {
     std::vector<size_t> scores;
 
  public:
-    Game(size_t num_players, size_t last_marble) 
+    Game(size_t num_players, size_t last_marble)
         : num_players(num_players), last_marble(last_marble) {
-            for (size_t player_index{0}; player_index < num_players; player_index++) {
+            for (size_t player_index{0};
+                 player_index < num_players;
+                 player_index++) {
                 scores.push_back(0);
             }
         }
@@ -45,7 +48,7 @@ class Game {
                 if (marble_it == marbles.begin()) {
                     marble_it = marbles.end();
                 }
-                marble_it--;;
+                marble_it--;
             }
             score(current_player) += *marble_it;
             marble_it = marbles.erase(marble_it);
@@ -100,6 +103,7 @@ class Game {
     }
 };
 
+
 size_t part_one(size_t num_players, size_t last_marble, bool verbose = false) {
     Game game(num_players, last_marble);
     if (verbose) {
@@ -126,7 +130,7 @@ int main() {
   std::regex re{"^(\\d+) players; last marble is worth (\\d+) points$"};
   std::smatch matches;
   std::regex_match(input, matches, re);
-  assert (matches.size() == 3);
+  assert(matches.size() == 3);
   size_t num_players = std::stol(matches[1].str());
   size_t last_marble = std::stol(matches[2].str());
 
