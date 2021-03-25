@@ -1,4 +1,5 @@
 #include <array>
+#include <cassert>
 #include <limits>
 #include <sstream>
 
@@ -20,8 +21,8 @@ class Grid {
     }
 
  public:
-    explicit Grid(const int& serial_number) 
-        : serial_number(serial_number) { 
+    explicit Grid(const int& serial_number)
+        : serial_number(serial_number) {
         for (size_t y{1}; y <= 300; y++) {
             for (size_t x{1}; x <= 300; x++) {
                 power(x, y) = calc_power_level(x, y);
@@ -30,17 +31,17 @@ class Grid {
     }
 
     int& power(size_t x, size_t y) {
-        assert (1 <= x && x <= 300);
-        assert (1 <= y && y <= 300);
+        assert(1 <= x && x <= 300);
+        assert(1 <= y && y <= 300);
         return power_level[(y-1) * 300 + (x-1)];
     }
 
-    int total_power(size_t x, size_t y, size_t width_x = 3, size_t width_y = 3) {
-        assert (1 <= x && 1 <= width_x && x + width_x -1 <= 300);
-        assert (1 <= y && 1 <= width_y && y + width_y -1 <= 300);
+    int total_power(size_t x, size_t y,
+                    size_t width_x = 3, size_t width_y = 3) {
+        assert(1 <= x && 1 <= width_x && x + width_x -1 <= 300);
+        assert(1 <= y && 1 <= width_y && y + width_y -1 <= 300);
         int power{0};
-        for (size_t offset_y{0}; offset_y < width_y; offset_y++)
-        {
+        for (size_t offset_y{0}; offset_y < width_y; offset_y++) {
             for (size_t offset_x{0}; offset_x < width_x; offset_x++) {
                 power += this->power(x + offset_x, y + offset_y);
             }
@@ -48,9 +49,12 @@ class Grid {
         return power;
     }
 
-    std::ostream& plot(std::ostream& os, size_t min_x = 1, size_t min_y = 1, size_t max_x = 300, size_t max_y = 300) {
-        assert (1 <= min_x && min_x <= max_x && max_x <= 300);
-        assert (1 <= min_y && min_y <= max_y && max_y <= 300);
+    std::ostream&
+    plot(std::ostream& os,
+         size_t min_x = 1, size_t min_y = 1,
+         size_t max_x = 300, size_t max_y = 300) {
+        assert(1 <= min_x && min_x <= max_x && max_x <= 300);
+        assert(1 <= min_y && min_y <= max_y && max_y <= 300);
         for (size_t y{min_y}; y <= max_y; y++) {
             for (size_t x{min_x}; x <= max_x; x++) {
                 int power = this->power(x, y);
