@@ -52,7 +52,8 @@ class Claim {
      }
 
      friend std::ostream& operator<<(std::ostream& os, const Claim& claim) {
-         os << "#" << claim.id << " @ " << claim.position.first << "," << claim.position.second
+         os << "#" << claim.id << " @ "
+            << claim.position.first << "," << claim.position.second
             << ": " << claim.shape.first << "x" << claim.shape.second;
          return os;
      }
@@ -61,7 +62,7 @@ class Claim {
 std::vector<Claim> prepare_claims(const std::vector<std::string>& input) {
     std::vector<Claim> claims;
 
-    for (auto line: input) {
+    for (auto line : input) {
         claims.push_back(Claim(line));
     }
 
@@ -72,8 +73,8 @@ size_t part_one(const std::vector<std::string>& input) {
     auto claims = prepare_claims(input);
     std::map<Point, std::set<Claim>> claimed_areas;
 
-    for (auto claim: claims) {
-        for (auto point: claim.get_area()) {
+    for (auto claim : claims) {
+        for (auto point : claim.get_area()) {
             if (claimed_areas.count(point) == 0) {
                 claimed_areas.insert(std::make_pair(point, std::set<Claim>()));
             }
@@ -82,7 +83,7 @@ size_t part_one(const std::vector<std::string>& input) {
     }
 
     size_t result{0};
-    for (auto [point, claims]: claimed_areas) {
+    for (auto [point, claims] : claimed_areas) {
         if (claims.size() > 1) {
             result++;
         }
@@ -95,8 +96,8 @@ size_t part_two(const std::vector<std::string>& input) {
     auto claims = prepare_claims(input);
     std::map<Point, std::set<Claim>> claimed_areas;
 
-    for (auto claim: claims) {
-        for (auto point: claim.get_area()) {
+    for (auto claim : claims) {
+        for (auto point : claim.get_area()) {
             if (claimed_areas.count(point) == 0) {
                 claimed_areas.insert(std::make_pair(point, std::set<Claim>()));
             }
@@ -104,10 +105,9 @@ size_t part_two(const std::vector<std::string>& input) {
         }
     }
 
-    for (auto claim: claims) {
+    for (auto claim : claims) {
         bool has_overlap{false};
-
-        for (auto point: claim.get_area()) {
+        for (auto point : claim.get_area()) {
             if (claimed_areas.at(point).size() > 1) {
                 has_overlap = true;
                 break;
@@ -133,4 +133,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-
