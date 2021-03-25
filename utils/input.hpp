@@ -42,4 +42,4 @@ T factorial(T n);
 template<typename T>
 std::string stringify(T input);
 
-} // namespace utils
+}  // namespace utils

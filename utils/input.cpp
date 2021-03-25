@@ -73,9 +73,12 @@ std::vector<T> rotate_vector(const std::vector<T>& input, const int& rotation) {
   return result;
 }
 
-template std::vector<bool> rotate_vector<bool>(const std::vector<bool>&, const int&);
-template std::vector<char> rotate_vector<char>(const std::vector<char>&, const int&);
-template std::vector<int> rotate_vector<int>(const std::vector<int>&, const int&);
+template std::vector<bool>
+rotate_vector<bool>(const std::vector<bool>&, const int&);
+template std::vector<char>
+rotate_vector<char>(const std::vector<char>&, const int&);
+template std::vector<int>
+rotate_vector<int>(const std::vector<int>&, const int&);
 
 template<typename T>
 T pow(T base, T exponent) {
