@@ -5,7 +5,7 @@
 
 std::vector<int> prepare_input(const std::vector<std::string>& input) {
   std::vector<int> changes;
-  for (auto line: input) {
+  for (auto line : input) {
     changes.push_back(std::stoi(line));
   }
   return changes;
@@ -14,7 +14,7 @@ std::vector<int> prepare_input(const std::vector<std::string>& input) {
 int part_one(const std::vector<std::string>& input) {
   auto changes = prepare_input(input);
   int frequency{0};
-  for (auto change: changes) {
+  for (auto change : changes) {
     frequency += change;
   }
   return frequency;
@@ -25,7 +25,7 @@ int part_two(const std::vector<std::string>& input) {
   std::set<int> frequencies{0};
   int frequency{0};
   while (1) {
-    for (auto change: changes) {
+    for (auto change : changes) {
       frequency += change;
       if (frequencies.count(frequency) > 0) {
         return frequency;
