@@ -6,12 +6,12 @@
 template<size_t multiplicity>
 bool contains_multiple(const std::string& candidate) {
   std::map<char, size_t> counts;
-  for (auto character: candidate) {
+  for (auto character : candidate) {
     counts.try_emplace(character, 0);
     counts.at(character)++;
   }
 
-  for (auto [key, value]: counts) {
+  for (auto [key, value] : counts) {
     if (value == multiplicity) {
       return true;
     }
@@ -38,7 +38,7 @@ bool are_close(const std::string& lhs, const std::string& rhs) {
 
 size_t part_one(const std::vector<std::string>& input) {
   size_t twin_count{0}, tripled_count{0};
-  for (auto line: input) {
+  for (auto line : input) {
     twin_count += contains_multiple<2>(line);
     tripled_count += contains_multiple<3>(line);
   }
@@ -49,8 +49,12 @@ size_t part_one(const std::vector<std::string>& input) {
 std::string part_two(const std::vector<std::string>& input) {
   std::string lhs, rhs;
   bool searching{true};
-  for (size_t left_index{0}; left_index + 1 < input.size() && searching; left_index++) {
-    for (size_t right_index{left_index+1}; right_index < input.size() && searching; right_index++) {
+  for (size_t left_index{0};
+       left_index + 1 < input.size() && searching;
+       left_index++) {
+    for (size_t right_index{left_index+1};
+         right_index < input.size() && searching;
+         right_index++) {
       if (are_close(input[left_index], input[right_index])) {
         lhs = input[left_index];
         rhs = input[right_index];
@@ -78,4 +82,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-
