@@ -68,6 +68,7 @@ class Grid {
             }
             os << std::endl;
         }
+
         return os;
     }
 
@@ -94,6 +95,7 @@ std::string part_one(const int& input) {
     }
     std::stringstream ss;
     ss << coord_x << "," << coord_y;
+
     return ss.str();
 }
 
@@ -118,6 +120,7 @@ std::string part_two(const int& input) {
     }
     std::stringstream ss;
     ss << coord_x << "," << coord_y << "," << max_size;
+
     return ss.str();
 }
 
@@ -130,5 +133,6 @@ int main() {
   std::cout << "The answer to part one is: " << answer_one << std::endl;
   auto answer_two =  part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
+
   return 0;
 }

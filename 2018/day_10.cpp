@@ -1,5 +1,5 @@
 #include <limits>
-#include <regex>
+#include <regex>  // NOLINT
 
 #include "../utils/input.hpp"
 
@@ -34,6 +34,7 @@ class Star {
         return os;
     }
 };
+
 
 class Starfield {
  private:
@@ -70,12 +71,15 @@ class Starfield {
         };
     }
 
-    void plot(int min_x, int min_y, int max_x, int max_y, size_t time=0) const {
+    void plot(int min_x, int min_y,
+              int max_x, int max_y,
+              size_t time = 0) const {
         for (int y={min_y}; y <=max_y; y++) {
             for (int x={min_x}; x <= max_x; x++) {
                 bool lights_up{false};
-                for (auto star: stars) {
-                    if (std::get<0>(star.position(time)) == x && std::get<1>(star.position(time)) == y) {
+                for (auto star : stars) {
+                    if (std::get<0>(star.position(time)) == x &&
+                        std::get<1>(star.position(time)) == y) {
                         lights_up = true;
                         break;
                     }
@@ -88,10 +92,9 @@ class Starfield {
             }
             std::cout << std::endl;
         }
-
     }
 
-    void plot(size_t time=0) {
+    void plot(size_t time = 0) {
         plot(initial_x_min, initial_y_min, initial_x_max, initial_y_max, time);
     }
 };
@@ -99,13 +102,14 @@ class Starfield {
 
 int align_stars(const std::vector<std::string>& input, bool verbose = false) {
     Starfield starfield(input);
-    std::vector<long> areas;
-    long min_area = std::numeric_limits<long>::max();
+    std::vector<int64_t> areas;
+    int64_t min_area = std::numeric_limits<int64_t>::max();
     int time_at_min_area = 0;
     int time;
     for (time = 0; ; time++) {
         auto [x_min, y_min, x_max, y_max] = starfield.border(time);
-        auto area = static_cast<long>(x_max - x_min + 1) * static_cast<long>(y_max - y_min + 1);
+        auto area = static_cast<int64_t>(x_max - x_min + 1) *
+                    static_cast<int64_t>(y_max - y_min + 1);
         if (area < min_area) {
             min_area = area;
             time_at_min_area = time;
@@ -118,9 +122,9 @@ int align_stars(const std::vector<std::string>& input, bool verbose = false) {
             break;
         }
     }
-
     auto [x_min, y_min, x_max, y_max] = starfield.border(time_at_min_area);
     starfield.plot(x_min, y_min, x_max, y_max, time_at_min_area);
+
     return time_at_min_area;
 }
 
@@ -132,5 +136,6 @@ int main() {
   std::cout << "The answer to part one is:" << std::endl;
   auto time = align_stars(input);
   std::cout << "The answer to part two is: " << time << std::endl;
+
   return 0;
 }

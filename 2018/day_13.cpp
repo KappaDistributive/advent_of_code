@@ -18,6 +18,7 @@ std::ostream& operator<<(std::ostream& os, const Direction& direction) {
         case south: os << "v"; break;
         case west: os << "<"; break;
     }
+
     return os;
 }
 
@@ -175,6 +176,7 @@ class Cart {
 
     friend std::ostream& operator<<(std::ostream& os, const Cart& cart) {
         os << cart._direction;
+
         return os;
     }
 };
@@ -286,6 +288,7 @@ class Track {
             // std::cout << "(" << std::get<0>(cart.position()) << ", "
             //           << std::get<1>(cart.position()) << ")" << std::endl;
         }
+
         return !crashed;
     }
 
@@ -305,12 +308,14 @@ class Track {
                 num_carts++;
             }
         }
+
         return num_carts;
     }
 
     char& track(const std::pair<size_t, size_t>& position) {
         assert(std::get<0>(position) < width);
         assert(std::get<1>(position) < height);
+
         return _track[std::get<1>(position) * width + std::get<0>(position)];
     }
 
@@ -383,6 +388,7 @@ std::string part_one(const std::vector<std::string>& input) {
     std::stringstream ss;
     ss << std::get<0>(track.crash_position()) << ","
        << std::get<1>(track.crash_position());
+
     return ss.str();
 }
 
@@ -411,6 +417,7 @@ std::string part_two(const std::vector<std::string>& input) {
     std::stringstream ss;
     ss << std::get<0>(track.final_cart_position()) << ","
        << std::get<1>(track.final_cart_position());
+
     return ss.str();
 }
 
@@ -423,5 +430,6 @@ int main() {
   std::cout << "The answer to part one is: " << answer_one << std::endl;
   auto answer_two =  part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
+
   return 0;
 }

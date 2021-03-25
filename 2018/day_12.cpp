@@ -1,6 +1,6 @@
 #include <deque>
 #include <map>
-#include <regex>
+#include <regex>  // NOLINT
 
 #include "../utils/input.hpp"
 
@@ -51,6 +51,7 @@ step(const std::deque<char>& state,
             new_state.push_back('.');
         }
     }
+
     return new_state;
 }
 
@@ -141,6 +142,7 @@ int64_t part_two(const std::vector<std::string>& input) {
     uint64_t final_offset = static_cast<uint64_t>(offset) +
                             static_cast<uint64_t>(50000000000ll - time) *
                             static_cast<uint64_t>(transition_offset);
+
     return score(state, final_offset);
 }
 
@@ -153,5 +155,6 @@ int main() {
   std::cout << "The answer to part one is: " << answer_one << std::endl;
   auto answer_two =  part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
+
   return 0;
 }

@@ -152,6 +152,7 @@ size_t part_one(const std::vector<std::string>& input) {
             result = land.size();
         }
     }
+
     return result;
 }
 
@@ -174,6 +175,7 @@ size_t part_two(const std::vector<std::string>& input) {
             area += static_cast<size_t>(total_distance <= 10000);
         }
     }
+
     return area;
 }
 
@@ -186,5 +188,6 @@ int main() {
   std::cout << "The answer to part one is: " << answer_one << std::endl;
   auto answer_two =  part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
+
   return 0;
 }

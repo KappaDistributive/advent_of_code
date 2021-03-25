@@ -1,14 +1,13 @@
 #include <cassert>
 #include <map>
-#include <regex>
+#include <regex>  // NOLINT
 #include <set>
 
 #include "../utils/input.hpp"
 
-// #1359 @ 102,354: 13x23
-//
 
 typedef std::pair<int, int> Point;
+
 
 class Claim {
  private:
@@ -59,6 +58,7 @@ class Claim {
      }
 };
 
+
 std::vector<Claim> prepare_claims(const std::vector<std::string>& input) {
     std::vector<Claim> claims;
 
@@ -68,6 +68,7 @@ std::vector<Claim> prepare_claims(const std::vector<std::string>& input) {
 
     return claims;
 }
+
 
 size_t part_one(const std::vector<std::string>& input) {
     auto claims = prepare_claims(input);
@@ -91,6 +92,7 @@ size_t part_one(const std::vector<std::string>& input) {
 
     return result;
 }
+
 
 size_t part_two(const std::vector<std::string>& input) {
     auto claims = prepare_claims(input);
@@ -122,7 +124,6 @@ size_t part_two(const std::vector<std::string>& input) {
 }
 
 
-
 int main() {
   utils::Reader reader(std::filesystem::path("../2018/data/input_03.txt"));
   auto input = reader.get_lines();
@@ -131,5 +132,6 @@ int main() {
   std::cout << "The answer to part one is: " << answer_one << std::endl;
   auto answer_two =  part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
+
   return 0;
 }

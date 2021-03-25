@@ -3,6 +3,7 @@
 
 #include "../utils/input.hpp"
 
+
 template<size_t multiplicity>
 bool contains_multiple(const std::string& candidate) {
   std::map<char, size_t> counts;
@@ -20,6 +21,7 @@ bool contains_multiple(const std::string& candidate) {
   return false;
 }
 
+
 bool are_close(const std::string& lhs, const std::string& rhs) {
   if (lhs.size() != rhs.size()) {
     return false;
@@ -36,6 +38,7 @@ bool are_close(const std::string& lhs, const std::string& rhs) {
   return differences == 1;
 }
 
+
 size_t part_one(const std::vector<std::string>& input) {
   size_t twin_count{0}, tripled_count{0};
   for (auto line : input) {
@@ -45,6 +48,7 @@ size_t part_one(const std::vector<std::string>& input) {
 
   return twin_count * tripled_count;
 }
+
 
 std::string part_two(const std::vector<std::string>& input) {
   std::string lhs, rhs;
@@ -72,6 +76,7 @@ std::string part_two(const std::vector<std::string>& input) {
   return result;
 }
 
+
 int main() {
   utils::Reader reader(std::filesystem::path("../2018/data/input_02.txt"));
   auto input = reader.get_lines();
@@ -80,5 +85,6 @@ int main() {
   std::cout << "The answer to part one is: " << answer_one << std::endl;
   auto answer_two =  part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
+
   return 0;
 }
