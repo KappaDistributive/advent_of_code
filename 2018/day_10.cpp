@@ -7,28 +7,29 @@ class Star {
  private:
     int x, y;
     int velocity_x, velocity_y;
+
  public:
     Star(int x, int y, int velocity_x, int velocity_y)
         : x(x), y(y), velocity_x(velocity_x), velocity_y(velocity_y) {
     }
 
-    Star(const std::string& description) {
-        std::regex re{"^position=<\\s*(-?\\d+),\\s*(-?\\d+)> velocity=<\\s*(-?\\d+),\\s*(-?\\d+)>$"};
+    explicit Star(const std::string& description) {
+        std::regex re{"^position=<\\s*(-?\\d+),\\s*(-?\\d+)> velocity=<\\s*(-?\\d+),\\s*(-?\\d+)>$"};  // NOLINT
         std::smatch matches;
         std::regex_match(description, matches, re);
-        assert (matches.size() == 5);
+        assert(matches.size() == 5);
         x = std::stoi(matches[1].str());
         y = std::stoi(matches[2].str());
         velocity_x = std::stoi(matches[3].str());
         velocity_y = std::stoi(matches[4].str());
     }
 
-    std::pair<int, int> position(int time=0) const {
+    std::pair<int, int> position(int time = 0) const {
         return {x + time * velocity_x, y + time * velocity_y};
     }
-    
+
     friend std::ostream& operator<<(std::ostream& os, const Star& star) {
-        os << "position=<" << star.x << ", " << star.y << "> " 
+        os << "position=<" << star.x << ", " << star.y << "> "
         << "velocity=<" << star.velocity_x << ", " << star.velocity_y << ">";
         return os;
     }
@@ -41,7 +42,7 @@ class Starfield {
 
  public:
     explicit Starfield(const std::vector<std::string>& input) {
-        for (auto line: input) {
+        for (auto line : input) {
             Star star(line);
             stars.push_back(Star(line));
         }
@@ -53,10 +54,10 @@ class Starfield {
         initial_y_max = std::get<3>(border);
     }
 
-    std::tuple<int, int, int, int> border(size_t time=0) {
+    std::tuple<int, int, int, int> border(size_t time = 0) {
         std::vector<int> xs;
         std::vector<int> ys;
-        for (auto star: stars) {
+        for (auto star : stars) {
             auto [x, y] = star.position(time);
             xs.push_back(x);
             ys.push_back(y);
