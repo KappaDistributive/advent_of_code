@@ -102,20 +102,21 @@ T factorial(T n) {
 }
 
 template int factorial<int>(int);
-template long factorial<long>(long);
+template int64_t factorial<int64_t>(int64_t);
 template size_t factorial<size_t>(size_t);
 
 
 template<typename T>
 std::string stringify(T input) {
   std::string result;
-  for (auto c: input) {
+  for (auto c : input) {
     result += c;
   }
 
   return result;
 }
 
+template std::string stringify(std::vector<char>);
 template std::string stringify(std::deque<char>);
 
-} // namespace utils
+}  // namespace utils

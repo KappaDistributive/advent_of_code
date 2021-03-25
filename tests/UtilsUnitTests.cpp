@@ -63,4 +63,17 @@ TEST(RotateVector, RotateCounterClockwise_test3) {
   EXPECT_EQ(want, got);
 }
 
+TEST(Stringify, VectorEmpty) {
+  std::string want{""};
+  auto got = utils::stringify(std::vector<char>());
+  EXPECT_EQ(want, got);
+}
+
+TEST(Stringify, VectorNonEmpty) {
+  std::string want{"abc def"};
+  auto got = utils::stringify(
+    std::vector<char>({'a', 'b', 'c', ' ', 'd', 'e', 'f'}));
+  EXPECT_EQ(want, got);
+}
+
 }  // namespace
