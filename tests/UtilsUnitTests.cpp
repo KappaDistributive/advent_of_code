@@ -76,4 +76,34 @@ TEST(Stringify, VectorNonEmpty) {
   EXPECT_EQ(want, got);
 }
 
+TEST(ReplaceAllSubstrings, NoOp) {
+  std::string want{"this is a test"};
+  std::string got{"this is a test"};
+  utils::replace_all_substrings(
+    &got,
+    "was",
+    "will");
+  EXPECT_EQ(want, got);
+}
+
+TEST(ReplaceAllSubstrings, ReplaceOne) {
+  std::string want{"that is a test"};
+  std::string got{"this is a test"};
+  utils::replace_all_substrings(
+    &got,
+    "this",
+    "that");
+  EXPECT_EQ(want, got);
+}
+
+TEST(ReplaceAllSubstrings, ReplaceMany) {
+  std::string want{"thwas was a test"};
+  std::string got{"this is a test"};
+  utils::replace_all_substrings(
+    &got,
+    "is",
+    "was");
+  EXPECT_EQ(want, got);
+}
+
 }  // namespace
