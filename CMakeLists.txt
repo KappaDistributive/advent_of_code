@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(input utils/input.cpp)
 add_library(md5 includes/md5.cpp)
 
-find_package(GTest REQUIRED)
+find_package(GTest)
 if (GTEST_FOUND)
   enable_testing()
   include_directories(${GTEST_INCLUDE_DIRS})
