@@ -3,7 +3,8 @@
 #include "../utils/input.hpp"
 
 
-std::tuple<int, int, std::vector<int>> parse_data(const std::vector<int>& data) {
+std::tuple<int, int, std::vector<int>>
+parse_data(const std::vector<int>& data) {
     int num_children = data[0];
     int num_meta = data[1];
     std::vector<int> tail = std::vector<int>(data.begin() + 2, data.end());
@@ -55,8 +56,7 @@ int main() {
   std::transform(input.begin(),
                  input.end(),
                  std::back_insert_iterator(transformed_input),
-                 [] (const std::string& entry) { return std::stoi(entry); }
-                );
+                 [] (const std::string& entry) { return std::stoi(entry); });
 
   auto answer_one =  part_one(transformed_input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
