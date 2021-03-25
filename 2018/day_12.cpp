@@ -4,17 +4,19 @@
 
 #include "../utils/input.hpp"
 
-std::pair<std::deque<char>, std::map<std::string, char>> prepare_input(const std::vector<std::string>& input) {
+
+std::pair<std::deque<char>, std::map<std::string, char>>
+prepare_input(const std::vector<std::string>& input) {
     std::regex initial_state_regex{"^initial state: ([\\.#]+)\\s*$"};
     std::regex transformation_regex{"^([\\.#]+) => ([\\.#])\\s*$"};
     std::smatch matches;
 
-    std::deque<char> initial_state;;
+    std::deque<char> initial_state;
     std::map<std::string, char> transformations;
-    for (auto line: input) {
+    for (auto line : input) {
         if (std::regex_match(line, matches, initial_state_regex)) {
             assert(initial_state.size() == 0);
-            for (auto character: matches[1].str()) {
+            for (auto character : matches[1].str()) {
                 initial_state.push_back(character);
             }
 
@@ -26,7 +28,10 @@ std::pair<std::deque<char>, std::map<std::string, char>> prepare_input(const std
     return {initial_state, transformations};
 }
 
-std::deque<char> step(const std::deque<char>& state, const std::map<std::string, char>& transformations) {
+
+std::deque<char>
+step(const std::deque<char>& state,
+     const std::map<std::string, char>& transformations) {
     std::deque<char> new_state;
     int index;
     for (index = -5; index < static_cast<int>(state.size()) + 5; index++) {
@@ -49,7 +54,9 @@ std::deque<char> step(const std::deque<char>& state, const std::map<std::string,
     return new_state;
 }
 
-std::pair<std::deque<char>, int> strip(const std::deque<char>& input, char symbol) {
+
+std::pair<std::deque<char>, int>
+strip(const std::deque<char>& input, char symbol) {
     auto left = input.begin();
     auto right = input.end();
     int offset{0};
@@ -63,21 +70,25 @@ std::pair<std::deque<char>, int> strip(const std::deque<char>& input, char symbo
             break;
         }
     }
-    
+
     return {std::deque<char>(left, right), offset};
 }
 
-void update(std::deque<char>& state, int& offset, const std::map<std::string, char>& transformations) {
-    state = step(state, transformations);
+
+void update(std::deque<char>* state,
+            int* offset,
+            const std::map<std::string, char>& transformations) {
+    *state = step(*state, transformations);
     offset -= 3;
-    auto stripped_update = strip(state, '.');
-    state = std::get<0>(stripped_update);
+    auto stripped_update = strip(*state, '.');
+    *state = std::get<0>(stripped_update);
     offset += std::get<1>(stripped_update);
 }
 
-long long score(const std::deque<char>& state, const long& offset) {
-    long long result{0};
-    for (long long index{0}; index < state.size(); index++) {
+
+int64_t score(const std::deque<char>& state, const int64_t& offset) {
+    int64_t result{0};
+    for (int64_t index{0}; index < state.size(); index++) {
         if (state[index] == '#') {
             result += offset + index;
         }
@@ -85,6 +96,7 @@ long long score(const std::deque<char>& state, const long& offset) {
 
     return result;
 }
+
 
 int part_one(const std::vector<std::string>& input) {
     std::deque<char> state;
@@ -96,7 +108,7 @@ int part_one(const std::vector<std::string>& input) {
 
     std::cout << "0: " << utils::stringify(state) << std::endl;
     for (size_t time{1}; time <= 20; time++) {
-        update(state, offset, transformations);
+        update(&state, &offset, transformations);
         std::cout << "Offset: " << offset << std::endl;
         std::cout << time << ": " << utils::stringify(state) << std::endl;
     }
@@ -105,7 +117,7 @@ int part_one(const std::vector<std::string>& input) {
 }
 
 
-long long part_two(const std::vector<std::string>& input) {
+int64_t part_two(const std::vector<std::string>& input) {
     std::deque<char> state;
     std::map<std::string, char> transformations;
     auto prepared_input = prepare_input(input);
@@ -118,14 +130,17 @@ long long part_two(const std::vector<std::string>& input) {
         time++;
         auto old_offset = offset;
         auto old_state = state;
-        update(state, offset, transformations);
+        update(&state, &offset, transformations);
         if (old_state == state) {
             transition_offset = offset - old_offset;
-            std::cout << time << ": Found fixed point! Transition-Offset = " << transition_offset << std::endl;
+            std::cout << time << ": Found fixed point! Transition-Offset = "
+                      << transition_offset << std::endl;
             break;
         }
     }
-    long long final_offset = static_cast<long long>(offset) + static_cast<long long>(50000000000ll - time) * static_cast<long long>(transition_offset);
+    uint64_t final_offset = static_cast<uint64_t>(offset) +
+                            static_cast<uint64_t>(50000000000ll - time) *
+                            static_cast<uint64_t>(transition_offset);
     return score(state, final_offset);
 }
 
