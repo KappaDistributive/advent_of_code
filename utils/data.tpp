@@ -54,9 +54,24 @@ bool Node<T>::operator!=(const Node& other) const {
   return !(*this == other);
 }
 
-// template<typename T>
-// std::ostream operator<<(std::ostream& os, const Node<T>& node) {
-//   os << "Node<data: " << node.getData() << "; #children: " << node.m_children.size() << ">";
-// }
+template<typename T>
+Tree<T>::Tree(const Node<T>& root)
+  : m_root(root) {
+  }
+
+template<typename T>
+const Node<T>& Tree<T>::getRoot() const {
+  return m_root;
+}
+
+template<typename T>
+bool Tree<T>::operator==(const Tree& other) const {
+  return this->getRoot() == other.getRoot();
+}
+
+template<typename T>
+bool Tree<T>::operator!=(const Tree& other) const {
+  return !(*this == other);
+}
 
 }  // namespace utils

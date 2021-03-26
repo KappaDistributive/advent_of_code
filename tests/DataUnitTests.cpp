@@ -111,4 +111,19 @@ TEST(Node, Print_test1) {
   EXPECT_EQ(want, got);
 }
 
+TEST(Tree, Initialization) {
+  utils::Node<int> want{1};
+  utils::Tree<int> tree(want);
+  auto got = tree.getRoot();
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Tree, Equality_test0) {
+  utils::Tree<int> tree(utils::Node<int>{1});
+
+  EXPECT_TRUE(tree == tree);
+  EXPECT_FALSE(tree != tree);
+}
+
 }  // namespace

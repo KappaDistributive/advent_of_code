@@ -35,18 +35,24 @@ class Node {
 };
 
 
-// template <typename T>
-// class Tree {
-//  private:
-//   Node<T>& root_;
-//
-//  public:
-//   Node<T>& root();
-//
-//   Node<T>& insert();
-//
-//   Node<T>* follow_path(const std::vector<size_t>& path);
-// };
+template <typename T>
+class Tree {
+ private:
+  Node<T> m_root;
+
+ public:
+  explicit Tree(const Node<T>& root);
+
+  const Node<T>& getRoot() const;
+
+  Node<T>& insert();
+
+  Node<T>* follow_path(const std::vector<size_t>& path);
+
+  bool operator==(const Tree& other) const;
+
+  bool operator!=(const Tree& other) const;
+};
 
 }  // namespace utils
 
