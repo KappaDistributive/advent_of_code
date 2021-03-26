@@ -1,3 +1,4 @@
+#include <sstream>
 #include <gtest/gtest.h>
 
 #include "../utils/data.hpp"
@@ -87,6 +88,27 @@ TEST(Node, Equality_test5) {
 
   EXPECT_FALSE(lhs == rhs);
   EXPECT_TRUE(lhs != rhs);
+}
+
+TEST(Node, Print_test0) {
+  utils::Node<std::string> node("one");
+  std::string want{"Node<data: one; #children: 0>"};
+  std::stringstream ss;
+  ss << node;
+  std::string got{ss.str()};
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Node, Print_test1) {
+  utils::Node<int> node(-1);
+  node.addChild(utils::Node<int>(1));
+  std::string want{"Node<data: -1; #children: 1>"};
+  std::stringstream ss;
+  ss << node;
+  std::string got{ss.str()};
+
+  EXPECT_EQ(want, got);
 }
 
 }  // namespace

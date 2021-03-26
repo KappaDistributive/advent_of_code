@@ -54,4 +54,9 @@ bool Node<T>::operator!=(const Node& other) const {
   return !(*this == other);
 }
 
+// template<typename T>
+// std::ostream operator<<(std::ostream& os, const Node<T>& node) {
+//   os << "Node<data: " << node.getData() << "; #children: " << node.m_children.size() << ">";
+// }
+
 }  // namespace utils

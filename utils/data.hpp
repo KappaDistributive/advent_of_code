@@ -26,8 +26,14 @@ class Node {
 
   bool operator!=(const Node& other) const;
 
-  // friend std::ostream& operator<<(std::ostream& os, const Node& node);
+  friend std::ostream& operator<<(std::ostream& os, const Node& node) {
+    os << "Node<data: " << node.getData()
+       << "; #children: " << node.m_children.size() << ">";
+
+    return os;
+  }
 };
+
 
 // template <typename T>
 // class Tree {
