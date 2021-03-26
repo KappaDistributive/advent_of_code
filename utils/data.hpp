@@ -18,9 +18,9 @@ class Node {
 
   void setData(const T& data);
 
-  size_t addChild(const Node child);
+  size_t addChild(const Node& child);
 
-  Node getChild(const size_t& childIndex) const;
+  Node& getChild(const size_t& childIndex);
 
   bool operator==(const Node& other) const;
 
@@ -43,7 +43,7 @@ class Tree {
  public:
   explicit Tree(const Node<T>& root);
 
-  const Node<T>& getRoot() const;
+  Node<T>& getRoot();
 
   Node<T>& insert();
 

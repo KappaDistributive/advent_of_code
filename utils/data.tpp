@@ -18,7 +18,7 @@ void Node<T>::setData(const T& data) {
 }
 
 template<typename T>
-size_t Node<T>::addChild(Node node) {
+size_t Node<T>::addChild(const Node& node) {
   size_t index = m_children.size();
   m_children.push_back(node);
 
@@ -26,7 +26,7 @@ size_t Node<T>::addChild(Node node) {
 }
 
 template<typename T>
-Node<T> Node<T>::getChild(const size_t& childIndex) const {
+Node<T>& Node<T>::getChild(const size_t& childIndex) {
   return m_children[childIndex];
 }
 
@@ -60,13 +60,13 @@ Tree<T>::Tree(const Node<T>& root)
   }
 
 template<typename T>
-const Node<T>& Tree<T>::getRoot() const {
+Node<T>& Tree<T>::getRoot() {
   return m_root;
 }
 
 template<typename T>
 bool Tree<T>::operator==(const Tree& other) const {
-  return this->getRoot() == other.getRoot();
+  return this->m_root == other.m_root;
 }
 
 template<typename T>

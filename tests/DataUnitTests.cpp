@@ -126,4 +126,21 @@ TEST(Tree, Equality_test0) {
   EXPECT_FALSE(tree != tree);
 }
 
+TEST(Tree, Equality_test1) {
+  utils::Tree<int> tree(utils::Node<int>{1});
+  utils::Tree<int> other(utils::Node<int>{1});
+
+  EXPECT_TRUE(tree == other);
+  EXPECT_FALSE(tree != other);
+}
+
+TEST(Tree, Equality_test2) {
+  utils::Tree<int> tree(utils::Node<int>{1});
+  tree.getRoot().addChild(utils::Node<int>{2});
+  utils::Tree<int> other(utils::Node<int>{1});
+
+  EXPECT_FALSE(tree == other);
+  EXPECT_TRUE(tree != other);
+}
+
 }  // namespace
