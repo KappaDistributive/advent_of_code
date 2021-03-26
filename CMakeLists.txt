@@ -10,9 +10,15 @@ find_package(GTest)
 if (GTEST_FOUND)
   enable_testing()
   include_directories(${GTEST_INCLUDE_DIRS})
-  add_executable(UtilsUnitTests tests/UtilsUnitTests.cpp)
-  target_link_libraries(UtilsUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
-  GTEST_DISCOVER_TESTS(UtilsUnitTests)
+
+  add_executable(InputUnitTests tests/InputUnitTests.cpp)
+  target_link_libraries(InputUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
+  GTEST_DISCOVER_TESTS(InputUnitTests)
+
+  add_executable(DataUnitTests tests/DataUnitTests.cpp)
+  target_link_libraries(DataUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
+  GTEST_DISCOVER_TESTS(DataUnitTests)
+  
 endif()
 
 add_executable(2015_01 2015/day_01.cpp)
