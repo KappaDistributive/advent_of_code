@@ -1,5 +1,5 @@
-#include <sstream>
 #include <gtest/gtest.h>
+#include <sstream>
 
 #include "../utils/data.hpp"
 
