@@ -69,4 +69,24 @@ TEST(Node, Equality_test3) {
   EXPECT_TRUE(lhs != rhs);
 }
 
+TEST(Node, Equality_test4) {
+  utils::Node<std::string> lhs("one");
+  lhs.addChild(utils::Node<std::string>("child"));
+  utils::Node<std::string> rhs("one");
+  rhs.addChild(utils::Node<std::string>("child"));
+
+  EXPECT_TRUE(lhs == rhs);
+  EXPECT_FALSE(lhs != rhs);
+}
+
+TEST(Node, Equality_test5) {
+  utils::Node<std::string> lhs("one");
+  lhs.addChild(utils::Node<std::string>("child"));
+  utils::Node<std::string> rhs("one");
+  rhs.addChild(utils::Node<std::string>("missfit"));
+
+  EXPECT_FALSE(lhs == rhs);
+  EXPECT_TRUE(lhs != rhs);
+}
+
 }  // namespace
