@@ -37,4 +37,36 @@ TEST(Node, GetChild) {
   EXPECT_EQ(want, got);
 }
 
+TEST(Node, Equality_test0) {
+  utils::Node<std::string> node("one");
+
+  EXPECT_TRUE(node == node);
+  EXPECT_FALSE(node != node);
+}
+
+TEST(Node, Equality_test1) {
+  utils::Node<std::string> lhs("one");
+  utils::Node<std::string> rhs("one");
+
+  EXPECT_TRUE(lhs == rhs);
+  EXPECT_FALSE(lhs != rhs);
+}
+
+TEST(Node, Equality_test2) {
+  utils::Node<std::string> lhs("lhs");
+  utils::Node<std::string> rhs("rhs");
+
+  EXPECT_FALSE(lhs == rhs);
+  EXPECT_TRUE(lhs != rhs);
+}
+
+TEST(Node, Equality_test3) {
+  utils::Node<std::string> lhs("lhs");
+  lhs.addChild(utils::Node<std::string>("child"));
+  utils::Node<std::string> rhs("rhs");
+
+  EXPECT_FALSE(lhs == rhs);
+  EXPECT_TRUE(lhs != rhs);
+}
+
 }  // namespace

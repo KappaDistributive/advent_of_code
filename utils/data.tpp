@@ -30,4 +30,28 @@ Node<T> Node<T>::getChild(const size_t& childIndex) const {
   return m_children[childIndex];
 }
 
+template<typename T>
+bool Node<T>::operator==(const Node& other) const {
+  bool equal{true};
+  if (this->getData() != other.getData()) {
+    equal = false;
+  } else if (this->m_children.size() != other.m_children.size()) {
+    equal = false;
+  } else {
+    for (size_t childIndex{0}; childIndex < this->m_children.size(); childIndex++) {
+      if (!(this->m_children[childIndex] == other.m_children[childIndex])) {
+        equal = false;
+        break;
+      }
+    }
+  }
+
+  return equal;
+}
+
+template<typename T>
+bool Node<T>::operator!=(const Node& other) const {
+  return !(*this == other);
+}
+
 }  // namespace utils

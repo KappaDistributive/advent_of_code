@@ -22,6 +22,10 @@ class Node {
 
   Node getChild(const size_t& childIndex) const;
 
+  bool operator==(const Node& other) const;
+
+  bool operator!=(const Node& other) const;
+
   // friend std::ostream& operator<<(std::ostream& os, const Node& node);
 };
 
