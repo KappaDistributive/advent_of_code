@@ -1,6 +1,9 @@
 #pragma once
 
+#include <deque>
+#include <list>
 #include <iostream>
+#include <iterator>
 #include <vector>
 
 namespace utils {
@@ -9,7 +12,7 @@ template<typename T>
 class Node {
  private:
   T m_data;
-  std::vector<Node<T>> m_children;
+  std::list<Node> m_children;
 
  public:
   explicit Node(const T& data);
@@ -18,7 +21,7 @@ class Node {
 
   void setData(const T& data);
 
-  size_t addChild(const Node& child);
+  Node& addChild(const Node& child);
 
   Node& getChild(const size_t& childIndex);
 
@@ -44,11 +47,6 @@ class Tree {
   explicit Tree(const Node<T>& root);
 
   Node<T>& getRoot();
-
-  Node<T>& insert();
-
-  Node<T>* follow_path(const std::vector<size_t>& path);
-
   bool operator==(const Tree& other) const;
 
   bool operator!=(const Tree& other) const;

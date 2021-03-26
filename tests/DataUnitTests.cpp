@@ -23,8 +23,8 @@ TEST(Node, SetData) {
 
 TEST(Node, AddChild) {
   utils::Node<std::string> node("one");
-  size_t want{0};
-  auto got = node.addChild(utils::Node<std::string>("two"));
+  utils::Node<std::string> want("two");
+  auto got = node.addChild(want);
 
   EXPECT_EQ(want, got);
 }
