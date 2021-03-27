@@ -24,7 +24,7 @@ TEST(Node, SetData) {
 TEST(Node, AddChild) {
   utils::Node<std::string> node("one");
   utils::Node<std::string> want("two");
-  auto got = node.addChild(want);
+  auto got = *node.addChild(want);
 
   EXPECT_EQ(want, got);
 }
@@ -108,6 +108,60 @@ TEST(Node, Print_test1) {
   ss << node;
   std::string got{ss.str()};
 
+  EXPECT_EQ(want, got);
+}
+
+TEST(NodeIterator, Dereference) {
+  using Node = utils::Node<int>;
+  Node node(1);
+  auto it = node.begin();
+  auto want = node.getData();
+  auto got = *it;
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(NodeIterator, Successor_test0) {
+  using Node = utils::Node<int>;
+  Node node(1);
+  Node child(2);
+  node.addChild(child);
+  auto it = node.begin();
+  auto want = child.getData();
+  auto got = *(++it);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(NodeIterator, Successor_test1) {
+  using Node = utils::Node<int>;
+  Node node(1);
+  auto child = node.addChild(Node(2));
+  child->addChild(Node(3));
+  child = node.addChild(Node(4));
+  child->addChild(Node(5));
+
+  auto want = std::vector<int>{1, 2, 3, 4, 5};
+  std::vector<int> got;
+  for (auto it = node.begin(); it != node.end(); it++) {
+    got.push_back(*it);
+  }
+  EXPECT_EQ(want, got);
+}
+
+TEST(NodeIterator, Successor_test2) {
+  using Node = utils::Node<int>;
+  Node node(1);
+  auto child = node.addChild(Node(2));
+  child->addChild(Node(3));
+  child = node.addChild(Node(4));
+  child->addChild(Node(5));
+
+  auto want = std::vector<int>{1, 2, 3, 4, 5};
+  std::vector<int> got;
+  for (auto node_value : node) {
+    got.push_back(node_value);
+  }
   EXPECT_EQ(want, got);
 }
 
