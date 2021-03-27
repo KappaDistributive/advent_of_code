@@ -1,6 +1,7 @@
 #include <cassert>
 #include <map>
 #include <set>
+#include <stack>
 
 #include "../utils/data.hpp"
 #include "../utils/input.hpp"
@@ -57,8 +58,49 @@ int part_one(const std::vector<std::string>& input) {
   return countOrbits(&tree.getRoot());
 }
 
+std::vector<Node*> findPath(Node* origin, Node* destination) {
+  std::set<std::stack<Node*>> paths;
+  std::stack<Node*> path;
+  path.push(origin);
+  paths.insert(path);
+  bool searching = !(origin == destination);
+
+  while (searching) {
+    std::set<std::stack<Node*>> extended_paths;
+    for (auto path : paths) {
+      Node* leaf = path.top();
+      for (auto child : leaf->getChildren()) {
+        auto extended_path = path;
+        extended_path.push(child);
+        extended_paths.insert(extended_path);
+        if (child == destination) {
+          std::vector<Node*> result;
+          while (extended_path.size() > 0) {
+            result.push_back(extended_path.top());
+            extended_path.pop();
+          }
+          return std::vector<Node*>(result.rbegin(), result.rend());
+        }
+      }
+    }
+    paths = extended_paths;
+  }
+
+  throw std::runtime_error("No path found!");
+}
+
 int part_two(const std::vector<std::string>& input) {
-  return -8;
+  auto tree = prepare_input(input);
+  auto root = &tree.getRoot();
+  auto you = tree.findByData(Node("YOU"))[0];
+  auto san = tree.findByData(Node("SAN"))[0];
+  auto path_to_you = findPath(root, you);
+  auto path_to_san = findPath(root, san);
+  size_t common_length{0};
+  while (path_to_you[common_length] == path_to_san[common_length]) {
+    common_length++;
+  }
+  return path_to_you.size() + path_to_san.size() - 2 * (common_length + 1);
 }
 
 int main() {
