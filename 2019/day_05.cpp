@@ -5,9 +5,11 @@
 
 std::vector<int> prepare_input(const std::vector<std::string>& input) {
     std::vector<int> intcodes;
-    std::transform(input.begin(), input.end(), std::back_inserter(intcodes),
-        [](std::string code) -> int { return std::stoi(code); }
-    );
+    std::transform(
+      input.begin(),
+      input.end(),
+      std::back_inserter(intcodes),
+        [](std::string code) -> int { return std::stoi(code); });
     return intcodes;
 }
 
@@ -27,7 +29,11 @@ class CPU {
     }
 
     int get_parameter(const Instruction& instruction, const size_t& index) {
-        int mode{(instruction.opcode / utils::pow(10, 2 + index)) % 10};
+        int mode{
+          (instruction.opcode /
+          utils::pow(
+            static_cast<size_t>(10),
+            static_cast<size_t>(2 + index))) % 10};
         switch (mode) {
             case 0:   // position mode
                 return memory[instruction.parameters[index]];

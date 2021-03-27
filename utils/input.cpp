@@ -91,6 +91,7 @@ T pow(T base, T exponent) {
 }
 
 template int pow<int>(int, int);
+template size_t pow<size_t>(size_t, size_t);
 
 template<typename T>
 T factorial(T n) {
