@@ -4,7 +4,7 @@
 
 std::vector<int> prepare_input(const std::vector<std::string>& input) {
   std::vector<int> blocks;
-  for (auto line: input) {
+  for (auto line : input) {
     blocks.push_back(std::stoi(line));
   }
   return blocks;

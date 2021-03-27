@@ -45,6 +45,8 @@ class Node {
 
   Node<T>& getChild(const size_t& childIndex);
 
+  std::vector<Node<T>*> getChildren();
+
   size_t size() const;
 
   bool operator==(const Node<T>& other) const;

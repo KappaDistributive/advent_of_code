@@ -32,6 +32,16 @@ Node<T>& Node<T>::getChild(const size_t& childIndex) {
 }
 
 template<typename T>
+std::vector<Node<T>*> Node<T>::getChildren() {
+  std::vector<Node<T>*> children;
+  for (auto it = m_children.begin(); it != m_children.end(); it++) {
+    children.push_back(&*it);
+  }
+
+  return children;
+}
+
+template<typename T>
 size_t Node<T>::size() const {
   size_t size{1};
   for (auto child: m_children) {

@@ -6,6 +6,9 @@
 #include "../utils/data.hpp"
 #include "../utils/input.hpp"
 
+using Node = utils::Node<std::pair<std::string, int>>;
+using Tree = utils::Tree<Node>;
+
 
 std::map<std::string, std::pair<int, std::vector<std::string>>>
 prepare_input(const std::vector<std::string>& input) {
@@ -58,11 +61,7 @@ std::string part_one(const std::vector<std::string>& input) {
 }
 
 
-utils::Tree<utils::Node<std::pair<std::string, int>>>
-create_tree(const std::vector<std::string>& input) {
-  using Node = utils::Node<std::pair<std::string, int>>;
-  using Tree = utils::Tree<Node>;
-
+Tree createTree(const std::vector<std::string>& input) {
   auto prepared_input = prepare_input(input);
   auto root_name = part_one(input);
   auto [root_weight, _] = prepared_input.at(root_name);
@@ -88,17 +87,70 @@ create_tree(const std::vector<std::string>& input) {
   return tree;
 }
 
+int weight(Node node) {
+  int weight{0};
+
+  for (auto it = node.begin(); it != node.end(); it++) {
+    auto node = *it;
+    weight += node->getData().second;
+  }
+
+  return weight;
+}
+
+int calculateTargetWeight(const std::vector<Node*>& children) {
+  std::map<int, int> histogram;
+  int mode_weight;
+  int mode{-1};
+
+  for (auto child : children) {
+    auto child_weight = weight(*child);
+    if (histogram.find(child_weight) == histogram.end()) {
+      histogram.insert({child_weight, 1});
+    } else {
+      histogram.at(child_weight)++;
+    }
+
+    if (mode == -1 || histogram.at(child_weight) > mode) {
+      mode_weight = child_weight;
+      mode = histogram.at(child_weight);
+    }
+  }
+
+  return mode_weight;
+}
+
+Node* oddOneOut(const std::vector<Node*> children) {
+  auto target_weight = calculateTargetWeight(children);
+  for (auto child : children) {
+    if (weight(*child) != target_weight) {
+      return child;
+    }
+  }
+  return nullptr;
+}
 
 int part_two(const std::vector<std::string>& input) {
-  auto tree = create_tree(input);
+  auto tree = createTree(input);
+  auto children = tree.getRoot().getChildren();
+  Node* odd_parent;
+  Node* odd_one = &tree.getRoot();
+  while (oddOneOut(children)) {
+    odd_parent = odd_one;
+    odd_one = oddOneOut(children);
+    children = odd_one->getChildren();
+  }
+  // std::cout << odd_one->getData().first << std::endl;
 
-  std::cout << tree.getRoot().size() << std::endl;
-  return 5;
+  int target_weight = calculateTargetWeight(odd_parent->getChildren());
+  int odd_weight = odd_one->getData().second;
+  int odd_weight_with_children = weight(*odd_one);
+  return odd_weight + target_weight - odd_weight_with_children;
 }
 
 
 int main() {
-  utils::Reader reader(std::filesystem::path("../2017/data/input_07_mock.txt"));
+  utils::Reader reader(std::filesystem::path("../2017/data/input_07.txt"));
   auto input = reader.get_lines();
 
   auto answer_one =  part_one(input);
