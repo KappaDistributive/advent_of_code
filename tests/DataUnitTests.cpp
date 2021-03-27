@@ -285,5 +285,4 @@ TEST(Tree, FindByData_test1) {
 
   EXPECT_EQ(want, got);
 }
-
 }  // namespace

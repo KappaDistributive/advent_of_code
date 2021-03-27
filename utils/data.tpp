@@ -179,5 +179,4 @@ bool
 Tree<Node>::operator!=(const Tree<Node>& other) const {
   return !(*this == other);
 }
-
 }  // namespace utils
