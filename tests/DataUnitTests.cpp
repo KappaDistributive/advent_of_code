@@ -134,14 +134,24 @@ TEST(NodeIterator, Successor_test0) {
 }
 
 TEST(NodeIterator, Successor_test1) {
+  /*
+  *           (1)
+  *          /    \
+  *        (2)     (4)
+  *       /     /   |   \
+  *     (3)   (5)  (6)  (7)
+  */
   using Node = utils::Node<int>;
   Node node(1);
-  auto child = node.addChild(Node(2));
-  child->addChild(Node(3));
-  child = node.addChild(Node(4));
-  child->addChild(Node(5));
+  auto node_two = node.addChild(Node(2));
+  node_two->addChild(Node(3));
+  auto node_four = node.addChild(Node(4));
+  node_four->addChild(Node(5));
+  node_four->addChild(Node(6));
+  node_four->addChild(Node(7));
 
-  auto want = std::vector<int>{1, 2, 3, 4, 5};
+  auto want = std::vector<int>{1, 2, 3, 4, 5, 6, 7};
+
   std::vector<int> got;
   for (auto it = node.begin(); it != node.end(); it++) {
     got.push_back((*it)->getData());
@@ -150,14 +160,24 @@ TEST(NodeIterator, Successor_test1) {
 }
 
 TEST(NodeIterator, Successor_test2) {
+  /*
+  *           (1)
+  *          /    \
+  *        (2)     (4)
+  *       /     /   |   \
+  *     (3)   (5)  (6)  (7)
+  */
   using Node = utils::Node<int>;
   Node node(1);
-  auto child = node.addChild(Node(2));
-  child->addChild(Node(3));
-  child = node.addChild(Node(4));
-  child->addChild(Node(5));
+  auto node_two = node.addChild(Node(2));
+  node_two->addChild(Node(3));
+  auto node_four = node.addChild(Node(4));
+  node_four->addChild(Node(5));
+  node_four->addChild(Node(6));
+  node_four->addChild(Node(7));
 
-  auto want = std::vector<int>{1, 2, 3, 4, 5};
+  auto want = std::vector<int>{1, 2, 3, 4, 5, 6, 7};
+
   std::vector<int> got;
   for (auto node_value : node) {
     got.push_back(node_value->getData());
