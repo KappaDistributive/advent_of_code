@@ -31,7 +31,7 @@ class Node {
     bool operator==(const Iterator<NodeType>& other) const;
     bool operator!=(const Iterator<NodeType>& other) const;
 
-    const T& operator*() const;
+    NodeType* operator*() const;
   };
 
  public:

@@ -127,9 +127,9 @@ Node<T>::Iterator<NodeType>::operator!=(const Node<T>::Iterator<NodeType>& other
 
 template<typename T>
 template<typename NodeType>
-const T&
+NodeType*
 Node<T>::Iterator<NodeType>::operator*() const {
-  return this->m_node->getData();
+  return this->m_node;
 }
 
 template<typename Node>
