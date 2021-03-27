@@ -45,6 +45,8 @@ class Node {
 
   Node<T>& getChild(const size_t& childIndex);
 
+  size_t size() const;
+
   bool operator==(const Node<T>& other) const;
 
   bool operator!=(const Node<T>& other) const;

@@ -32,6 +32,16 @@ Node<T>& Node<T>::getChild(const size_t& childIndex) {
 }
 
 template<typename T>
+size_t Node<T>::size() const {
+  size_t size{1};
+  for (auto child: m_children) {
+    size += child.size();
+  }
+
+  return size;
+}
+
+template<typename T>
 bool Node<T>::operator==(const Node<T>& other) const {
   bool equal{true};
   if (this->getData() != other.getData()) {

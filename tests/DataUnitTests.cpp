@@ -38,6 +38,37 @@ TEST(Node, GetChild) {
   EXPECT_EQ(want, got);
 }
 
+TEST(Node, Size_test0) {
+  utils::Node<std::string> node("one");
+  size_t want{1};
+  auto got = node.size();
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Node, Size_test1) {
+  /*
+  *           (1)
+  *          /    \
+  *        (2)     (4)
+  *       /     /   |   \
+  *     (3)   (5)  (6)  (7)
+  */
+  using Node = utils::Node<int>;
+  Node node(1);
+  auto node_two = node.addChild(Node(2));
+  node_two->addChild(Node(3));
+  auto node_four = node.addChild(Node(4));
+  node_four->addChild(Node(5));
+  node_four->addChild(Node(6));
+  node_four->addChild(Node(7));
+
+  size_t want{7};
+  auto got = node.size();
+
+  EXPECT_EQ(want, got);
+}
+
 TEST(Node, Equality_test0) {
   utils::Node<std::string> node("one");
 
