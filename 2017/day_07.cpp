@@ -1,15 +1,17 @@
 #include <cassert>
+#include <map>
 #include <regex>  // NOLINT
 #include <set>
 
 #include "../utils/data.hpp"
 #include "../utils/input.hpp"
 
-std::vector<std::tuple<std::string, int, std::vector<std::string>>>
+
+std::map<std::string, std::pair<int, std::vector<std::string>>>
 prepare_input(const std::vector<std::string>& input) {
   std::regex node_re{"^(\\w+) \\((\\d+)\\).*$"};
   std::smatch matches;
-  std::vector<std::tuple<std::string, int, std::vector<std::string>>> result;
+  std::map<std::string, std::pair<int, std::vector<std::string>>> result;
 
   for (auto line : input) {
     std::regex_match(line, matches, node_re);
@@ -28,21 +30,23 @@ prepare_input(const std::vector<std::string>& input) {
         children.push_back(copy);
       }
     }
-    result.push_back({name, weight, children});
+    result.insert({name, {weight, children}});
   }
 
   return result;
 }
 
+
 std::string part_one(const std::vector<std::string>& input) {
   auto prepared_input = prepare_input(input);
   std::set<std::string> root_candidates;
 
-  for (auto [name, weight, children] : prepared_input) {
+  for (auto [name, meta] : prepared_input) {
     root_candidates.insert(name);
   }
 
-  for (auto [name, weight, children] : prepared_input) {
+  for (auto [name, meta] : prepared_input) {
+    auto [weight, children] = meta;
     for (auto child : children) {
       root_candidates.erase(child);
     }
@@ -53,12 +57,48 @@ std::string part_one(const std::vector<std::string>& input) {
   return *root_candidates.begin();
 }
 
-int part_two(const std::vector<std::string>& input) {
-  return 34;
+
+utils::Tree<utils::Node<std::pair<std::string, int>>>
+create_tree(const std::vector<std::string>& input) {
+  using Node = utils::Node<std::pair<std::string, int>>;
+  using Tree = utils::Tree<Node>;
+
+  auto prepared_input = prepare_input(input);
+  auto root_name = part_one(input);
+  auto [root_weight, _] = prepared_input.at(root_name);
+  std::pair<std::string, int> root_data = {root_name, root_weight};
+  Tree tree(Node{root_data});
+  std::set<Node*> leafs{&tree.getRoot()};
+
+  while (leafs.size() > 0) {
+    std::set<Node*> new_leafs;
+    for (auto leaf : leafs) {
+      auto [weight, children] = prepared_input.at(leaf->getData().first);
+      for (auto child_name : children) {
+        auto child_meta = prepared_input.at(child_name);
+        auto [child_weight, __] = child_meta;
+        auto child_node = leaf->addChild(
+          Node{std::make_pair(child_name, child_weight)});
+        new_leafs.insert(child_node);
+      }
+    }
+    leafs = new_leafs;
+  }
+
+  return tree;
 }
 
+
+int part_two(const std::vector<std::string>& input) {
+  auto tree = create_tree(input);
+
+  std::cout << tree.getRoot().size() << std::endl;
+  return 5;
+}
+
+
 int main() {
-  utils::Reader reader(std::filesystem::path("../2017/data/input_07.txt"));
+  utils::Reader reader(std::filesystem::path("../2017/data/input_07_mock.txt"));
   auto input = reader.get_lines();
 
   auto answer_one =  part_one(input);
