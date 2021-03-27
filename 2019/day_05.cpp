@@ -29,14 +29,15 @@ class CPU {
     int get_parameter(const Instruction& instruction, const size_t& index) {
         int mode{(instruction.opcode / utils::pow(10, 2 + index)) % 10};
         switch (mode) {
-            case 0:  // position mode
+            case 0:   // position mode
                 return memory[instruction.parameters[index]];
                 break;
-            case 1: // immediate mode
+            case 1:  // immediate mode
                 return instruction.parameters[index];
                 break;
             default:
-                throw std::runtime_error("Invalid parameter mode " + std::to_string(mode));
+                throw std::runtime_error(
+                    "Invalid parameter mode " + std::to_string(mode));
                 break;
         }
     }
@@ -49,11 +50,15 @@ class CPU {
         switch (instruction.opcode % 100) {
             case 1:
                 assert(instruction.parameters.size() == 3);
-                memory[instruction.parameters[2]] = get_parameter(instruction, 0) + get_parameter(instruction, 1);
+                memory[instruction.parameters[2]] =
+                    get_parameter(instruction, 0) +
+                    get_parameter(instruction, 1);
                 break;
             case 2:
                 assert(instruction.parameters.size() == 3);
-                memory[instruction.parameters[2]] = get_parameter(instruction, 0) * get_parameter(instruction, 1);
+                memory[instruction.parameters[2]] =
+                  get_parameter(instruction, 0) *
+                  get_parameter(instruction, 1);
                 break;
             case 3:
                 assert(instruction.parameters.size() == 1);
@@ -63,7 +68,8 @@ class CPU {
                 break;
             case 4:
                 assert(instruction.parameters.size() == 1);
-                std::cout << "Output: " << get_parameter(instruction, 0) << std::endl;
+                std::cout << "Output: "
+                          << get_parameter(instruction, 0) << std::endl;
                 break;
             case 5:
                 assert(instruction.parameters.size() == 2);
@@ -81,17 +87,24 @@ class CPU {
                 break;
             case 7:
                 assert(instruction.parameters.size() == 3);
-                memory[instruction.parameters[2]] = static_cast<int>(get_parameter(instruction, 0) < get_parameter(instruction, 1));
+                memory[instruction.parameters[2]] = static_cast<int>(
+                  get_parameter(instruction, 0) <
+                  get_parameter(instruction, 1));
                 break;
             case 8:
                 assert(instruction.parameters.size() == 3);
-                memory[instruction.parameters[2]] = static_cast<int>(get_parameter(instruction, 0) == get_parameter(instruction, 1));
+                memory[instruction.parameters[2]] = static_cast<int>(
+                  get_parameter(instruction, 0) ==
+                  get_parameter(instruction, 1));
                 break;
             case 99:
                 halting = true;
                 break;
             default:
-                throw std::runtime_error("Encountered invalid opcode: " + std::to_string(instruction.opcode)); break;
+                throw std::runtime_error(
+                  "Encountered invalid opcode: " +
+                  std::to_string(instruction.opcode));
+                break;
         }
 
         if (update_instruction_pointer) {
@@ -108,10 +121,16 @@ class CPU {
         std::vector<int> parameters;
         switch (opcode % 100) {
             case 1:
-                parameters = { this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2], this->memory[this->instruction_pointer+3] };
+                parameters = {
+                  this->memory[this->instruction_pointer+1],
+                  this->memory[this->instruction_pointer+2],
+                  this->memory[this->instruction_pointer+3] };
                 break;
             case 2:
-                parameters = { this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2], this->memory[this->instruction_pointer+3] };
+                parameters = {
+                  this->memory[this->instruction_pointer+1],
+                  this->memory[this->instruction_pointer+2],
+                  this->memory[this->instruction_pointer+3] };
                 break;
             case 3:
                 parameters = {this->memory[this->instruction_pointer+1]};
@@ -120,16 +139,26 @@ class CPU {
                 parameters = {this->memory[this->instruction_pointer+1]};
                 break;
             case 5:
-                parameters = {this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2]};
+                parameters = {
+                  this->memory[this->instruction_pointer+1],
+                  this->memory[this->instruction_pointer+2] };
                 break;
             case 6:
-                parameters = {this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2]};
+                parameters = {
+                  this->memory[this->instruction_pointer+1],
+                  this->memory[this->instruction_pointer+2] };
                 break;
             case 7:
-                parameters = { this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2], this->memory[this->instruction_pointer+3] };
+                parameters = {
+                  this->memory[this->instruction_pointer+1],
+                  this->memory[this->instruction_pointer+2],
+                  this->memory[this->instruction_pointer+3] };
                 break;
             case 8:
-                parameters = { this->memory[this->instruction_pointer+1], this->memory[this->instruction_pointer+2], this->memory[this->instruction_pointer+3] };
+                parameters = {
+                  this->memory[this->instruction_pointer+1],
+                  this->memory[this->instruction_pointer+2],
+                  this->memory[this->instruction_pointer+3] };
                 break;
             default:
                 parameters = {};
