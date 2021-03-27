@@ -112,32 +112,36 @@ TEST(Node, Print_test1) {
 }
 
 TEST(Tree, Initialization) {
-  utils::Node<int> want{1};
-  utils::Tree<int> tree(want);
+  using Node = utils::Node<int>;
+  Node want{1};
+  utils::Tree<Node> tree(want);
   auto got = tree.getRoot();
 
   EXPECT_EQ(want, got);
 }
 
 TEST(Tree, Equality_test0) {
-  utils::Tree<int> tree(utils::Node<int>{1});
+  using Node = utils::Node<int>;
+  utils::Tree<Node> tree(utils::Node<int>{1});
 
   EXPECT_TRUE(tree == tree);
   EXPECT_FALSE(tree != tree);
 }
 
 TEST(Tree, Equality_test1) {
-  utils::Tree<int> tree(utils::Node<int>{1});
-  utils::Tree<int> other(utils::Node<int>{1});
+  using Node = utils::Node<int>;
+  utils::Tree<Node> tree(utils::Node<int>{1});
+  utils::Tree<Node> other(utils::Node<int>{1});
 
   EXPECT_TRUE(tree == other);
   EXPECT_FALSE(tree != other);
 }
 
 TEST(Tree, Equality_test2) {
-  utils::Tree<int> tree(utils::Node<int>{1});
+  using Node = utils::Node<int>;
+  utils::Tree<Node> tree(utils::Node<int>{1});
   tree.getRoot().addChild(utils::Node<int>{2});
-  utils::Tree<int> other(utils::Node<int>{1});
+  utils::Tree<Node> other(utils::Node<int>{1});
 
   EXPECT_FALSE(tree == other);
   EXPECT_TRUE(tree != other);

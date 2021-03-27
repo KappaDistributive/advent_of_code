@@ -12,7 +12,7 @@ template<typename T>
 class Node {
  private:
   T m_data;
-  std::list<Node> m_children;
+  std::list<Node<T>> m_children;
 
  public:
   explicit Node(const T& data);
@@ -21,15 +21,15 @@ class Node {
 
   void setData(const T& data);
 
-  Node& addChild(const Node& child);
+  Node<T>& addChild(const Node<T>& child);
 
-  Node& getChild(const size_t& childIndex);
+  Node<T>& getChild(const size_t& childIndex);
 
-  bool operator==(const Node& other) const;
+  bool operator==(const Node<T>& other) const;
 
-  bool operator!=(const Node& other) const;
+  bool operator!=(const Node<T>& other) const;
 
-  friend std::ostream& operator<<(std::ostream& os, const Node& node) {
+  friend std::ostream& operator<<(std::ostream& os, const Node<T>& node) {
     os << "Node<data: " << node.getData()
        << "; #children: " << node.m_children.size() << ">";
 
@@ -38,18 +38,18 @@ class Node {
 };
 
 
-template <typename T>
+template <typename Node>
 class Tree {
  private:
-  Node<T> m_root;
+  Node m_root;
 
  public:
-  explicit Tree(const Node<T>& root);
+  explicit Tree(const Node& root);
 
-  Node<T>& getRoot();
-  bool operator==(const Tree& other) const;
+  Node& getRoot();
+  bool operator==(const Tree<Node>& other) const;
 
-  bool operator!=(const Tree& other) const;
+  bool operator!=(const Tree<Node>& other) const;
 };
 
 }  // namespace utils

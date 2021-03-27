@@ -18,7 +18,7 @@ void Node<T>::setData(const T& data) {
 }
 
 template<typename T>
-Node<T>& Node<T>::addChild(const Node& node) {
+Node<T>& Node<T>::addChild(const Node<T>& node) {
   m_children.emplace_back(node);
 
   return m_children.back();
@@ -32,7 +32,7 @@ Node<T>& Node<T>::getChild(const size_t& childIndex) {
 }
 
 template<typename T>
-bool Node<T>::operator==(const Node& other) const {
+bool Node<T>::operator==(const Node<T>& other) const {
   bool equal{true};
   if (this->getData() != other.getData()) {
     equal = false;
@@ -55,27 +55,27 @@ bool Node<T>::operator==(const Node& other) const {
 }
 
 template<typename T>
-bool Node<T>::operator!=(const Node& other) const {
+bool Node<T>::operator!=(const Node<T>& other) const {
   return !(*this == other);
 }
 
-template<typename T>
-Tree<T>::Tree(const Node<T>& root)
+template<typename Node>
+Tree<Node>::Tree(const Node& root)
   : m_root(root) {
   }
 
-template<typename T>
-Node<T>& Tree<T>::getRoot() {
+template<typename Node>
+Node& Tree<Node>::getRoot() {
   return m_root;
 }
 
-template<typename T>
-bool Tree<T>::operator==(const Tree& other) const {
+template<typename Node>
+bool Tree<Node>::operator==(const Tree<Node>& other) const {
   return this->m_root == other.m_root;
 }
 
-template<typename T>
-bool Tree<T>::operator!=(const Tree& other) const {
+template<typename Node>
+bool Tree<Node>::operator!=(const Tree<Node>& other) const {
   return !(*this == other);
 }
 
