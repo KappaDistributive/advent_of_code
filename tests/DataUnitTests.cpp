@@ -221,4 +221,38 @@ TEST(Tree, Equality_test2) {
   EXPECT_TRUE(tree != other);
 }
 
+TEST(Tree, FindByData_test0) {
+  using Node = utils::Node<std::string>;
+  utils::Tree<Node> tree(Node("root"));
+
+  std::vector<Node*> want{&tree.getRoot()};
+  auto got = tree.findByData(Node("root"));
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Tree, FindByData_test1) {
+  /*
+  *           (3)
+  *          /    \
+  *        (2)     (4)
+  *       /     /   |   \
+  *     (3)   (3)  (6)  (7)
+  */
+  using Node = utils::Node<int>;
+  utils::Tree<Node> tree(Node(3));
+  auto match_0 = &tree.getRoot();
+  auto node_two = match_0->addChild(Node(2));
+  auto match_1 = node_two->addChild(Node(3));
+  auto node_four = match_0->addChild(Node(4));
+  auto match_2 = node_four->addChild(Node(3));
+  node_four->addChild(Node(6));
+  node_four->addChild(Node(7));
+
+  std::vector<Node*> want = {match_0, match_1, match_2};
+  auto got = tree.findByData(Node(3));
+
+  EXPECT_EQ(want, got);
+}
+
 }  // namespace

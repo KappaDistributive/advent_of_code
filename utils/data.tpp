@@ -138,17 +138,35 @@ Tree<Node>::Tree(const Node& root)
   }
 
 template<typename Node>
-Node& Tree<Node>::getRoot() {
+Node&
+Tree<Node>::getRoot() {
   return m_root;
 }
 
 template<typename Node>
-bool Tree<Node>::operator==(const Tree<Node>& other) const {
+std::vector<Node*>
+Tree<Node>::findByData(const Node& reference) {
+  std::vector<Node*> matches;
+
+  for (auto it = m_root.begin(); it != m_root.end(); it++) {
+    if ((*it)->getData() == reference.getData()) {
+      Node* node = *it;
+      matches.push_back(node);
+    }
+  }
+
+  return matches;
+}
+
+template<typename Node>
+bool
+Tree<Node>::operator==(const Tree<Node>& other) const {
   return this->m_root == other.m_root;
 }
 
 template<typename Node>
-bool Tree<Node>::operator!=(const Tree<Node>& other) const {
+bool
+Tree<Node>::operator!=(const Tree<Node>& other) const {
   return !(*this == other);
 }
 

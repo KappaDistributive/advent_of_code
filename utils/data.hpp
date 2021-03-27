@@ -70,6 +70,9 @@ class Tree {
   explicit Tree(const Node& root);
 
   Node& getRoot();
+
+  std::vector<Node*> findByData(const Node& reference);
+
   bool operator==(const Tree<Node>& other) const;
 
   bool operator!=(const Tree<Node>& other) const;
