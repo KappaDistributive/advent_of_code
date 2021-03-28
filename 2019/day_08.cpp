@@ -34,7 +34,7 @@ int find_pixel(const size_t& x,
       return image[z][y * WIDTH + x];
     }
   }
-  std::runtime_error("This should never happen!");
+  throw std::runtime_error("Wasn't able to find a non-transparent pixel!");
 }
 
 size_t part_one(const std::string& input) {
