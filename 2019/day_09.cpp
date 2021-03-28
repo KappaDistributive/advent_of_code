@@ -30,7 +30,7 @@ class CPU {
 
   int get_parameter(const Instruction& instruction, const size_t& index) {
     int mode{
-    (instruction.opcode /
+    static_cast<int>(instruction.opcode /
     utils::pow(
       static_cast<size_t>(10),
       static_cast<size_t>(2 + index))) % 10};
