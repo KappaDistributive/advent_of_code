@@ -1,4 +1,7 @@
 #include <algorithm>
+#include <array>
+#include <deque>
+#include <optional>
 #include <cassert>
 
 #include "../utils/input.hpp"
@@ -20,25 +23,32 @@ struct Instruction {
 
 class CPU {
  private:
+    bool verbose;
     std::vector<int> memory;
     size_t instruction_pointer;
-    const std::vector<int> input_tape;
-    size_t input_index;
+    std::deque<int>* input_tape;
     const bool use_input_tape;
+    bool is_waiting_for_input{false};
     int output{-1};
 
  public:
-    explicit CPU(const std::vector<int>& intcodes)
-        : memory(intcodes), instruction_pointer(0),
-          input_tape(std::vector<int>()), input_index(0),
-          use_input_tape(false) {
+    explicit CPU(const std::vector<int>& intcodes,
+                 bool verbose = false)
+        : memory(intcodes),
+          instruction_pointer(0),
+          input_tape(nullptr),
+          use_input_tape(false),
+          verbose(verbose) {
     }
 
     explicit CPU(const std::vector<int>& intcodes,
-                 const std::vector<int>& input_tape)
-        : memory(intcodes), instruction_pointer(0),
-          input_tape(input_tape), input_index(0),
-          use_input_tape(true) {
+                 std::deque<int>* input_tape,
+                 bool verbose = false)
+        : memory(intcodes),
+          instruction_pointer(0),
+          input_tape(input_tape),
+          use_input_tape(true),
+          verbose(verbose) {
     }
 
     int get_parameter(const Instruction& instruction, const size_t& index) {
@@ -66,6 +76,7 @@ class CPU {
         std::string raw_input{""};
         int input{-1};
         bool update_instruction_pointer{true};
+        is_waiting_for_input = false;
 
         switch (instruction.opcode % 100) {
             case 1:
@@ -83,7 +94,12 @@ class CPU {
             case 3:
                 assert(instruction.parameters.size() == 1);
                 if (use_input_tape) {
-                    input = input_tape[input_index++];
+                    if (input_tape->size() > 0) {
+                        input = input_tape->front();
+                        input_tape->pop_front();
+                    } else {
+                        is_waiting_for_input = true;
+                    }
                 } else {
                     std::cout << "Input required:" << std::endl;
                     std::cin >> raw_input;
@@ -94,7 +110,9 @@ class CPU {
             case 4:
                 assert(instruction.parameters.size() == 1);
                 output = get_parameter(instruction, 0);
-                std::cout << "Output: " << output << std::endl;
+                if (verbose) {
+                    std::cout << "Output: " << output << std::endl;
+                }
                 break;
             case 5:
                 assert(instruction.parameters.size() == 2);
@@ -132,11 +150,11 @@ class CPU {
                 break;
         }
 
-        if (update_instruction_pointer) {
+        if (!is_waiting_for_input && update_instruction_pointer) {
             this->instruction_pointer += 1 + instruction.parameters.size();
         }
 
-        return halting;
+        return is_waiting_for_input || halting;
     }
 
     bool execute() {
@@ -193,9 +211,14 @@ class CPU {
         return execute(instruction);
     }
 
-    int run() {
-        while (!execute()) {}
-        return this->memory[0];
+    std::pair<int, bool> run() {
+        while (!execute()) {
+        }
+        return {this->memory[0], is_waiting_for_input};
+    }
+
+    void reset_instruction_pointer() {
+        instruction_pointer = 0;
     }
 
     int get_output() const {
@@ -213,13 +236,19 @@ class CPU {
 
 int part_one(const std::vector<std::string>& input) {
     auto intcodes = prepare_input(input);
-    std::vector<int> phase_settings{{0, 1, 2, 3, 4}};
+    std::array<int, 5> phase_settings{{0, 1, 2, 3, 4}};
+    std::array<std::deque<int>*, 5> inputs = {nullptr};
+    for (size_t index{0}; index < 5; index++) {
+        inputs[index] = new std::deque<int>();
+    }
     int result{0};
     do {
         int thrust{0};
-        for (auto phase_setting : phase_settings) {
-            CPU cpu(intcodes, {phase_setting, thrust});
-            cpu.run();
+        for (size_t index{0}; index < 5; index++) {
+            inputs[index]->push_back(phase_settings[index]);
+            inputs[index]->push_back(thrust);
+            CPU cpu(intcodes, inputs[index]);
+            assert(!std::get<1>(cpu.run()));
             thrust = cpu.get_output();
         }
         if (thrust > result) {
@@ -228,11 +257,57 @@ int part_one(const std::vector<std::string>& input) {
     } while (std::next_permutation(
         phase_settings.begin(),
         phase_settings.end()));
+
+    for (size_t index{0}; index < 5; index++) {
+        delete inputs[index];
+    }
     return result;
 }
 
 int part_two(const std::vector<std::string>& input) {
-    return 765;
+    auto intcodes = prepare_input(input);
+    std::array<int, 5> phase_settings{{5, 6, 7, 8, 9}};
+    bool done = false;
+    std::array<std::deque<int>*, 5> inputs = {nullptr};
+    std::array<CPU*, 5> amplifiers = {nullptr};
+    int result{0};
+    do {
+        done = false;
+        // initialize inputs & cpus
+        for (size_t index{0}; index < 5; index++) {
+            delete inputs[index];
+            inputs[index] = new std::deque<int>();
+            inputs[index]->push_back(phase_settings[index]);
+            if (index == 0) {
+                inputs[index]->push_back(0);
+            }
+            delete amplifiers[index];
+            amplifiers[index] = new CPU(intcodes, inputs[index]);
+        }
+
+        while (!done) {
+            done = true;
+            for (size_t index{0}; index < 5; index++) {
+                auto [_, is_waiting_for_input] = amplifiers[index]->run();
+                inputs[(index + 1) % 5]->push_back(
+                    amplifiers[index]->get_output());
+                if (is_waiting_for_input) {
+                    done = false;
+                }
+            }
+        }
+        if (amplifiers[4]->get_output() > result) {
+            result = amplifiers[4]->get_output();
+        }
+    } while (std::next_permutation(
+        phase_settings.begin(),
+        phase_settings.end()));
+
+    for (size_t index{0}; index < 5; index++) {
+        delete inputs[index];
+        delete amplifiers[index];
+    }
+    return result;
 }
 
 int main() {
