@@ -4,6 +4,8 @@
 
 #include "../utils/input.hpp"
 
+#define assertm(exp, msg) assert(((void)msg, exp))
+
 std::vector<int64_t> prepare_input(const std::vector<std::string>& input) {
   std::vector<int64_t> intcodes;
   std::transform(
@@ -41,12 +43,15 @@ class CPU {
     }
   }
 
-  int64_t& get_parameter(Instruction instruction, const size_t& index) {
-    int64_t mode{
-    static_cast<int64_t>(instruction.opcode /
+  int64_t get_mode(const Instruction& instruction, const size_t& index) {
+    return static_cast<int64_t>(instruction.opcode /
     utils::pow(
       static_cast<size_t>(10),
-      static_cast<size_t>(2 + index))) % 10};
+      static_cast<size_t>(2 + index))) % 10;
+  }
+
+  int64_t& get_parameter(Instruction instruction, const size_t& index) {
+    auto mode = get_mode(instruction, index);
     switch (mode) {
     case 0:   // position mode
       return this->get_memory(instruction.parameters[index]);
@@ -73,12 +78,16 @@ bool execute(const Instruction& instruction) {
   switch (instruction.opcode % 100) {
     case 1:
       assert(instruction.parameters.size() == 3);
+      assertm(get_mode(instruction, 2) != 1,
+              "Parameters that an instruction writes to cannot be in immediate mode.");  // NOLINT
       this->get_parameter(instruction, 2) =
         get_parameter(instruction, 0) +
         get_parameter(instruction, 1);
       break;
     case 2:
       assert(instruction.parameters.size() == 3);
+      assertm(get_mode(instruction, 2) != 1,
+              "Parameters that an instruction writes to cannot be in immediate mode.");  // NOLINT
       this->get_parameter(instruction, 2) =
         get_parameter(instruction, 0) *
         get_parameter(instruction, 1);
@@ -87,6 +96,9 @@ bool execute(const Instruction& instruction) {
       assert(instruction.parameters.size() == 1);
       std::cout << "Input required:" << std::endl;
       std::cin >> input;
+      assertm(get_mode(instruction, 2) != 1,
+              "Parameters that an instruction writes to cannot be in immediate mode.");  // NOLINT
+      assert(get_mode(instruction, 0) != 1);
       this->get_parameter(instruction, 0) =
         std::strtoll(input.c_str(), NULL, 10);
       break;
@@ -113,12 +125,17 @@ bool execute(const Instruction& instruction) {
       break;
     case 7:
       assert(instruction.parameters.size() == 3);
+      assertm(get_mode(instruction, 2) != 1,
+              "Parameters that an instruction writes to cannot be in immediate mode.");  // NOLINT
+      assert(get_mode(instruction, 2) != 1);
       this->get_parameter(instruction, 2) = static_cast<int64_t>(
         get_parameter(instruction, 0) <
         get_parameter(instruction, 1));
       break;
     case 8:
       assert(instruction.parameters.size() == 3);
+      assertm(get_mode(instruction, 2) != 1,
+              "Parameters that an instruction writes to cannot be in immediate mode.");  // NOLINT
       this->get_parameter(instruction, 2) = static_cast<int64_t>(
         get_parameter(instruction, 0) ==
         get_parameter(instruction, 1));
