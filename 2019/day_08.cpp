@@ -26,6 +26,17 @@ prepare_input(const std::string& input) {
   return image;
 }
 
+int find_pixel(const size_t& x,
+               const size_t& y,
+               const std::vector<std::array<int, WIDTH * HEIGHT>>& image) {
+  for (size_t z{0}; z < image.size(); z++) {
+    if (image[z][y * WIDTH + x] != 2) {
+      return image[z][y * WIDTH + x];
+    }
+  }
+  std::runtime_error("This should never happen!");
+}
+
 size_t part_one(const std::string& input) {
   auto image = prepare_input(input);
 
@@ -55,8 +66,15 @@ size_t part_one(const std::string& input) {
   return num_ones * num_twos;
 }
 
-int part_two(const std::string& input) {
-  return 6;
+void part_two(const std::string& input) {
+  auto image = prepare_input(input);
+  for (size_t y{0}; y < HEIGHT; y++) {
+    for (size_t x{0}; x < WIDTH; x++) {
+      auto pixel = find_pixel(x, y, image);
+      std::cout << (pixel == 0 ? '.' : '#');
+    }
+    std::cout << std::endl;
+  }
 }
 
 int main() {
@@ -66,8 +84,9 @@ int main() {
 
   auto answer_one =  part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two =  part_two(input);
-  std::cout << "The answer to part two is: " << answer_two << std::endl;
+  std::cout << "The answer to part two is: " << std::endl;
+  part_two(input);
+
   return 0;
 }
 
