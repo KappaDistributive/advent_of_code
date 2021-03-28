@@ -4,18 +4,20 @@
 
 #include "../utils/input.hpp"
 
-std::vector<int> prepare_input(const std::vector<std::string>& input) {
-  std::vector<int> intcodes;
+std::vector<int64_t> prepare_input(const std::vector<std::string>& input) {
+  std::vector<int64_t> intcodes;
   std::transform(
     input.begin(),
     input.end(),
     std::back_inserter(intcodes),
-      [](std::string code) -> int { return std::stoi(code); });
+      [](std::string code) -> int64_t {
+        return std::strtoll(code.c_str(), NULL, 10);
+      });
   return intcodes;
 }
 
 struct Instruction {
-  int opcode;
+  int64_t opcode;
   std::vector<int64_t> parameters;
 };
 
@@ -28,7 +30,7 @@ class CPU {
   bool verbose;
 
  public:
-  explicit CPU(const std::vector<int>& intcodes,
+  explicit CPU(const std::vector<int64_t>& intcodes,
                const bool& verbose = true)
       : instruction_pointer(0),
         relative_base(0),
@@ -39,9 +41,9 @@ class CPU {
     }
   }
 
-  int get_parameter(const Instruction& instruction, const size_t& index) {
-    int mode{
-    static_cast<int>(instruction.opcode /
+  int64_t& get_parameter(Instruction instruction, const size_t& index) {
+    int64_t mode{
+    static_cast<int64_t>(instruction.opcode /
     utils::pow(
       static_cast<size_t>(10),
       static_cast<size_t>(2 + index))) % 10};
@@ -71,13 +73,13 @@ bool execute(const Instruction& instruction) {
   switch (instruction.opcode % 100) {
     case 1:
       assert(instruction.parameters.size() == 3);
-      this->get_memory(instruction.parameters[2]) =
+      this->get_parameter(instruction, 2) =
         get_parameter(instruction, 0) +
         get_parameter(instruction, 1);
       break;
     case 2:
       assert(instruction.parameters.size() == 3);
-      this->get_memory(instruction.parameters[2]) =
+      this->get_parameter(instruction, 2) =
         get_parameter(instruction, 0) *
         get_parameter(instruction, 1);
       break;
@@ -85,7 +87,8 @@ bool execute(const Instruction& instruction) {
       assert(instruction.parameters.size() == 1);
       std::cout << "Input required:" << std::endl;
       std::cin >> input;
-      this->get_memory(instruction.parameters[0]) = std::stoi(input);
+      this->get_parameter(instruction, 0) =
+        std::strtoll(input.c_str(), NULL, 10);
       break;
     case 4:
       assert(instruction.parameters.size() == 1);
@@ -110,13 +113,13 @@ bool execute(const Instruction& instruction) {
       break;
     case 7:
       assert(instruction.parameters.size() == 3);
-      this->get_memory(instruction.parameters[2]) = static_cast<int>(
+      this->get_parameter(instruction, 2) = static_cast<int64_t>(
         get_parameter(instruction, 0) <
         get_parameter(instruction, 1));
       break;
     case 8:
       assert(instruction.parameters.size() == 3);
-      this->get_memory(instruction.parameters[2]) = static_cast<int>(
+      this->get_parameter(instruction, 2) = static_cast<int64_t>(
         get_parameter(instruction, 0) ==
         get_parameter(instruction, 1));
       break;
@@ -187,6 +190,9 @@ bool execute(const Instruction& instruction) {
           this->get_memory(this->instruction_pointer+2),
           this->get_memory(this->instruction_pointer+3) };
         break;
+      case 9:
+        parameters = {this->get_memory(this->instruction_pointer+1)};
+        break;
       default:
         parameters = {};
         break;
@@ -195,13 +201,9 @@ bool execute(const Instruction& instruction) {
     return execute(instruction);
   }
 
-  int run() {
+  int64_t run() {
     while (!execute()) {}
     return this->get_memory(0);
-  }
-
-  void set_memory(size_t location, int value) {
-    this->get_memory(location) = value;
   }
 
   int64_t& get_memory(const size_t& index) {
@@ -216,14 +218,14 @@ bool execute(const Instruction& instruction) {
   }
 };
 
-int part_one(const std::vector<std::string>& input) {
+int64_t part_one(const std::vector<std::string>& input) {
   auto intcodes = prepare_input(input);
   CPU cpu(intcodes);
   cpu.run();
   return cpu.get_output();
 }
 
-int part_two(const std::vector<std::string>& input) {
+int64_t part_two(const std::vector<std::string>& input) {
   auto intcodes = prepare_input(input);
   CPU cpu(intcodes);
   cpu.run();
@@ -231,7 +233,7 @@ int part_two(const std::vector<std::string>& input) {
 }
 
 int main() {
-  utils::Reader reader(std::filesystem::path("../2019/data/input_05.txt"));
+  utils::Reader reader(std::filesystem::path("../2019/data/input_09.txt"));
   auto input = utils::split_string(reader.get_lines()[0], ',');
 
   auto answer_one =  part_one(input);
