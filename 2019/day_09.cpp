@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <map>
 
 #include "../utils/input.hpp"
 
@@ -15,17 +16,27 @@ std::vector<int> prepare_input(const std::vector<std::string>& input) {
 
 struct Instruction {
   int opcode;
-  std::vector<int> parameters;
+  std::vector<int64_t> parameters;
 };
 
 class CPU {
  private:
-  std::vector<int> memory;
+  std::map<size_t, int64_t> memory;
   size_t instruction_pointer;
+  size_t relative_base;
+  int64_t output;
+  bool verbose;
 
  public:
-  explicit CPU(const std::vector<int>& intcodes)
-      : memory(intcodes), instruction_pointer(0) {
+  explicit CPU(const std::vector<int>& intcodes,
+               const bool& verbose = true)
+      : instruction_pointer(0),
+        relative_base(0),
+        output(0),
+        verbose(verbose) {
+    for (size_t index{0}; index < intcodes.size(); index++) {
+      this->get_memory(index) = static_cast<int64_t>(intcodes[index]);
+    }
   }
 
   int get_parameter(const Instruction& instruction, const size_t& index) {
@@ -36,10 +47,14 @@ class CPU {
       static_cast<size_t>(2 + index))) % 10};
     switch (mode) {
     case 0:   // position mode
-      return memory[instruction.parameters[index]];
+      return this->get_memory(instruction.parameters[index]);
       break;
     case 1:  // immediate mode
       return instruction.parameters[index];
+      break;
+    case 2:  // relative mode
+      return this->get_memory(relative_base +
+        instruction.parameters[index]);
       break;
     default:
       throw std::runtime_error(
@@ -56,13 +71,13 @@ bool execute(const Instruction& instruction) {
   switch (instruction.opcode % 100) {
     case 1:
       assert(instruction.parameters.size() == 3);
-      memory[instruction.parameters[2]] =
+      this->get_memory(instruction.parameters[2]) =
         get_parameter(instruction, 0) +
         get_parameter(instruction, 1);
       break;
     case 2:
       assert(instruction.parameters.size() == 3);
-      memory[instruction.parameters[2]] =
+      this->get_memory(instruction.parameters[2]) =
         get_parameter(instruction, 0) *
         get_parameter(instruction, 1);
       break;
@@ -70,12 +85,14 @@ bool execute(const Instruction& instruction) {
       assert(instruction.parameters.size() == 1);
       std::cout << "Input required:" << std::endl;
       std::cin >> input;
-      memory[instruction.parameters[0]] = std::stoi(input);
+      this->get_memory(instruction.parameters[0]) = std::stoi(input);
       break;
     case 4:
       assert(instruction.parameters.size() == 1);
-      std::cout << "Output: "
-                << get_parameter(instruction, 0) << std::endl;
+      output = get_parameter(instruction, 0);
+      if (verbose) {
+        std::cout << "Output: " << output << std::endl;
+      }
       break;
     case 5:
       assert(instruction.parameters.size() == 2);
@@ -93,15 +110,19 @@ bool execute(const Instruction& instruction) {
       break;
     case 7:
       assert(instruction.parameters.size() == 3);
-      memory[instruction.parameters[2]] = static_cast<int>(
+      this->get_memory(instruction.parameters[2]) = static_cast<int>(
         get_parameter(instruction, 0) <
         get_parameter(instruction, 1));
       break;
     case 8:
       assert(instruction.parameters.size() == 3);
-      memory[instruction.parameters[2]] = static_cast<int>(
+      this->get_memory(instruction.parameters[2]) = static_cast<int>(
         get_parameter(instruction, 0) ==
         get_parameter(instruction, 1));
+      break;
+    case 9:
+      assert(instruction.parameters.size() == 1);
+      relative_base += get_parameter(instruction, 0);
       break;
     case 99:
       halting = true;
@@ -121,50 +142,50 @@ bool execute(const Instruction& instruction) {
 }
 
   bool execute() {
-    int opcode = this->memory[this->instruction_pointer];
+    int64_t opcode = this->get_memory(this->instruction_pointer);
     Instruction instruction;
     instruction.opcode = opcode;
-    std::vector<int> parameters;
+    std::vector<int64_t> parameters;
     switch (opcode % 100) {
       case 1:
         parameters = {
-          this->memory[this->instruction_pointer+1],
-          this->memory[this->instruction_pointer+2],
-          this->memory[this->instruction_pointer+3] };
+          this->get_memory(this->instruction_pointer+1),
+          this->get_memory(this->instruction_pointer+2),
+          this->get_memory(this->instruction_pointer+3) };
         break;
       case 2:
         parameters = {
-          this->memory[this->instruction_pointer+1],
-          this->memory[this->instruction_pointer+2],
-          this->memory[this->instruction_pointer+3] };
+          this->get_memory(this->instruction_pointer+1),
+          this->get_memory(this->instruction_pointer+2),
+          this->get_memory(this->instruction_pointer+3) };
         break;
       case 3:
-        parameters = {this->memory[this->instruction_pointer+1]};
+        parameters = {this->get_memory(this->instruction_pointer+1)};
         break;
       case 4:
-        parameters = {this->memory[this->instruction_pointer+1]};
+        parameters = {this->get_memory(this->instruction_pointer+1)};
         break;
       case 5:
         parameters = {
-          this->memory[this->instruction_pointer+1],
-          this->memory[this->instruction_pointer+2] };
+          this->get_memory(this->instruction_pointer+1),
+          this->get_memory(this->instruction_pointer+2) };
         break;
       case 6:
         parameters = {
-          this->memory[this->instruction_pointer+1],
-          this->memory[this->instruction_pointer+2] };
+          this->get_memory(this->instruction_pointer+1),
+          this->get_memory(this->instruction_pointer+2) };
         break;
       case 7:
         parameters = {
-          this->memory[this->instruction_pointer+1],
-          this->memory[this->instruction_pointer+2],
-          this->memory[this->instruction_pointer+3] };
+          this->get_memory(this->instruction_pointer+1),
+          this->get_memory(this->instruction_pointer+2),
+          this->get_memory(this->instruction_pointer+3) };
         break;
       case 8:
         parameters = {
-          this->memory[this->instruction_pointer+1],
-          this->memory[this->instruction_pointer+2],
-          this->memory[this->instruction_pointer+3] };
+          this->get_memory(this->instruction_pointer+1),
+          this->get_memory(this->instruction_pointer+2),
+          this->get_memory(this->instruction_pointer+3) };
         break;
       default:
         parameters = {};
@@ -176,28 +197,37 @@ bool execute(const Instruction& instruction) {
 
   int run() {
     while (!execute()) {}
-    return this->memory[0];
+    return this->get_memory(0);
   }
 
   void set_memory(size_t location, int value) {
-    this->memory[location] = value;
+    this->get_memory(location) = value;
   }
 
-  std::vector<int> get_memory() const {
-    return this->memory;
+  int64_t& get_memory(const size_t& index) {
+    if (memory.count(index) == 0) {
+      this->memory.insert({index, 0});
+    }
+    return this->memory.at(index);
+  }
+
+  int64_t get_output() const {
+    return output;
   }
 };
 
 int part_one(const std::vector<std::string>& input) {
   auto intcodes = prepare_input(input);
   CPU cpu(intcodes);
-  return cpu.run();
+  cpu.run();
+  return cpu.get_output();
 }
 
 int part_two(const std::vector<std::string>& input) {
   auto intcodes = prepare_input(input);
   CPU cpu(intcodes);
-  return cpu.run();
+  cpu.run();
+  return cpu.get_output();
 }
 
 int main() {
