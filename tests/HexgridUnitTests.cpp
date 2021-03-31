@@ -4,6 +4,7 @@
 #include "../utils/hexgrid.hpp"
 
 namespace  {
+using utils::hexgrid::Direction;
 using utils::hexgrid::Point;
 
 TEST(Point, Print) {
@@ -43,6 +44,54 @@ TEST(Point, Addition_test_0) {
   Point rhs(1, 2);
   Point want(1, 2);
   auto got = lhs + rhs;
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, Step_test_0) {
+  Point want(-1, -1);
+  Point got(0, 0);
+  got.step(Direction::kNorthWest);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, Step_test_1) {
+  Point want(1, -1);
+  Point got(0, 0);
+  got.step(Direction::kNorthEast);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, Step_test_2) {
+  Point want(1, 0);
+  Point got(0, 0);
+  got.step(Direction::kEast);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, Step_test_3) {
+  Point want(1, 1);
+  Point got(0, 0);
+  got.step(Direction::kSouthEast);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, Step_test_4) {
+  Point want(-1, 1);
+  Point got(0, 0);
+  got.step(Direction::kSouthWest);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, Step_test_5) {
+  Point want(-1, 0);
+  Point got(0, 0);
+  got.step(Direction::kWest);
 
   EXPECT_EQ(want, got);
 }

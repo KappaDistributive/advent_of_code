@@ -15,6 +15,30 @@ Point::distance(const Point& destination) const {
 
 void
 Point::step(const Direction& direction) {
+  switch (direction) {
+    case Direction::kNorthWest:
+      this->m_x--;
+      this->m_y--;
+      break;
+  case Direction::kNorthEast:
+      this->m_x++;
+      this->m_y--;
+      break;
+  case Direction::kEast:
+      this->m_x++;
+      break;
+  case Direction::kSouthEast:
+      this->m_x++;
+      this->m_y++;
+      break;
+  case Direction::kSouthWest:
+      this->m_x--;
+      this->m_y++;
+      break;
+  case Direction::kWest:
+      this->m_x--;
+      break;
+  }
 }
 
 Point&
@@ -24,7 +48,6 @@ Point::operator+=(const Point& summand) {
 
   return *this;
 }
-
 
 bool
 operator==(const Point& lhs, const Point& rhs) {
