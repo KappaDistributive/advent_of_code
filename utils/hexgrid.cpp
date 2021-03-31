@@ -4,24 +4,38 @@
 namespace utils {
 namespace hexgrid {
 
+std::ostream&
+operator<<(std::ostream& os, const Direction& direction) {
+  switch (direction) {
+    case Direction::kNorthWest: os << "northwest"; break;
+    case Direction::kNorth: os << "north"; break;
+    case Direction::kNorthEast: os << "northeast"; break;
+    case Direction::kSouthWest: os << "southwest"; break;
+    case Direction::kSouth: os << "south"; break;
+    case Direction::kSouthEast: os << "southeast"; break;
+  }
+
+  return os;
+}
 
 Point::Point(const int& x, const int& y)
     : m_x(x), m_y(y) {
 }
 
+Point::Point(const Point& point)
+    : m_x(point.m_x), m_y(point.m_y) {
+}
+
 size_t
 Point::distance(const Point& destination) const {
-  size_t distance{0};
   auto delta_x = destination.m_x - this->m_x;
   auto delta_y = destination.m_y - this->m_y;
 
-  if (utils::sign(delta_x) == utils::sign(delta_y)) {
-    distance = std::max(std::abs(delta_x), std::abs(delta_y));
+  if ((delta_x > 0) == (delta_y > 0)) {
+    return std::max(std::abs(delta_x), std::abs(delta_y));
   } else {
-    distance = std::abs(delta_x) + std::abs(delta_y);
+    return std::abs(delta_x) + std::abs(delta_y);
   }
-
-  return distance;
 }
 
 void
@@ -29,25 +43,23 @@ Point::step(const Direction& direction) {
   switch (direction) {
     case Direction::kNorthWest:
       this->m_x--;
-      this->m_y--;
       break;
-  case Direction::kNorthEast:
-      this->m_x++;
-      this->m_y--;
+    case Direction::kNorth:
+      this->m_y++;
       break;
-  case Direction::kEast:
-      this->m_x++;
-      break;
-  case Direction::kSouthEast:
+    case Direction::kNorthEast:
       this->m_x++;
       this->m_y++;
       break;
-  case Direction::kSouthWest:
-      this->m_x--;
-      this->m_y++;
+    case Direction::kSouthEast:
+      this->m_x++;
       break;
-  case Direction::kWest:
+    case Direction::kSouth:
+      this->m_y--;
+      break;
+    case Direction::kSouthWest:
       this->m_x--;
+      this->m_y--;
       break;
   }
 }

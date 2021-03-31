@@ -8,19 +8,40 @@ namespace hexgrid {
 
 enum class Direction {
   kNorthWest,
+  kNorth,
   kNorthEast,
-  kEast,
   kSouthEast,
+  kSouth,
   kSouthWest,
-  kWest,
 };
 
+std::ostream&
+operator<<(std::ostream&os, const Direction& direction);
+
+/*
+ * Hex Coordinate System:
+ *           _ _
+ *         /     \
+ *    _ _ / (0, 1)\ _ _
+ *  /     \       /     \
+ * /(-1,0) \ _ _ / (1,1) \
+ * \       /     \       /
+ *  \ _ _ / (0,0) \ _ _ /
+ *  /     \       /     \
+ * /(-1,-1)\ _ _ / (1,0) \
+ * \       /     \       /
+ *  \ _ _ / (0,-1)\ _ _ /
+ *        \       /
+ *         \ _ _ /
+ */
 class Point {
  private:
   int m_x, m_y;
 
  public:
   Point(const int& x, const int& y);
+
+  Point(const Point& point);
 
   size_t distance(const Point& destination) const;
 

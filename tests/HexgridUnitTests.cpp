@@ -49,9 +49,18 @@ TEST(Point, Distance_test_1) {
 }
 
 TEST(Point, Distance_test_2) {
-  Point lhs(2, 5);
-  Point rhs(4, 2);
-  size_t want{5};
+  Point lhs(0, 0);
+  Point rhs(0, 4);
+  size_t want{4};
+  size_t got = lhs.distance(rhs);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, Distance_test_3) {
+  Point lhs(0, 0);
+  Point rhs(-1, 2);
+  size_t want{3};
   size_t got = lhs.distance(rhs);
 
   EXPECT_EQ(want, got);
@@ -76,7 +85,7 @@ TEST(Point, Addition_test_0) {
 }
 
 TEST(Point, Step_test_0) {
-  Point want(-1, -1);
+  Point want(-1, 0);
   Point got(0, 0);
   got.step(Direction::kNorthWest);
 
@@ -84,23 +93,23 @@ TEST(Point, Step_test_0) {
 }
 
 TEST(Point, Step_test_1) {
-  Point want(1, -1);
+  Point want(0, 1);
+  Point got(0, 0);
+  got.step(Direction::kNorth);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, Step_test_2) {
+  Point want(1, 1);
   Point got(0, 0);
   got.step(Direction::kNorthEast);
 
   EXPECT_EQ(want, got);
 }
 
-TEST(Point, Step_test_2) {
-  Point want(1, 0);
-  Point got(0, 0);
-  got.step(Direction::kEast);
-
-  EXPECT_EQ(want, got);
-}
-
 TEST(Point, Step_test_3) {
-  Point want(1, 1);
+  Point want(1, 0);
   Point got(0, 0);
   got.step(Direction::kSouthEast);
 
@@ -108,19 +117,20 @@ TEST(Point, Step_test_3) {
 }
 
 TEST(Point, Step_test_4) {
-  Point want(-1, 1);
+  Point want(0, -1);
+  Point got(0, 0);
+  got.step(Direction::kSouth);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, Step_test_5) {
+  Point want(-1, -1);
   Point got(0, 0);
   got.step(Direction::kSouthWest);
 
   EXPECT_EQ(want, got);
 }
 
-TEST(Point, Step_test_5) {
-  Point want(-1, 0);
-  Point got(0, 0);
-  got.step(Direction::kWest);
-
-  EXPECT_EQ(want, got);
-}
 
 }  // namespace
