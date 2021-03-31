@@ -4,6 +4,7 @@ project(advent_of_code)
 set(CMAKE_CXX_STANDARD 17)
 
 add_library(input utils/input.cpp)
+add_library(hexgrid utils/hexgrid.cpp)
 add_library(md5 includes/md5.cpp)
 
 find_package(GTest)
@@ -15,9 +16,13 @@ if (GTEST_FOUND)
   target_link_libraries(InputUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
   GTEST_DISCOVER_TESTS(InputUnitTests)
 
-  add_executable(DataUnitTests tests/TreeUnitTests.cpp)
-  target_link_libraries(DataUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
-  GTEST_DISCOVER_TESTS(DataUnitTests)
+  add_executable(TreeUnitTests tests/TreeUnitTests.cpp)
+  target_link_libraries(TreeUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
+  GTEST_DISCOVER_TESTS(TreeUnitTests)
+
+  add_executable(HexgridUnitTests tests/HexgridUnitTests.cpp)
+  target_link_libraries(HexgridUnitTests ${GTEST_BOTH_LIBRARIES} pthread input hexgrid)
+  GTEST_DISCOVER_TESTS(HexgridUnitTests)
   
 endif()
 

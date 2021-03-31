@@ -4,7 +4,8 @@
 #include "../utils/tree.hpp"
 
 namespace  {
-using utils::tree;
+using utils::tree::Node;
+using utils::tree::Tree;
 
 TEST(Node, Instantiation) {
   std::string want{"one"};
@@ -229,7 +230,7 @@ TEST(Tree, Initialization) {
 
 TEST(Tree, Equality_test0) {
   using Node = Node<int>;
-  Tree<Node> tree(Node<int>{1});
+  Tree<Node> tree(Node{1});
 
   EXPECT_TRUE(tree == tree);
   EXPECT_FALSE(tree != tree);
@@ -237,8 +238,8 @@ TEST(Tree, Equality_test0) {
 
 TEST(Tree, Equality_test1) {
   using Node = Node<int>;
-  Tree<Node> tree(Node<int>{1});
-  Tree<Node> other(Node<int>{1});
+  Tree<Node> tree(Node{1});
+  Tree<Node> other(Node{1});
 
   EXPECT_TRUE(tree == other);
   EXPECT_FALSE(tree != other);
@@ -246,9 +247,9 @@ TEST(Tree, Equality_test1) {
 
 TEST(Tree, Equality_test2) {
   using Node = Node<int>;
-  Tree<Node> tree(Node<int>{1});
-  tree.getRoot().addChild(Node<int>{2});
-  Tree<Node> other(Node<int>{1});
+  Tree<Node> tree(Node{1});
+  tree.getRoot().addChild(Node{2});
+  Tree<Node> other(Node{1});
 
   EXPECT_FALSE(tree == other);
   EXPECT_TRUE(tree != other);
