@@ -1,6 +1,7 @@
-#include "data.hpp"
+#include "tree.hpp"
 
 namespace utils {
+namespace tree {
 
 template<typename T>
 Node<T>::Node(const T& data)
@@ -189,4 +190,6 @@ bool
 Tree<Node>::operator!=(const Tree<Node>& other) const {
   return !(*this == other);
 }
+
+}  // namespace tree
 }  // namespace utils

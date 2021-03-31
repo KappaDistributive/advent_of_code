@@ -3,11 +3,11 @@
 #include <regex>  // NOLINT
 #include <set>
 
-#include "../utils/data.hpp"
+#include "../utils/tree.hpp"
 #include "../utils/input.hpp"
 
-using Node = utils::Node<std::pair<std::string, int>>;
-using Tree = utils::Tree<Node>;
+using Node = utils::tree::Node<std::pair<std::string, int>>;
+using Tree = utils::tree::Tree<Node>;
 
 
 std::map<std::string, std::pair<int, std::vector<std::string>>>

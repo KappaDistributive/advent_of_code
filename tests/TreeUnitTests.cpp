@@ -1,12 +1,14 @@
 #include <gtest/gtest.h>
 #include <sstream>
 
-#include "../utils/data.hpp"
+#include "../utils/tree.hpp"
 
-namespace {
+namespace  {
+using utils::tree;
+
 TEST(Node, Instantiation) {
   std::string want{"one"};
-  utils::Node<std::string> node("one");
+  Node<std::string> node("one");
   auto got = node.getData();
 
   EXPECT_EQ(want, got);
@@ -14,7 +16,7 @@ TEST(Node, Instantiation) {
 
 TEST(Node, SetData) {
   std::string want{"two"};
-  utils::Node<std::string> node("one");
+  Node<std::string> node("one");
   node.setData("two");
   auto got = node.getData();
 
@@ -22,24 +24,24 @@ TEST(Node, SetData) {
 }
 
 TEST(Node, AddChild) {
-  utils::Node<std::string> node("one");
-  utils::Node<std::string> want("two");
+  Node<std::string> node("one");
+  Node<std::string> want("two");
   auto got = *node.addChild(want);
 
   EXPECT_EQ(want, got);
 }
 
 TEST(Node, GetChild) {
-  utils::Node<std::string> node("one");
+  Node<std::string> node("one");
   std::string want{"two"};
-  node.addChild(utils::Node<std::string>("two"));
+  node.addChild(Node<std::string>("two"));
   auto got = node.getChild(0).getData();
 
   EXPECT_EQ(want, got);
 }
 
 TEST(Node, Size_test0) {
-  utils::Node<std::string> node("one");
+  Node<std::string> node("one");
   size_t want{1};
   auto got = node.size();
 
@@ -54,7 +56,7 @@ TEST(Node, Size_test1) {
   *       /     /   |   \
   *     (3)   (5)  (6)  (7)
   */
-  using Node = utils::Node<int>;
+  using Node = Node<int>;
   Node node(1);
   auto node_two = node.addChild(Node(2));
   node_two->addChild(Node(3));
@@ -70,59 +72,59 @@ TEST(Node, Size_test1) {
 }
 
 TEST(Node, Equality_test0) {
-  utils::Node<std::string> node("one");
+  Node<std::string> node("one");
 
   EXPECT_TRUE(node == node);
   EXPECT_FALSE(node != node);
 }
 
 TEST(Node, Equality_test1) {
-  utils::Node<std::string> lhs("one");
-  utils::Node<std::string> rhs("one");
+  Node<std::string> lhs("one");
+  Node<std::string> rhs("one");
 
   EXPECT_TRUE(lhs == rhs);
   EXPECT_FALSE(lhs != rhs);
 }
 
 TEST(Node, Equality_test2) {
-  utils::Node<std::string> lhs("lhs");
-  utils::Node<std::string> rhs("rhs");
+  Node<std::string> lhs("lhs");
+  Node<std::string> rhs("rhs");
 
   EXPECT_FALSE(lhs == rhs);
   EXPECT_TRUE(lhs != rhs);
 }
 
 TEST(Node, Equality_test3) {
-  utils::Node<std::string> lhs("lhs");
-  lhs.addChild(utils::Node<std::string>("child"));
-  utils::Node<std::string> rhs("rhs");
+  Node<std::string> lhs("lhs");
+  lhs.addChild(Node<std::string>("child"));
+  Node<std::string> rhs("rhs");
 
   EXPECT_FALSE(lhs == rhs);
   EXPECT_TRUE(lhs != rhs);
 }
 
 TEST(Node, Equality_test4) {
-  utils::Node<std::string> lhs("one");
-  lhs.addChild(utils::Node<std::string>("child"));
-  utils::Node<std::string> rhs("one");
-  rhs.addChild(utils::Node<std::string>("child"));
+  Node<std::string> lhs("one");
+  lhs.addChild(Node<std::string>("child"));
+  Node<std::string> rhs("one");
+  rhs.addChild(Node<std::string>("child"));
 
   EXPECT_TRUE(lhs == rhs);
   EXPECT_FALSE(lhs != rhs);
 }
 
 TEST(Node, Equality_test5) {
-  utils::Node<std::string> lhs("one");
-  lhs.addChild(utils::Node<std::string>("child"));
-  utils::Node<std::string> rhs("one");
-  rhs.addChild(utils::Node<std::string>("missfit"));
+  Node<std::string> lhs("one");
+  lhs.addChild(Node<std::string>("child"));
+  Node<std::string> rhs("one");
+  rhs.addChild(Node<std::string>("missfit"));
 
   EXPECT_FALSE(lhs == rhs);
   EXPECT_TRUE(lhs != rhs);
 }
 
 TEST(Node, Print_test0) {
-  utils::Node<std::string> node("one");
+  Node<std::string> node("one");
   std::string want{"Node<data: one; #children: 0>"};
   std::stringstream ss;
   ss << node;
@@ -132,8 +134,8 @@ TEST(Node, Print_test0) {
 }
 
 TEST(Node, Print_test1) {
-  utils::Node<int> node(-1);
-  node.addChild(utils::Node<int>(1));
+  Node<int> node(-1);
+  node.addChild(Node<int>(1));
   std::string want{"Node<data: -1; #children: 1>"};
   std::stringstream ss;
   ss << node;
@@ -143,7 +145,7 @@ TEST(Node, Print_test1) {
 }
 
 TEST(NodeIterator, Dereference) {
-  using Node = utils::Node<int>;
+  using Node = Node<int>;
   Node node(1);
   auto it = node.begin();
   auto want = node.getData();
@@ -153,7 +155,7 @@ TEST(NodeIterator, Dereference) {
 }
 
 TEST(NodeIterator, Successor_test0) {
-  using Node = utils::Node<int>;
+  using Node = Node<int>;
   Node node(1);
   Node child(2);
   node.addChild(child);
@@ -172,7 +174,7 @@ TEST(NodeIterator, Successor_test1) {
   *       /     /   |   \
   *     (3)   (5)  (6)  (7)
   */
-  using Node = utils::Node<int>;
+  using Node = Node<int>;
   Node node(1);
   auto node_two = node.addChild(Node(2));
   node_two->addChild(Node(3));
@@ -198,7 +200,7 @@ TEST(NodeIterator, Successor_test2) {
   *       /     /   |   \
   *     (3)   (5)  (6)  (7)
   */
-  using Node = utils::Node<int>;
+  using Node = Node<int>;
   Node node(1);
   auto node_two = node.addChild(Node(2));
   node_two->addChild(Node(3));
@@ -217,44 +219,44 @@ TEST(NodeIterator, Successor_test2) {
 }
 
 TEST(Tree, Initialization) {
-  using Node = utils::Node<int>;
+  using Node = Node<int>;
   Node want{1};
-  utils::Tree<Node> tree(want);
+  Tree<Node> tree(want);
   auto got = tree.getRoot();
 
   EXPECT_EQ(want, got);
 }
 
 TEST(Tree, Equality_test0) {
-  using Node = utils::Node<int>;
-  utils::Tree<Node> tree(utils::Node<int>{1});
+  using Node = Node<int>;
+  Tree<Node> tree(Node<int>{1});
 
   EXPECT_TRUE(tree == tree);
   EXPECT_FALSE(tree != tree);
 }
 
 TEST(Tree, Equality_test1) {
-  using Node = utils::Node<int>;
-  utils::Tree<Node> tree(utils::Node<int>{1});
-  utils::Tree<Node> other(utils::Node<int>{1});
+  using Node = Node<int>;
+  Tree<Node> tree(Node<int>{1});
+  Tree<Node> other(Node<int>{1});
 
   EXPECT_TRUE(tree == other);
   EXPECT_FALSE(tree != other);
 }
 
 TEST(Tree, Equality_test2) {
-  using Node = utils::Node<int>;
-  utils::Tree<Node> tree(utils::Node<int>{1});
-  tree.getRoot().addChild(utils::Node<int>{2});
-  utils::Tree<Node> other(utils::Node<int>{1});
+  using Node = Node<int>;
+  Tree<Node> tree(Node<int>{1});
+  tree.getRoot().addChild(Node<int>{2});
+  Tree<Node> other(Node<int>{1});
 
   EXPECT_FALSE(tree == other);
   EXPECT_TRUE(tree != other);
 }
 
 TEST(Tree, FindByData_test0) {
-  using Node = utils::Node<std::string>;
-  utils::Tree<Node> tree(Node("root"));
+  using Node = Node<std::string>;
+  Tree<Node> tree(Node("root"));
 
   std::vector<Node*> want{&tree.getRoot()};
   auto got = tree.findByData(Node("root"));
@@ -270,8 +272,8 @@ TEST(Tree, FindByData_test1) {
   *       /     /   |   \
   *     (3)   (3)  (6)  (7)
   */
-  using Node = utils::Node<int>;
-  utils::Tree<Node> tree(Node(3));
+  using Node = Node<int>;
+  Tree<Node> tree(Node(3));
   auto match_0 = &tree.getRoot();
   auto node_two = match_0->addChild(Node(2));
   auto match_1 = node_two->addChild(Node(3));

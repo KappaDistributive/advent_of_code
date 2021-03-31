@@ -3,11 +3,11 @@
 #include <set>
 #include <stack>
 
-#include "../utils/data.hpp"
+#include "../utils/tree.hpp"
 #include "../utils/input.hpp"
 
-using Node = utils::Node<std::string>;
-using Tree = utils::Tree<Node>;
+using Node = utils::tree::Node<std::string>;
+using Tree = utils::tree::Tree<Node>;
 
 
 Tree prepare_input(const std::vector<std::string>& input) {

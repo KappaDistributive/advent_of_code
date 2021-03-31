@@ -9,7 +9,7 @@
 #include <type_traits>
 
 namespace utils {
-
+namespace tree {
 template<typename T>
 class Node {
  private:
@@ -82,6 +82,7 @@ class Tree {
   bool operator!=(const Tree<Node>& other) const;
 };
 
+}  // namespace tree
 }  // namespace utils
 
-#include "data.tpp"
+#include "tree.tpp"
