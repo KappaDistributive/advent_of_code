@@ -121,4 +121,13 @@ std::string stringify(T input) {
 template std::string stringify(std::vector<char>);
 template std::string stringify(std::deque<char>);
 
+
+template <class T>
+inline int sign(const T& value) {
+  return (T(0) < value) - (value < T(0));
+}
+
+template int sign(const int&);
+template int sign(const int64_t&);
+
 }  // namespace utils

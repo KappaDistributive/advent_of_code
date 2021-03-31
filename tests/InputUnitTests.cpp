@@ -106,4 +106,25 @@ TEST(ReplaceAllSubstrings, ReplaceMany) {
   EXPECT_EQ(want, got);
 }
 
+TEST(Sign, Negative) {
+  int want{-1};
+  auto got = utils::sign(-2);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Sign, Zero) {
+  int want{0};
+  auto got = utils::sign(0);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Sign, Positive) {
+  int want{1};
+  auto got = utils::sign(123);
+
+  EXPECT_EQ(want, got);
+}
+
 }  // namespace

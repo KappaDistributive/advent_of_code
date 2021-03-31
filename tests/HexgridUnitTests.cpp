@@ -30,6 +30,33 @@ TEST(Point, Equality_test_1) {
   EXPECT_FALSE(lhs == rhs);
 }
 
+TEST(Point, Distance_test_0) {
+  Point lhs(0, 0);
+  Point rhs(0, 0);
+  size_t want{0};
+  size_t got = lhs.distance(rhs);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, Distance_test_1) {
+  Point lhs(0, 0);
+  Point rhs(1, 1);
+  size_t want{1};
+  size_t got = lhs.distance(rhs);
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, Distance_test_2) {
+  Point lhs(2, 5);
+  Point rhs(4, 2);
+  size_t want{5};
+  size_t got = lhs.distance(rhs);
+
+  EXPECT_EQ(want, got);
+}
+
 TEST(Point, IncAddition_test_0) {
   Point got(0, 0);
   Point summand(1, 2);

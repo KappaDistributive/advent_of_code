@@ -42,4 +42,8 @@ T factorial(T n);
 template<typename T>
 std::string stringify(T input);
 
+// Returns 1 if x > 0, -1 if x < 0, and 0 if x is zero.
+template <class T>
+int sign(const T& z);
+
 }  // namespace utils

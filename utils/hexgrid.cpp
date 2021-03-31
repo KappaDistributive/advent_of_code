@@ -1,3 +1,4 @@
+#include "input.hpp"
 #include "hexgrid.hpp"
 
 namespace utils {
@@ -10,7 +11,17 @@ Point::Point(const int& x, const int& y)
 
 size_t
 Point::distance(const Point& destination) const {
-  return 1;
+  size_t distance{0};
+  auto delta_x = destination.m_x - this->m_x;
+  auto delta_y = destination.m_y - this->m_y;
+
+  if (utils::sign(delta_x) == utils::sign(delta_y)) {
+    distance = std::max(std::abs(delta_x), std::abs(delta_y));
+  } else {
+    distance = std::abs(delta_x) + std::abs(delta_y);
+  }
+
+  return distance;
 }
 
 void
