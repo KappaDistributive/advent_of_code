@@ -17,6 +17,27 @@ void
 Point::step(const Direction& direction) {
 }
 
+Point&
+Point::operator+=(const Point& summand) {
+  this->m_x += summand.m_x;
+  this->m_y += summand.m_y;
+
+  return *this;
+}
+
+
+bool
+operator==(const Point& lhs, const Point& rhs) {
+  return lhs.m_x == rhs.m_x && lhs.m_y == rhs.m_y;
+}
+
+Point
+operator+(const Point& lhs, const Point& rhs) {
+  Point point(lhs.m_x + rhs.m_x, lhs.m_y + rhs.m_y);
+
+  return point;
+}
+
 std::ostream& operator<<(std::ostream& os, const Point& point) {
   os << "(" << point.m_x << ", " << point.m_y << ")";
   return os;
