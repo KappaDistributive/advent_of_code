@@ -12,6 +12,14 @@ if (GTEST_FOUND)
   enable_testing()
   include_directories(${GTEST_INCLUDE_DIRS})
 
+  add_executable(GraphUnitTests tests/GraphUnitTests.cpp)
+  target_link_libraries(GraphUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
+  GTEST_DISCOVER_TESTS(GraphUnitTests)
+
+  add_executable(HexgridUnitTests tests/HexgridUnitTests.cpp)
+  target_link_libraries(HexgridUnitTests ${GTEST_BOTH_LIBRARIES} pthread input hexgrid)
+  GTEST_DISCOVER_TESTS(HexgridUnitTests)
+
   add_executable(InputUnitTests tests/InputUnitTests.cpp)
   target_link_libraries(InputUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
   GTEST_DISCOVER_TESTS(InputUnitTests)
@@ -19,11 +27,6 @@ if (GTEST_FOUND)
   add_executable(TreeUnitTests tests/TreeUnitTests.cpp)
   target_link_libraries(TreeUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
   GTEST_DISCOVER_TESTS(TreeUnitTests)
-
-  add_executable(HexgridUnitTests tests/HexgridUnitTests.cpp)
-  target_link_libraries(HexgridUnitTests ${GTEST_BOTH_LIBRARIES} pthread input hexgrid)
-  GTEST_DISCOVER_TESTS(HexgridUnitTests)
-  
 endif()
 
 add_executable(2015_01 2015/day_01.cpp)
