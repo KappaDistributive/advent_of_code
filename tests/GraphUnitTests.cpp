@@ -54,6 +54,14 @@ TEST(DirectedGraph, AddNode_test_1) {
   EXPECT_EQ(want, got);
 }
 
+TEST(DirectedGraph, AddNode_test_2) {
+  DirectedGraph<int> graph;
+  auto want = graph.addNode(1);
+  auto got = graph.findNodeByData(want.getData());
+
+  EXPECT_EQ(want, got);
+}
+
 TEST(DirectedGraph, AddEdge_test_0) {
   DirectedGraph<int> graph;
 
