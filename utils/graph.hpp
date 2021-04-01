@@ -3,6 +3,7 @@
 #include <iostream>
 #include <map>
 #include <set>
+#include <sstream>
 #include <utility>
 
 namespace utils {
@@ -48,6 +49,8 @@ class DirectedGraph {
   const Node<T>& findNodeByData(const T& data) const;
 
   const Node<T>& addNode(const Node<T>& node);
+
+  const Node<T>& addNode(const T& data);
 
   void addEdge(const Node<T>& lhs, const Node<T>& rhs);
 

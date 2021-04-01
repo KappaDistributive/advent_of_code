@@ -81,6 +81,13 @@ const Node<T>& DirectedGraph<T>::addNode(const Node<T>& node) {
 }
 
 template<typename T>
+const Node<T>& DirectedGraph<T>::addNode(const T& data) {
+  Node<T> node(data);
+  this->m_vertices.insert(node);
+  return this->findNodeByData(node.getData());
+}
+
+template<typename T>
 void DirectedGraph<T>::addEdge(const Node<T>& lhs, const Node<T>& rhs) {
   this->m_edges.insert({this->addNode(lhs), this->addNode(rhs)});
 }
