@@ -14,6 +14,11 @@ const T& Node<T>::getData() const {
 }
 
 template<typename T>
+T& Node<T>::getData() {
+  return m_data;
+}
+
+template<typename T>
 void Node<T>::setData(const T& data) {
   m_data = data;
 }

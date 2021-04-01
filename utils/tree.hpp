@@ -39,6 +39,8 @@ class Node {
 
   const T& getData() const;
 
+  T& getData();
+
   void setData(const T& data);
 
   Node<T>* addChild(const Node<T>& child);
