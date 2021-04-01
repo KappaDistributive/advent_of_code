@@ -56,12 +56,8 @@ class Node {
   Iterator<Node<T>> begin();
   Iterator<Node<T>> end();
 
-  friend std::ostream& operator<<(std::ostream& os, const Node<T>& node) {
-    os << "Node<data: " << node.getData()
-       << "; #children: " << node.m_children.size() << ">";
-
-    return os;
-  }
+  template<typename S>
+  friend std::ostream& operator<<(std::ostream& os, const Node<S>& node);
 };
 
 

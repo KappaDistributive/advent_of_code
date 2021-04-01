@@ -81,6 +81,14 @@ bool Node<T>::operator!=(const Node<T>& other) const {
 }
 
 template<typename T>
+std::ostream& operator<<(std::ostream& os, const Node<T>& node) {
+  os << "Node<data: " << node.getData()
+     << "; #children: " << node.m_children.size() << ">";
+
+  return os;
+}
+
+template<typename T>
 typename Node<T>::template Iterator<Node<T>>
 Node<T>::begin() {
   return Iterator<Node<T>>(this);
