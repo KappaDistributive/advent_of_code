@@ -79,4 +79,32 @@ TEST(DirectedGraph, AddEdge_test_0) {
   }
 }
 
+TEST(DirectedGraph, GetComponent_test_0) {
+  DirectedGraph<int> graph;
+  std::vector<Node<int>> nodes;
+
+  for (int i{0}; i < 10; i++) {
+    Node<int> temp(i);
+    const Node<int>& node = graph.addNode(temp);
+    nodes.push_back(node);
+  }
+  graph.addEdge(nodes[0], nodes[1]);
+  graph.addEdge(nodes[1], nodes[2]);
+  graph.addEdge(nodes[1], nodes[3]);
+  graph.addEdge(nodes[3], nodes[4]);
+
+  graph.addEdge(nodes[5], nodes[4]);
+  graph.addEdge(nodes[5], nodes[7]);
+  graph.addEdge(nodes[7], nodes[8]);
+  graph.addEdge(nodes[7], nodes[9]);
+
+  std::set<Node<int>> want;
+  for (int i{0}; i < 5; i++) {
+    want.insert(graph.findNodeByData(nodes[i].getData()));
+  }
+  auto got = graph.getComponent(graph.findNodeByData(nodes[0].getData()));
+
+  EXPECT_EQ(want, got);
+}
+
 }  // namespace

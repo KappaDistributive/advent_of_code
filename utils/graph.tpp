@@ -90,5 +90,24 @@ size_t DirectedGraph<T>::size() const {
   return this->m_vertices.size();
 }
 
+template<typename T>
+std::set<Node<T>> DirectedGraph<T>::getComponent(const Node<T>& node) const {
+  std::set<Node<T>> component;
+  component.insert(node);
+  bool searching{true};
+
+  while (searching) {
+    searching = false;
+    for (auto [origin, destination] : this->m_edges) {
+      if (component.count(origin) > 0 && component.count(destination) == 0) {
+        searching = true;
+        component.insert(destination);
+      }
+    }
+  }
+
+  return component;
+}
+
 }  // namespace graph
 }  // namespace utils

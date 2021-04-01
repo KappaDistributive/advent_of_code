@@ -54,6 +54,7 @@ class DirectedGraph {
   // Returns number of vertices.
   size_t size() const;
 
+  std::set<Node<T>> getComponent(const Node<T>& node) const;
 };
 
 }  // namespace graph
