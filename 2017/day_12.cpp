@@ -1,16 +1,16 @@
-#include <regex>
+#include <regex>  // NOLINT
 #include <vector>
+#include "boost/graph/adjacency_matrix.hpp"
 
-#include "../utils/graph.hpp"
 #include "../utils/input.hpp"
 
-using utils::graph::DirectedGraph;
-using utils::graph::Node;
+typedef boost::adjacency_matrix<boost::directedS> Graph;
 
-DirectedGraph<int> prepare_input(const std::vector<std::string>& input) {
+Graph
+prepare_input(const std::vector<std::string>& input) {
   std::regex re{"(\\d+)\\s<->\\s([\\d,\\s]+)"};
   std::smatch matches;
-  DirectedGraph<int> graph;
+  Graph graph(input.size());
 
   for (auto line : input) {
     std::regex_match(line, matches, re);
@@ -20,26 +20,63 @@ DirectedGraph<int> prepare_input(const std::vector<std::string>& input) {
     std::vector<std::string> destinations = utils::split_string(split, ',');
 
     for (auto destination : destinations) {
-      auto node_origin = graph.addNode(std::stoi(origin));
-      auto node_destination =  graph.addNode(std::stoi(destination));
-      graph.addEdge(node_origin, node_destination);
-      graph.addEdge(node_destination, node_origin);
+      add_edge(std::stoi(origin), std::stoi(destination), graph);
+      add_edge(std::stoi(destination), std::stoi(origin), graph);
     }
   }
 
   return graph;
 }
 
+std::set<int> graphComponent(const int& vertex, const Graph& graph) {
+  std::set<int> component;
+  component.insert(vertex);
+  bool searching{true};
+
+  while (searching) {
+    searching = false;
+    for (auto origin : component) {
+      auto [begin, end] = boost::adjacent_vertices(origin, graph);
+      auto it = begin;
+      while (it != end) {
+        auto destination = *it;
+        if (component.count(destination) == 0) {
+          searching = true;
+          component.insert(destination);
+        }
+        it++;
+      }
+    }
+  }
+
+  return component;
+}
+
 size_t part_one(const std::vector<std::string>& input) {
   auto graph = prepare_input(input);
-
-  auto node = graph.findNodeByData(0);
-
-  return graph.getComponent(node).size();
+  return graphComponent(0, graph).size();
 }
 
 size_t part_two(const std::vector<std::string>& input) {
-  return 764321;
+  auto graph = prepare_input(input);
+  std::set<int> visited;
+  auto [begin, end] = boost::vertices(graph);
+  auto it = begin;
+  size_t num_components{0};
+
+  while (it != end) {
+    auto vertex = *it;
+    if (visited.count(vertex) == 0) {
+      auto component = graphComponent(vertex, graph);
+      num_components++;
+      for (auto entry : component) {
+        visited.insert(entry);
+      }
+    }
+    it++;
+  }
+
+  return num_components;
 }
 
 int main() {

@@ -12,10 +12,6 @@ if (GTEST_FOUND)
   enable_testing()
   include_directories(${GTEST_INCLUDE_DIRS})
 
-  add_executable(GraphUnitTests tests/GraphUnitTests.cpp)
-  target_link_libraries(GraphUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
-  GTEST_DISCOVER_TESTS(GraphUnitTests)
-
   add_executable(HexgridUnitTests tests/HexgridUnitTests.cpp)
   target_link_libraries(HexgridUnitTests ${GTEST_BOTH_LIBRARIES} pthread input hexgrid)
   GTEST_DISCOVER_TESTS(HexgridUnitTests)
@@ -28,6 +24,9 @@ if (GTEST_FOUND)
   target_link_libraries(TreeUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
   GTEST_DISCOVER_TESTS(TreeUnitTests)
 endif()
+
+
+find_package(Boost REQUIRED)
 
 add_executable(2015_01 2015/day_01.cpp)
 target_link_libraries(2015_01 input)
