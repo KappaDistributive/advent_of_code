@@ -42,8 +42,24 @@ size_t part_one(const std::vector<std::string>& input) {
   return matches;
 }
 
+
 size_t part_two(const std::vector<std::string>& input) {
-  return 0;
+  size_t matches{0};
+  auto prepared_input = prepare_input(input);
+  size_t val_a = std::get<0>(prepared_input);
+  size_t val_b = std::get<1>(prepared_input);
+
+  for (size_t round{0}; round < 5000000; round++) {
+    do {
+      step(&val_a, MUL_A);
+    } while (val_a % 4 != 0);
+    do {
+      step(&val_b, MUL_B);
+    } while (val_b % 8 != 0);
+    matches += match(val_a, val_b);
+  }
+
+  return matches;
 }
 
 int main() {
