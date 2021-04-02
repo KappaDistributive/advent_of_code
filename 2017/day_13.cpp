@@ -8,12 +8,14 @@ class Firewall {
  private:
   int m_position;
   int m_time;
+  bool m_moved;
   std::vector<size_t> m_scanner_ranges;
 
  public:
   explicit Firewall(const std::vector<std::string>& input)
     : m_position(-1),
-      m_time(0) {
+      m_time(0),
+      m_moved(false) {
     std::regex re{"^(\\d+):\\s(\\d+)$"};
     std::smatch matches;
 
@@ -29,16 +31,25 @@ class Firewall {
 
   void step() {
     this->m_time++;
+    this->m_moved = false;
   }
 
-  size_t move() {
+  std::pair<size_t, bool> move() {
+    size_t severity{0};
+    bool got_caught{false};
+    this->m_moved = true;
     this->m_position++;
     if (this->m_position < this->size() &&
         this->getScannerLayer(this->m_position) == 0) {
-      return this->m_position * this->m_scanner_ranges[this->m_position];
+      severity = this->m_position * this->m_scanner_ranges[this->m_position];
+      got_caught = true;
     }
 
-    return 0;
+    return {severity, got_caught};
+  }
+
+  void setTime(size_t time) {
+    this->m_time = time;
   }
 
   size_t size() const {
@@ -56,20 +67,18 @@ class Firewall {
     if (step < this->m_scanner_ranges[scanner]) {
       return step;
     } else {
-      return this->m_scanner_ranges[scanner] + 1 - step;
+      return 2 * this->m_scanner_ranges[scanner] - 2 - step;
     }
   }
 
   friend std::ostream& operator<<(std::ostream& os, const Firewall& firewall) {
     // print time
-    if (firewall.m_time >= 0) {
+    if (firewall.m_moved) {
       std::cout << "Picosecond: " << firewall.m_time << std::endl;
-    } else {
-      std::cout << "Initial state:" << std::endl;
     }
     // print index
-    for (int depth{-1}; depth < static_cast<int>(firewall.size()); depth++) {
-      std::cout << (depth < 0 ? " " : "  ") << depth << "  ";
+    for (size_t depth{0}; depth < firewall.size(); depth++) {
+      std::cout << "  " << depth << "  ";
     }
     std::cout << std::endl;
 
@@ -78,29 +87,18 @@ class Firewall {
 
     // print layers
     for (size_t layer{0}; layer <= max_range; layer++) {
-      for (int depth{-1}; depth < static_cast<int>(firewall.size()); depth++) {
-        if (depth < 0) {
-          auto is_at_package = firewall.m_position == depth;
-          if (layer == 0) {
-            std::cout << " " << (is_at_package ? "(" : "[");
-            std::cout << " ";
-            std::cout << (is_at_package ? ")" : "]") << " ";
-          } else {
-            std::cout << "     ";
-          }
+      for (size_t depth{0}; depth < firewall.size(); depth++) {
+        auto is_at_package = layer == 0 && firewall.m_position == depth;
+        auto is_in_range = layer < firewall.m_scanner_ranges[depth];
+        bool is_at_scanner = firewall.getScannerLayer(depth) == layer;
+        if (is_in_range) {
+          std::cout << " " << (is_at_package ? "(" : "[");
+          std::cout << (is_at_scanner ? "S" : " ");
+          std::cout << (is_at_package ? ")" : "]") << " ";
+        } else if (layer == 0) {
+          std::cout << (is_at_package ? " (.) " : " ... ");
         } else {
-          auto is_at_package = layer == 0 && firewall.m_position == depth;
-          auto is_in_range = layer < firewall.m_scanner_ranges[depth];
-          bool is_at_scanner = firewall.getScannerLayer(depth) == layer;
-          if (is_in_range) {
-            std::cout << " " << (is_at_package ? "(" : "[");
-            std::cout << (is_at_scanner ? "S" : " ");
-            std::cout << (is_at_package ? ")" : "]") << " ";
-          } else if (layer == 0) {
-            std::cout << (is_at_package ? " (.) " : " ... ");
-          } else {
-            std::cout << "     ";
-          }
+          std::cout << "     ";
         }
       }
       std::cout << std::endl;
@@ -110,24 +108,48 @@ class Firewall {
   }
 };
 
+std::pair<size_t, bool> run(
+           Firewall firewall,
+           size_t delay = 0,
+           bool part_two = false,
+           bool verbose = false) {
+  firewall.setTime(delay);
+
+  size_t severity{0};
+  bool got_caught{false};
+  for (size_t step{0}; step < firewall.size(); step++) {
+    auto update = firewall.move();
+    severity += std::get<0>(update);
+    got_caught = got_caught || std::get<1>(update);
+
+    // early stopping
+    if (part_two && got_caught) {
+      return {0, got_caught};
+    }
+
+    if (verbose)
+      std::cout << firewall << std::endl;
+    firewall.step();
+    if (verbose)
+      std::cout << firewall << std::endl;
+  }
+
+  return {severity, got_caught};
+}
+
 
 size_t part_one(const std::vector<std::string>& input) {
   Firewall firewall(input);
-  size_t severity{0};
-
-  std::cout << firewall << std::endl;
-  for (size_t step{0}; step < firewall.size(); step++) {
-    severity += firewall.move();
-    std::cout << firewall << std::endl;
-    firewall.step();
-    std::cout << firewall << std::endl;
-  }
-
-  return severity;
+  return std::get<0>(run(firewall));
 }
 
 size_t part_two(const std::vector<std::string>& input) {
-  return 37;
+  size_t delay{0};
+  Firewall firewall(input);
+  while (std::get<1>(run(firewall, delay, true))) {
+    delay++;
+  }
+  return delay;
 }
 
 int main() {
