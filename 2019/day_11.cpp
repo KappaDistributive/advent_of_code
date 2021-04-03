@@ -313,9 +313,10 @@ class Robot {
   }
 
  public:
-  explicit Robot(const std::vector<int64_t>& intcodes)
+  explicit Robot(const std::vector<int64_t>& intcodes,
+                 bool verbose = false)
     : m_position(Point{0, 0}),
-      m_cpu(CPU(intcodes)),
+      m_cpu(CPU(intcodes, verbose)),
       m_direction(Direction::north) {
   }
 
@@ -376,6 +377,10 @@ class Robot {
            this->m_panel.at(position);
   }
 
+  void setPanel(int x, int y, bool white) {
+    this->m_panel.insert_or_assign(Point{x, y}, white);
+  }
+
   std::set<Point> getVisitedLocations() const {
     return this->m_visited;
   }
@@ -411,7 +416,7 @@ size_t part_one(const std::vector<std::string>& input) {
   auto intcodes = prepare_input(input);
   bool halting{false};
   bool verbose{false};
-  Robot robot(intcodes);
+  Robot robot(intcodes, verbose);
 
   if (verbose)
     std::cout << robot << std::endl;
@@ -423,8 +428,22 @@ size_t part_one(const std::vector<std::string>& input) {
   return robot.getVisitedLocations().size();
 }
 
-int part_two(const std::vector<std::string>& input) {
-  return 18;
+void part_two(const std::vector<std::string>& input) {
+  auto intcodes = prepare_input(input);
+  bool halting{false};
+  bool verbose{false};
+  Robot robot(intcodes, verbose);
+  robot.setPanel(0, 0, true);
+
+  if (verbose)
+    std::cout << robot << std::endl;
+  while (!halting) {
+    halting = robot.step();
+    if (verbose)
+      std::cout << robot << std::endl;
+  }
+
+  std::cout << robot << std::endl;
 }
 
 int main() {
@@ -433,7 +452,7 @@ int main() {
 
   auto answer_one =  part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two =  part_two(input);
-  std::cout << "The answer to part two is: " << answer_two << std::endl;
+  std::cout << "The answer to part two is: " << std::endl;
+  part_two(input);
   return 0;
 }
