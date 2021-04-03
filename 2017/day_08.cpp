@@ -1,6 +1,6 @@
 #include <limits>
 #include <map>
-#include <regex>
+#include <regex>  // NOLINT
 
 #include "../utils/input.hpp"
 
