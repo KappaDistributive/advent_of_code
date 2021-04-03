@@ -1,9 +1,9 @@
+#include<stdio.h>
 #include <cassert>
 #include <limits>
 #include <map>
 #include <set>
 #include <stack>
-#include<stdio.h>
 
 #include "../utils/input.hpp"
 
