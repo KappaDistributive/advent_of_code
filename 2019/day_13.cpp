@@ -1,7 +1,9 @@
 #include <cassert>
+#include <limits>
 #include <map>
 #include <set>
 #include <stack>
+#include<stdio.h>
 
 #include "../utils/input.hpp"
 
@@ -170,8 +172,12 @@ execute(const Instruction& instruction) {
   return {halting, output};
 }
 
+  int64_t current_opcode() {
+    return this->get_memory(this->instruction_pointer);
+  }
+
   std::pair<bool, std::optional<int64_t>> execute() {
-    int64_t opcode = this->get_memory(this->instruction_pointer);
+    int64_t opcode = this->current_opcode();
     Instruction instruction;
     instruction.opcode = opcode;
     std::vector<int64_t> parameters;
@@ -414,11 +420,60 @@ createMap(const std::vector<int64_t>& outputs) {
   return result;
 }
 
+int64_t getScore(const std::vector<int64_t>& outputs) {
+  int64_t score{-1};
+  for (size_t index{0}; index < outputs.size(); index+=3) {
+    if (outputs[index] == -1 && outputs[index+1] == 0) {
+      score = outputs[index+2];
+    }
+  }
+
+  return score;
+}
+
+void print(const std::map<std::pair<int, int>, int>& map) {
+  for (size_t y{0}; y < 24; y++) {
+    for (size_t x{0}; x < 36; x++) {
+      int tile = (map.count({x, y}) > 0) ? map.at({x, y}) : 0;
+      char texture{' '};
+      switch (tile) {
+        case 1: texture = '+'; break;
+        case 2: texture = '#'; break;
+        case 3: texture = '^'; break;
+        case 4: texture = 'o'; break;
+        default: break;
+      }
+      std::cout << texture;
+    }
+    std::cout << std::endl;
+  }
+}
+
+std::pair<int, int>
+tilePosition(int tile, const std::map<std::pair<int, int>, int> map) {
+  for (auto [pos, tile_] : map) {
+    if (tile_ == tile) {
+      return pos;
+    }
+  }
+  throw std::out_of_range("Tile not found!");
+}
+
+size_t remainingBlocks(const std::map<std::pair<int, int>, int> map) {
+  size_t num_blocks{0};
+  for (auto [pos, tile] : map) {
+    if (tile == 2) {
+      num_blocks++;
+    }
+  }
+
+  return num_blocks;
+}
+
 size_t part_one(const std::vector<std::string>& input) {
   auto intcodes = prepare_input(input);
-  CPU cpu(intcodes);
+  CPU cpu(intcodes, false);
   bool halting{false};
-  std::optional<int64_t> output{std::nullopt};
   std::vector<int64_t> outputs;
 
   while (!halting) {
@@ -428,7 +483,6 @@ size_t part_one(const std::vector<std::string>& input) {
     if (!halting)
       outputs.push_back(std::get<1>(update).value());
   }
-
   auto map = createMap(outputs);
   size_t result{0};
   for (auto [_, tile_id] : map) {
@@ -438,7 +492,62 @@ size_t part_one(const std::vector<std::string>& input) {
   return result;
 }
 
-void part_two(const std::vector<std::string>& input) {
+int64_t part_two(const std::vector<std::string>& input) {
+  bool interactive{false};
+  auto intcodes = prepare_input(input);
+  CPU cpu(intcodes, false);
+  cpu.get_memory(0) = 2;
+  bool done{false};
+  std::optional<int64_t> output{std::nullopt};
+  std::vector<int64_t> outputs;
+  int64_t opcode;
+  char key;
+  int64_t score{-1};
+
+  while (!done) {
+    auto opcode = cpu.current_opcode();
+    if (opcode % 100 == 3) {
+      if (interactive) {
+        score = getScore(outputs);
+        std::cout << "Score: " << score << std::endl;
+        auto map = createMap(outputs);
+        done = remainingBlocks(map) == 0;
+        print(map);
+
+        system("stty -echo");
+        system("stty cbreak");
+        key = getchar();
+        system("stty echo");
+        system("stty -cbreak");
+        switch (key) {
+          case 'a': cpu.pushInput(-1); break;
+          case 'd': cpu.pushInput(1); break;
+          default: cpu.pushInput(0); break;
+        }
+      } else {
+        auto map = createMap(outputs);
+        done = remainingBlocks(map) == 0;
+        score = getScore(outputs);
+        auto paddle_pos = tilePosition(3, map);
+        auto ball_pos = tilePosition(4, map);
+
+        if (ball_pos.first < paddle_pos.first) {
+          cpu.pushInput(-1);
+        } else if (ball_pos.first > paddle_pos.first) {
+          cpu.pushInput(1);
+        } else {
+          cpu.pushInput(0);
+        }
+      }
+    }
+    auto update = cpu.execute();
+    output = std::get<1>(update);
+
+    if (output.has_value())
+      outputs.push_back(std::get<1>(update).value());
+  }
+
+  return score;
 }
 
 int main() {
@@ -447,7 +556,8 @@ int main() {
 
   auto answer_one =  part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  std::cout << "The answer to part two is: " << std::endl;
-  part_two(input);
+  auto answer_two =  part_two(input);
+  std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
+
