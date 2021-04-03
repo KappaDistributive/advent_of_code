@@ -1,3 +1,5 @@
+#include <map>
+#include <numeric>
 #include <regex> // NOLINT
 
 #include "../utils/input.hpp"
@@ -126,6 +128,44 @@ size_t getEnergy(const std::vector<Moon>& moons) {
   return total_energy;
 }
 
+void detectPeriods(std::map<size_t, size_t>* periods,
+                   const std::vector<std::vector<Moon>>& history) {
+  if (history.size() <= 1) {
+    return;
+  }
+  for (size_t dimension{0}; dimension < 3; dimension++) {
+    if (periods->count(dimension) == 0) {
+      bool found_period{true};
+      for (size_t moon{0}; moon < history.front().size(); moon++) {
+        switch (dimension) {
+          case 0:
+            if (history.back()[moon].pos_x != history.front()[moon].pos_x ||
+                history.back()[moon].vel_x != history.front()[moon].vel_x) {
+              found_period = false;
+            }
+            break;
+          case 1:
+            if (history.back()[moon].pos_y != history.front()[moon].pos_y ||
+                history.back()[moon].vel_y != history.front()[moon].vel_y) {
+              found_period = false;
+            }
+            break;
+          case 2:
+            if (history.back()[moon].pos_z != history.front()[moon].pos_z ||
+                history.back()[moon].vel_z != history.front()[moon].vel_z) {
+              found_period = false;
+            }
+            break;
+          default: throw std::runtime_error("This should never happen!");
+        }
+      }
+      if (found_period) {
+        periods->insert({dimension, history.size() - 1});
+      }
+    }
+  }
+}
+
 int part_one(const std::vector<std::string>& input) {
   bool verbose{false};
   size_t time_step{0};
@@ -144,8 +184,24 @@ int part_one(const std::vector<std::string>& input) {
   return getEnergy(moons);
 }
 
-int part_two(const std::vector<std::string>& input) {
-  return -97;
+size_t part_two(const std::vector<std::string>& input) {
+  size_t time_step{0};
+  auto moons = prepare_input(input);
+  std::vector<std::vector<Moon>> history;
+  std::map<size_t, size_t> periods;
+
+  while (periods.size() < 3) {
+    history.push_back(moons);
+    detectPeriods(&periods, history);
+    step(&moons);
+  }
+
+  size_t result{1};
+  for (auto [dimension, period] : periods) {
+    result = std::lcm(result, period);
+  }
+
+  return result;
 }
 
 int main() {
