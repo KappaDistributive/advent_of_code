@@ -124,7 +124,27 @@ int part_one(const std::string& input) {
 }
 
 int part_two(const std::string& input) {
-  return 12;
+  size_t num_garbage{0};
+  bool in_garbage{false};
+  bool is_escaped{false};
+
+  for (auto character : input) {
+    if (is_escaped) {
+      is_escaped = false;
+    } else if (character == '!') {
+      is_escaped = true;
+    } else if (in_garbage) {
+      if (character == '>') {
+        in_garbage = false;
+      } else {
+        num_garbage++;
+      }
+    } else if (character == '<') {
+      in_garbage = true;
+    }
+  }
+
+  return num_garbage;
 }
 
 int main() {
