@@ -90,7 +90,12 @@ bool compare(const int& lhs, const Comparator& comparator, const int& rhs) {
   return false;
 }
 
-typedef std::tuple<std::string, Operator, int, std::string, Comparator, int> Instruction;
+typedef std::tuple<std::string,
+                   Operator,
+                   int,
+                   std::string,
+                   Comparator,
+                   int> Instruction;
 
 std::ostream& operator<< (std::ostream& os, const Instruction& instruction) {
   auto [target, op, data, lhs, cmp, rhs] = instruction;
@@ -101,9 +106,9 @@ std::ostream& operator<< (std::ostream& os, const Instruction& instruction) {
 
 std::vector<Instruction> prepare_input(const std::vector<std::string>& input) {
   std::vector<Instruction> instructions;
-  std::regex re{"^(\\w+)\\s(inc|dec)\\s(-?\\d+)\\sif\\s(\\w+)\\s(<|<=|==|!=|>=|>)\\s(-?\\d+)$"};
+  std::regex re{"^(\\w+)\\s(inc|dec)\\s(-?\\d+)\\sif\\s(\\w+)\\s(<|<=|==|!=|>=|>)\\s(-?\\d+)$"};  // NOLINT
   std::smatch matches;
-  for (auto line: input) {
+  for (auto line : input) {
     std::regex_match(line, matches, re);
     instructions.push_back({
         matches[1].str(),
@@ -153,7 +158,7 @@ int part_one(const std::vector<std::string>& input) {
   auto registers = cpu.get_registers();
 
   int result{std::numeric_limits<int>::min()};
-  for (auto [_, value]: registers) {
+  for (auto [_, value] : registers) {
     if (value > result) {
       result = value;
     }
@@ -167,7 +172,7 @@ int part_two(const std::vector<std::string>& input) {
   CPU cpu(instructions);
   do {
     auto registers = cpu.get_registers();
-    for (auto [_, value]: registers) {
+    for (auto [_, value] : registers) {
       if (value > result) {
         result = value;
       }
@@ -187,4 +192,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-
