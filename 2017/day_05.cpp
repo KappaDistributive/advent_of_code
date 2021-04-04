@@ -2,7 +2,7 @@
 
 std::vector<int> prepare_input(const std::vector<std::string>& input) {
   std::vector<int> jumps;
-  for (auto line: input) {
+  for (auto line : input) {
     jumps.push_back(std::stoi(line));
   }
   return jumps;
@@ -47,4 +47,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-
