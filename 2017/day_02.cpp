@@ -2,11 +2,12 @@
 
 #include "../utils/input.hpp"
 
-std::vector<std::vector<int>> prepare_input(const std::vector<std::string>& input) {
+std::vector<std::vector<int>>
+prepare_input(const std::vector<std::string>& input) {
   std::vector<std::vector<int>> data;
-  for (auto line: input) {
+  for (auto line : input) {
     std::vector<int> row;
-    for (auto entry: utils::split_string(line, '\t')) {
+    for (auto entry : utils::split_string(line, '\t')) {
       row.push_back(std::stoi(entry));
     }
     data.push_back(row);
@@ -17,7 +18,7 @@ std::vector<std::vector<int>> prepare_input(const std::vector<std::string>& inpu
 int64_t part_one(const std::vector<std::string>& input) {
   auto data = prepare_input(input);
   int64_t result{0};
-  for (auto row: data) {
+  for (auto row : data) {
     std::sort(row.begin(), row.end());
     result += row.back() - row[0];
   }
@@ -27,9 +28,11 @@ int64_t part_one(const std::vector<std::string>& input) {
 int part_two(const std::vector<std::string>& input) {
   auto data = prepare_input(input);
   int64_t result{0};
-  for (auto row: data) {
+  for (auto row : data) {
     for (size_t left_index{0}; left_index + 1 < row.size(); left_index++) {
-      for (size_t right_index{left_index+1}; right_index < row.size(); right_index++) {
+      for (size_t right_index{left_index+1};
+           right_index < row.size();
+           right_index++) {
         if (row[left_index] % row[right_index] == 0) {
           result += row[left_index] / row[right_index];
           break;
@@ -53,4 +56,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-

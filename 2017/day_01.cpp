@@ -2,7 +2,7 @@
 
 std::vector<int> get_digits(const std::string& input) {
   std::vector<int> digits;
-  for (auto character: input) {
+  for (auto character : input) {
     digits.push_back(character - '0');
   }
   return digits;
@@ -11,7 +11,8 @@ std::vector<int> get_digits(const std::string& input) {
 int64_t calculate_answer(const std::vector<int>& digits, size_t offset) {
   int64_t result{0};
   for (size_t index{0}; index <= digits.size(); index++) {
-    if (digits[index % digits.size()] == digits[(index + offset) % digits.size()]) {
+    if (digits[index % digits.size()] ==
+        digits[(index + offset) % digits.size()]) {
       result += digits[index % digits.size()];
     }
   }
@@ -38,4 +39,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-

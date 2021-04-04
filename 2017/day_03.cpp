@@ -23,16 +23,19 @@ std::ostream& operator<< (std::ostream& os, const Direction& direction) {
   return os;
 }
 
-std::pair<int, int> operator+ (std::pair<int, int> lhs, std::pair<int, int> rhs) {
+std::pair<int, int>
+operator+(std::pair<int, int> lhs, std::pair<int, int> rhs) {
   return std::make_pair(lhs.first + rhs.first, lhs.second + rhs.second);
 }
 
-void operator+=(std::pair<int, int>& position, const std::pair<int, int>& other) {
+void operator+=(std::pair<int, int>& position,
+                const std::pair<int, int>& other) {
   position.first += other.first;
   position.second += other.second;
 }
 
-std::ostream& operator<< (std::ostream& os, const std::pair<int, int>& position) {
+std::ostream& operator<<(std::ostream& os,
+                         const std::pair<int, int>& position) {
   os << "(" << position.first << ", " << position.second << ")";
   return os;
 }
@@ -50,7 +53,14 @@ class SpiralGrid {
 
  public:
   explicit SpiralGrid(bool part_two = false)
-    : height(_height), width(_width), center({_height / 2, _width / 2}), data(new std::array<int, _height * _width>()), position({0, 0}), direction(south), path({{0, 0}}), path_index(0) {
+    : height(_height),
+      width(_width),
+      center({_height / 2, _width / 2}),
+      data(new std::array<int, _height * _width>()),
+      position({0, 0}),
+      direction(south),
+      path({{0, 0}}),
+      path_index(0) {
     build_spiral(part_two);
   }
 
@@ -60,7 +70,10 @@ class SpiralGrid {
   }
 
   int* operator[] (std::pair<int, int> position) {
-    size_t index{(center.second - position.second) * this->width + center.first + position.first};
+    size_t index{
+      (center.second - position.second) * this->width +
+      center.first +
+      position.first};
     if (index < this->data->size()) {
       return &(this->data->operator[](index));
     } else {
@@ -71,7 +84,7 @@ class SpiralGrid {
   friend std::ostream& operator<< (std::ostream& os, const SpiralGrid& grid) {
     size_t padding{0};
     size_t current_length;
-    for (auto entry: *grid.data) {
+    for (auto entry : *grid.data) {
       current_length = std::to_string(entry).size() + 1;
       if (current_length > padding) {
         padding = current_length;
@@ -82,7 +95,9 @@ class SpiralGrid {
         if (y == grid.height / 2 && x == grid.height / 2) {
           os << GREEN;
         }
-        os << std::setw(padding) << grid.data->operator[](y * grid.width + x) << std::setw(1);
+        os << std::setw(padding)
+           << grid.data->operator[](y * grid.width + x)
+           << std::setw(1);
         if (y == grid.height / 2 && x == grid.height / 2) {
           os << RESET;
         }
@@ -100,26 +115,26 @@ class SpiralGrid {
     // update direction
     switch (this->direction) {
       case north:
-        if (this->operator[](position + std::make_pair(-1, 0)) == nullptr || *this->operator[](position + std::make_pair(-1, 0)) == 0)
-        {
+        if (this->operator[](position + std::make_pair(-1, 0)) == nullptr ||
+            *this->operator[](position + std::make_pair(-1, 0)) == 0) {
           this->direction = west;
         }
         break;
       case east:
-        if (this->operator[](position + std::make_pair(0, 1)) == nullptr || *this->operator[](position + std::make_pair(0, 1)) == 0)
-        {
+        if (this->operator[](position + std::make_pair(0, 1)) == nullptr ||
+            *this->operator[](position + std::make_pair(0, 1)) == 0) {
           this->direction = north;
         }
         break;
       case south:
-        if (this->operator[](position + std::make_pair(1, 0)) == nullptr || *this->operator[](position + std::make_pair(1, 0)) == 0)
-        {
+        if (this->operator[](position + std::make_pair(1, 0)) == nullptr ||
+            *this->operator[](position + std::make_pair(1, 0)) == 0) {
           this->direction = east;
         }
         break;
       case west:
-        if (this->operator[](position + std::make_pair(0, -1)) == nullptr || *this->operator[](position + std::make_pair(0, -1)) == 0)
-        {
+        if (this->operator[](position + std::make_pair(0, -1)) == nullptr ||
+            *this->operator[](position + std::make_pair(0, -1)) == 0) {
           this->direction = south;
         }
         break;
@@ -148,7 +163,8 @@ class SpiralGrid {
     std::pair<int, int> position;
     for (int y{0}; y < this->height; y++) {
       for (int x{0}; x < this->width; x++) {
-        position = std::make_pair(x - this->center.first, y - this->center.second);
+        position = std::make_pair(x - this->center.first,
+                                  y - this->center.second);
         if (*this->operator[](position) == value) {
           return position;
         }
@@ -161,7 +177,8 @@ class SpiralGrid {
     return this->path;
   }
 
-  void build_spiral(bool part_two = false) { // only works for uneven _height, _width
+  // only works for uneven _height, _width
+  void build_spiral(bool part_two = false) {
     int value{1};
     while (this->operator[](this->position) != nullptr) {
       if (part_two && this->position != std::make_pair(0, 0)) {
@@ -169,7 +186,8 @@ class SpiralGrid {
         for (int offset_y{-1}; offset_y <= 1; offset_y++) {
           for (int offset_x{-1}; offset_x <= 1; offset_x++) {
             if (offset_y != 0 || offset_x != 0) {
-              auto pointer = this->operator[](this->position + std::make_pair(offset_x, offset_y));
+              auto pointer = this->operator[](
+                this->position + std::make_pair(offset_x, offset_y));
               if (pointer != nullptr) {
                 value += *pointer;
               }
@@ -198,7 +216,7 @@ int part_two(const int& input) {
   SpiralGrid<1001, 1001> grid(true);
   auto path = grid.get_path();
   int value;
-  for (auto position: path) {
+  for (auto position : path) {
     value = *grid[position];
     if (value > input) {
       break;
@@ -217,4 +235,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-
