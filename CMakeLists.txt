@@ -187,6 +187,9 @@ target_link_libraries(2017_08 input)
 add_executable(2017_09 2017/day_09.cpp)
 target_link_libraries(2017_09 input)
 
+add_executable(2017_10 2017/day_10.cpp)
+target_link_libraries(2017_10 input)
+
 add_executable(2017_11 2017/day_11.cpp)
 target_link_libraries(2017_11 input hexgrid)
 
