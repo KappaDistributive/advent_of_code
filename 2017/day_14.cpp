@@ -1,5 +1,7 @@
+#include <array>
 #include <bitset>
 #include <cassert>
+#include <set>
 #include <sstream>
 
 #include "../utils/input.hpp"
@@ -82,18 +84,16 @@ std::string denseHash(const std::string& input) {
   std::stringstream ss;
   ss << std::hex;
   for (auto entry : raw_hash) {
-    ss << entry;
+    ss << std::setfill('0') << std::setw(2) << entry;
   }
 
   return ss.str();
 }
 
 std::bitset<128> knotHashToBits(std::string hash) {
-
-  std::string lower = (std::string(32 - hash.size(), '0') +
-                       hash).substr(0, 16);
-  std::string upper = (std::string(32 - hash.size(), '0') +
-                       hash).substr(16, 16);
+  assert(hash.size() == 32);
+  std::string lower = hash.substr(0, 16);
+  std::string upper = hash.substr(16, 16);
 
   std::bitset<64> lower_bit(std::stoull(lower, nullptr, 16));
   std::bitset<64> upper_bit(std::stoull(upper, nullptr, 16));
@@ -109,6 +109,85 @@ std::bitset<128> knotHashToBits(std::string hash) {
   return result;
 }
 
+
+std::pair<size_t, size_t>
+findNewRegion(const std::array<bool, 128*128>& disk,
+              const std::array<int, 128*128>& ownership) {
+  for (size_t y{0}; y < 128; y++) {
+    for (size_t x{0}; x < 128; x++) {
+      if (ownership[y * 128 + x] == -1) {
+        return {x, y};
+      }
+    }
+  }
+
+  throw std::runtime_error("No new region left!");
+}
+
+
+void fillRegion(const std::array<bool, 128*128>& disk,
+                size_t x,
+                size_t y,
+                std::array<int, 128*128>* ownership) {
+  assert(disk[y * 128 + x] == true);
+  int owner = *std::max_element(ownership->begin(), ownership->end());
+  owner++;
+  std::cout << "Adding owner: " << owner << std::endl;
+  std::set<std::pair<size_t, size_t>> points{{{x, y}}};
+  bool expand{true};
+  while (expand) {
+    std::set<std::pair<size_t, size_t>> new_points;
+    for (auto point : points) {
+      for (int y{-1}; y <= 1; y++) {
+        for (int x{-1}; x <= 1; x++) {
+          if (!(x== 0 && y == 0) && (x == 0 || y == 0)) {
+            std::pair<int, int> candidate;
+            candidate.first = std::min(
+              std::max(0, static_cast<int>(point.first) + x), 127);
+            candidate.second = std::min(
+              std::max(0, static_cast<int>(point.second) + y), 127);
+
+            if (disk[candidate.second * 128 + candidate.first]) {
+              new_points.insert({static_cast<size_t>(candidate.first),
+                                 static_cast<size_t>(candidate.second)});
+            }
+          }
+        }
+      }
+    }
+    size_t num_points{points.size()};
+    for (auto p : new_points) {
+      points.insert(p);
+    }
+    expand = points.size() > num_points;
+  }
+
+  for (auto p : points) {
+    ownership->operator[](p.second * 128 + p.first) = owner;
+  }
+}
+
+int countRegions(const std::array<bool, 128*128>& disk) {
+  std::array<int, 128*128> ownership;
+  ownership.fill(-1);
+
+  // set ownership for empty parts of disk
+  for (size_t y{0}; y < 128; y++) {
+    for (size_t x{0}; x < 128; x++) {
+      if (!disk[y * 128 + x]) {
+        ownership[y * 128 + x] = 0;
+      }
+    }
+  }
+
+  while (*std::min_element(ownership.begin(), ownership.end()) < 0) {
+    auto [x, y] = findNewRegion(disk, ownership);
+    fillRegion(disk, x, y, &ownership);
+  }
+
+  return *std::max_element(ownership.begin(), ownership.end());
+}
+
 size_t part_one(const std::string& input) {
   size_t result{0};
   for (auto layer{0}; layer < 128; layer++) {
@@ -121,8 +200,17 @@ size_t part_one(const std::string& input) {
 }
 
 
-std::string part_two(const std::string& input) {
-  return denseHash(input);
+int part_two(const std::string& input) {
+  std::array<bool, 128*128> disk;
+
+  for (auto layer{0}; layer < 128; layer++) {
+    auto row  = knotHashToBits(denseHash(input + "-" + std::to_string(layer)));
+    for (auto x{0}; x < 128; x++) {
+      disk[layer * 128 + x] = row[127 - x];
+    }
+  }
+
+  return countRegions(disk);
 }
 
 

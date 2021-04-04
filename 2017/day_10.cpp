@@ -89,7 +89,7 @@ std::string denseHash(const std::string& input) {
   std::stringstream ss;
   ss << std::hex;
   for (auto entry : raw_hash) {
-    ss << entry;
+    ss << std::setfill('0') << std::setw(2) << entry;
   }
 
   return ss.str();
