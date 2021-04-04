@@ -1,10 +1,20 @@
 #include "../utils/input.hpp"
 
-std::string part_one(const std::vector<std::string>& input) {
-  std::vector<char> programs = {'a', 'b', 'c', 'd',
-                                'e', 'f', 'g', 'h',
-                                'i', 'j', 'k', 'l',
-                                'm', 'n', 'o', 'p'};
+std::string
+dance(const std::vector<std::string>& input,
+      const std::string& position = "") {
+  std::vector<char> programs;
+  if (position.size() == 16) {
+    for (auto p : position) {
+      programs.push_back(p);
+    }
+  } else {
+    programs = {'a', 'b', 'c', 'd',
+               'e', 'f', 'g', 'h',
+               'i', 'j', 'k', 'l',
+               'm', 'n', 'o', 'p'};
+  }
+
   for (auto instruction : input) {
     auto tail = instruction.substr(1);
     char op = instruction[0];
@@ -44,9 +54,26 @@ std::string part_one(const std::vector<std::string>& input) {
   return result;
 }
 
+std::string part_one(const std::vector<std::string>& input) {
+  return dance(input);
+}
 
-int part_two(const std::vector<std::string>& input) {
-  return 2;
+
+std::string part_two(const std::vector<std::string>& input) {
+  std::vector<std::string> positions;
+  std::string program{"abcdefghijklmnop"};
+  while (positions.size() == 0 || program != "abcdefghijklmnop") {
+    positions.push_back(program);
+    program = dance(input, program);
+  }
+
+  size_t remaining = 1000000000ull % (positions.size());
+  program = "abcdefghijklmnop";
+  for (size_t index{0}; index < remaining; index++) {
+    program = dance(input, program);
+  }
+
+  return program;
 }
 
 int main() {
