@@ -4,10 +4,13 @@
 
 class GameOfChairs {
  private:
-  int width, height;
+  size_t width, height;
   std::vector<char> chairs;
 
-  int neighbor_count(size_t row, size_t column, char kind, bool part_two = false) const {
+  int neighbor_count(size_t row,
+                     size_t column,
+                     char kind,
+                     bool part_two = false) const {
     int counter{0};
     if (!part_two) {
       size_t row_lower{(row > 0) ? row-1 : row},
@@ -29,8 +32,12 @@ class GameOfChairs {
           }
 
           size_t row_position{row}, column_position{column};
-          while ((y_step == 0 || (y_step == -1 && row_position > 0) || (y_step == 1 && row_position + 1 < height)) &&
-              (x_step == 0 || (x_step == -1 && column_position > 0) || (x_step == 1 && column_position + 1 < width))) {
+          while ((y_step == 0 ||
+                 (y_step == -1 && row_position > 0) ||
+                 (y_step == 1 && row_position + 1 < height)) &&
+                 (x_step == 0 ||
+                 (x_step == -1 && column_position > 0) ||
+                 (x_step == 1 && column_position + 1 < width))) {
             row_position += y_step;
             column_position += x_step;
             if (this->get_seat(row_position, column_position) != '.') {
@@ -49,10 +56,10 @@ class GameOfChairs {
     width = seating_plan[0].size();
     height = 0;
 
-    for (auto line: seating_plan) {
+    for (auto line : seating_plan) {
       height++;
       assert(line.size() == width);
-      for (auto seat: line) {
+      for (auto seat : line) {
         chairs.push_back(seat);
       }
     }
@@ -92,7 +99,7 @@ class GameOfChairs {
       }
     }
 
-    for (auto [index, seat]: changes) {
+    for (auto [index, seat] : changes) {
       chairs[index] = seat;
     }
 
@@ -101,7 +108,7 @@ class GameOfChairs {
 
   int count(char kind) {
     int counter{0};
-    for (auto chair: chairs) {
+    for (auto chair : chairs) {
       if (chair == kind) {
         counter++;
       }
@@ -133,7 +140,6 @@ int part_one(const std::vector<std::string>& input) {
 }
 
 int part_two(const std::vector<std::string>& input) {
-
   GameOfChairs game(input);
   do {
     // std:: cout << "\n" << game << std::endl;
@@ -151,4 +157,3 @@ int main() {
 
   return 0;
 }
-
