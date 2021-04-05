@@ -1,5 +1,6 @@
 #include "../utils/input.hpp"
 
+
 std::vector<int> prepare_input(const std::vector<std::string>& input) {
   std::vector<int> jumps;
   for (auto line : input) {
@@ -8,9 +9,10 @@ std::vector<int> prepare_input(const std::vector<std::string>& input) {
   return jumps;
 }
 
+
 int64_t part_one(const std::vector<std::string>& input) {
   auto jumps = prepare_input(input);
-  int position{0};
+  size_t position{0};
   int64_t step{0};
   do {
     position += jumps[position]++;
@@ -19,9 +21,10 @@ int64_t part_one(const std::vector<std::string>& input) {
   return step;
 }
 
+
 int part_two(const std::vector<std::string>& input) {
   auto jumps = prepare_input(input);
-  int position{0};
+  size_t position{0};
   int64_t step{0};
   int jump_value;
   do {
@@ -36,6 +39,7 @@ int part_two(const std::vector<std::string>& input) {
   } while (0 <= position && position < jumps.size());
   return step;
 }
+
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2017/data/input_05.txt"));
