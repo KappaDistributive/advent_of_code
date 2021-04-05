@@ -135,7 +135,7 @@ class Gate {
     return inputs;
   }
 
-  const gate_type get_type() const {
+  gate_type get_type() const {
     return type;
   }
 };
