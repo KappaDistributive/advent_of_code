@@ -208,7 +208,7 @@ int part_two(const std::vector<std::string>& input) {
   return cpu.get_memory().at('b');
 }
 
-int main(int argc, char** argv) {
+int main() {
   utils::Reader reader(std::filesystem::path("../2015/data/input_23.txt"));
   const auto input = reader.get_lines();
 
