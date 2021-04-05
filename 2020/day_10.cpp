@@ -3,11 +3,13 @@
 
 #include "../utils/input.hpp"
 
-std::vector<int> get_jolts(const std::vector<std::string>& input) {
+
+std::vector<int>
+get_jolts(const std::vector<std::string>& input) {
   std::vector<int> jolts;
   int value{0}, max{0};
   jolts.push_back(0);
-  for (auto jolt: input) {
+  for (auto jolt : input) {
     value = std::stoi(jolt);
     if (value > max) {
       max = value;
@@ -19,8 +21,10 @@ std::vector<int> get_jolts(const std::vector<std::string>& input) {
   return jolts;
 }
 
-bool indicator(int jolt, const std::vector<int>& jolts) {
-  for (auto j: jolts) {
+
+bool
+indicator(int jolt, const std::vector<int>& jolts) {
+  for (auto j : jolts) {
     if (j == jolt) {
       return true;
     } else if (j > jolt) {
@@ -30,8 +34,8 @@ bool indicator(int jolt, const std::vector<int>& jolts) {
   return false;
 }
 
-int part_one(const std::vector<std::string>& input) {
-  int result{0};
+
+auto part_one(const std::vector<std::string>& input) {
   int distribution[] = {0, 0, 0};
   int diff{0};
   auto jolts = get_jolts(input);
@@ -47,7 +51,8 @@ int part_one(const std::vector<std::string>& input) {
   return distribution[0] * distribution[2];
 }
 
-int64_t part_two(const std::vector<std::string>& input) {
+
+auto part_two(const std::vector<std::string>& input) {
   auto jolts = get_jolts(input);
   std::sort(jolts.begin(), jolts.end());
 
@@ -58,11 +63,17 @@ int64_t part_two(const std::vector<std::string>& input) {
   paths[1] = static_cast<int64_t>(indicator(1, jolts));
   paths[2] = static_cast<int64_t>(indicator(2, jolts) * (paths[0] + paths[1]));
 
-  for (size_t index{3}; index < max + 1; index++) {
-    paths[index] = static_cast<int64_t>(indicator(index, jolts) * (paths[index-3] + paths[index-2] + paths[index-1]));
+  for (size_t index{3};
+       index < static_cast<size_t>(max + 1);
+       index++) {
+    paths[index] = static_cast<int64_t>(
+      indicator(index, jolts) * (paths[index-3] +
+      paths[index-2] +
+      paths[index-1]));
   }
   return paths[max];
 }
+
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2020/data/input_10.txt"));
@@ -73,4 +84,3 @@ int main() {
 
   return 0;
 }
-
