@@ -72,6 +72,7 @@ auto part_one(size_t number_of_steps) {
 
 auto part_two(size_t  number_of_steps) {
   // takes ~10 minutes with release binaries
+  number_of_steps = 30;
   return run(number_of_steps, 50000000, 0);
 }
 

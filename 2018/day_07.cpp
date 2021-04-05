@@ -70,6 +70,7 @@ available_tasks(const std::vector<char>& alphabet,
     return candidates;
 }
 
+
 std::string part_one(const std::vector<std::string>& input) {
     auto restrictions = prepare_input(input);
     auto alphabet = prepare_alphabet(input);
@@ -81,6 +82,7 @@ std::string part_one(const std::vector<std::string>& input) {
 
     return result;
 }
+
 
 size_t part_two(const std::vector<std::string>& input) {
     auto restrictions = prepare_input(input);
@@ -116,7 +118,8 @@ size_t part_two(const std::vector<std::string>& input) {
                             second + static_cast<int>(candidate - 'A') + 61};
                     }
                 }
-            } else if (std::get<1>(worker) == second) {  // worker is done
+            } else if (std::get<1>(worker) ==
+                       static_cast<int>(second)) {  // worker is done
                 finished_new_work = true;
                 result += std::get<0>(worker);
                 workers[index] = {'\0', -1};
