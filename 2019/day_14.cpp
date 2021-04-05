@@ -128,10 +128,7 @@ auto part_one(const std::vector<std::string>& input) {
     reagents = new_reagents;
   }
 
-  for (auto [name, quanity] : reagents) {
-    std::cout << quanity << " " << name << std::endl;
-  }
-  return 0;
+  return reagents.at("ORE");
 }
 
 auto part_two(const std::vector<std::string>& input) {
