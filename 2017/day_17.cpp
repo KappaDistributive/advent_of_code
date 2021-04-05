@@ -2,6 +2,7 @@
 
 #include "../utils/input.hpp"
 
+
 void next(std::list<size_t>* buffer,
           std::list<size_t>::iterator* position,
           const size_t number_of_steps) {
@@ -16,6 +17,7 @@ void next(std::list<size_t>* buffer,
     *position = buffer->insert(std::next(*position), buffer->size());
 }
 
+
 std::ostream&
 operator<<(std::ostream& os,
            std::pair<std::list<size_t>*, std::list<size_t>::iterator*> state) {
@@ -29,7 +31,11 @@ operator<<(std::ostream& os,
   return os;
 }
 
-auto part_one(size_t number_of_steps) {
+
+size_t
+run(size_t number_of_steps,
+    size_t number_of_rounds,
+    size_t target) {
   bool verbose{false};
   std::list<size_t> buffer;
   buffer.push_back(0);
@@ -39,7 +45,7 @@ auto part_one(size_t number_of_steps) {
     std::cout << std::make_pair(&buffer, &position) << std::endl;
   }
 
-  for (size_t round{1}; round <= 2017; round++) {
+  for (size_t round{1}; round <= number_of_rounds; round++) {
     next(&buffer, &position, number_of_steps);
     if (verbose) {
       std::cout << std::make_pair(&buffer, &position) << std::endl;
@@ -49,7 +55,7 @@ auto part_one(size_t number_of_steps) {
   auto it = buffer.begin();
   size_t result{0};
   for (; it != buffer.end(); it++) {
-    if (*it == 2017) {
+    if (*it == target) {
       result = std::next(it) == buffer.end() ? buffer.front() : *std::next(it);
       break;
     }
@@ -59,9 +65,16 @@ auto part_one(size_t number_of_steps) {
 }
 
 
-auto part_two(size_t  number_of_steps) {
-  return "test";
+auto part_one(size_t number_of_steps) {
+  return run(number_of_steps, 2017, 2017);
 }
+
+
+auto part_two(size_t  number_of_steps) {
+  // takes ~10 minutes with release binaries
+  return run(number_of_steps, 50000000, 0);
+}
+
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2017/data/input_17.txt"));
