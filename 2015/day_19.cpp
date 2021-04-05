@@ -1,5 +1,5 @@
 #include <cassert>
-#include <regex>
+#include <regex>  // NOLINT
 #include <set>
 
 #include "../utils/input.hpp"
@@ -31,16 +31,20 @@ class Replacement {
     std::string suffix = input;
     std::string replacement;
     std::smatch matches;
-    size_t offset{0};
 
-    // std::cout << "Replacement: " << source_pattern << " => " << target << std::endl;
+    // std::cout << "Replacement: "
+    //           << source_pattern << " => "
+    //           << target << std::endl;
     // std::cout << "Before: " << input << std::endl;
 
-    for (auto it =std::sregex_iterator(input.begin(), input.end(), source_regex); it != std::sregex_iterator(); ++it) {
+    for (auto it = std::sregex_iterator(
+           input.begin(), input.end(), source_regex);
+         it != std::sregex_iterator(); ++it) {
       matches = *it;
       replacement = input.substr(0, matches.position(1)) +
                     target +
-                    input.substr(matches.position(1) + source_pattern.size(), input.size());
+                    input.substr(matches.position(1) + source_pattern.size(),
+                                 input.size());
       // std::cout << "After: " << replacement << std::endl;
       replacements.push_back(replacement);
     }
@@ -49,12 +53,14 @@ class Replacement {
   }
 };
 
-std::pair<std::vector<Replacement>, std::string> prepare_input(const std::vector<std::string>& input, bool inverted = false) {
+std::pair<std::vector<Replacement>, std::string>
+prepare_input(const std::vector<std::string>& input,
+              bool inverted = false) {
   std::string molecule;
   std::vector<Replacement> replacements;
   bool first_section{true};
 
-  for (auto line: input) {
+  for (auto line : input) {
     if (line.size() == 0) {
       first_section = false;
     } else if (first_section) {
@@ -75,8 +81,8 @@ int part_one(const std::vector<std::string>& input) {
   // assert (replacements.size() == 3);
   // std::cout << "Molecule: " << molecule << std::endl;
 
-  for (auto replacement: replacements) {
-    for (auto result: replacement.apply(molecule)) {
+  for (auto replacement : replacements) {
+    for (auto result : replacement.apply(molecule)) {
       // std::cout << "Result: " << result << std::endl;
       molecules.insert(result);
     }
@@ -91,10 +97,10 @@ int part_two(const std::vector<std::string>& input) {
 
   while (molecule != "e") {
     stage++;
-    for (auto replacement: replacements) {
+    for (auto replacement : replacements) {
       auto new_molecules = replacement.apply(molecule);
       if (new_molecules.size() > 0) {
-        molecule = new_molecules[0]; // greedy decoding
+        molecule = new_molecules[0];  // greedy decoding
         break;
       }
     }
