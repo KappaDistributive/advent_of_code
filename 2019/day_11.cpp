@@ -315,9 +315,9 @@ class Robot {
  public:
   explicit Robot(const std::vector<int64_t>& intcodes,
                  bool verbose = false)
-    : m_position(Point{0, 0}),
-      m_cpu(CPU(intcodes, verbose)),
-      m_direction(Direction::north) {
+    : m_direction(Direction::north),
+      m_position(Point{0, 0}),
+      m_cpu(CPU(intcodes, verbose)) {
   }
 
   void turn(bool panel) {
