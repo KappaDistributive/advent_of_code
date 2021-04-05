@@ -36,7 +36,7 @@ step(const std::deque<char>& state,
     int index;
     for (index = -5; index < static_cast<int>(state.size()) + 5; index++) {
         std::string local_state;
-        for (int offset{0}; offset < 5; offset++) {
+        for (size_t offset{0}; offset < 5; offset++) {
             if (index + offset >= 0 && index + offset < state.size()) {
                 local_state += state[index + offset];
             } else {
