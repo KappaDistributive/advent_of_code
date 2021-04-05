@@ -1,6 +1,6 @@
 #include <cassert>
 #include <map>
-#include <regex>
+#include <regex>  // NOLINT
 
 #include "../utils/input.hpp"
 
@@ -8,12 +8,12 @@ class Seating {
  private:
   std::vector<std::string> names;
   std::map<std::pair<std::string, std::string>, int> happiness_deltas;
-  std::regex re{"^(\\w+)\\swould\\s(lose|gain)\\s(\\d+)\\shappiness\\sunits\\sby\\ssitting\\snext\\sto\\s(\\w+)\\.$"};
+  std::regex re{"^(\\w+)\\swould\\s(lose|gain)\\s(\\d+)\\shappiness\\sunits\\sby\\ssitting\\snext\\sto\\s(\\w+)\\.$"};  // NOLINT
 
  public:
   explicit Seating(const std::vector<std::string>& input) {
     std::smatch matches;
-    for (auto line: input) {
+    for (auto line : input) {
       std::regex_match(line, matches, re);
       assert(matches.size() == 5);
       std::string alice = matches[1].str();
@@ -31,14 +31,17 @@ class Seating {
       if (it_bob == names.end()) {
         names.push_back(bob);
       }
-      happiness_deltas.insert(std::make_pair(std::make_pair(alice, bob), happiness));
+      happiness_deltas.insert(
+        std::make_pair(std::make_pair(alice, bob), happiness));
     }
   }
 
   void add_me() {
-    for (auto name: names) {
-      happiness_deltas.insert(std::make_pair(std::make_pair("<<me>>", name), 0));
-      happiness_deltas.insert(std::make_pair(std::make_pair(name, "<<me>>"), 0));
+    for (auto name : names) {
+      happiness_deltas.insert(
+        std::make_pair(std::make_pair("<<me>>", name), 0));
+      happiness_deltas.insert(
+        std::make_pair(std::make_pair(name, "<<me>>"), 0));
     }
     names.push_back("<<me>>");
   }
@@ -47,9 +50,13 @@ class Seating {
     int happiness_delta{0};
     assert(indices.size() == names.size());
 
-    for (int index{0}; index < indices.size(); index++) {
-      happiness_delta += happiness_deltas.at(std::make_pair(names[indices[index]], names[indices[(index+indices.size()-1)%indices.size()]]));
-      happiness_delta += happiness_deltas.at(std::make_pair(names[indices[index]], names[indices[(index+1)%indices.size()]]));
+    for (size_t index{0}; index < indices.size(); index++) {
+      happiness_delta += happiness_deltas.at(std::make_pair(
+        names[indices[index]],
+        names[indices[(index+indices.size()-1)%indices.size()]]));
+      happiness_delta += happiness_deltas.at(std::make_pair(
+        names[indices[index]],
+        names[indices[(index+1)%indices.size()]]));
     }
 
     return happiness_delta;
