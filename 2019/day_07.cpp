@@ -23,11 +23,11 @@ struct Instruction {
 
 class CPU {
  private:
-    bool verbose;
     std::vector<int> memory;
     size_t instruction_pointer;
     std::deque<int>* input_tape;
     const bool use_input_tape;
+    bool verbose;
     bool is_waiting_for_input{false};
     int output{-1};
 
