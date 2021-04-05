@@ -15,7 +15,7 @@ std::list<std::pair<size_t, uint64_t>>::iterator rotate(const std::list<std::pai
 
 uint64_t part_one(const std::string& input) {
   std::list<std::pair<size_t, uint64_t>> elves;
-  for (size_t elf{1}; elf <= std::stoi(input); elf++) {
+  for (size_t elf{1}; elf <= std::stoul(input); elf++) {
     elves.push_back({elf, 1});
   }
   auto elf = elves.begin();
@@ -32,7 +32,7 @@ uint64_t part_one(const std::string& input) {
 
 uint64_t part_two(const std::string& input) {
   std::list<std::pair<size_t, uint64_t>> elves;
-  for (size_t elf{1}; elf <= std::stoi(input); elf++) {
+  for (size_t elf{1}; elf <= std::stoul(input); elf++) {
     elves.push_back({elf, 1});
   }
   auto elf = elves.begin();
