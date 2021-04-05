@@ -180,12 +180,10 @@ int part_one(const std::vector<std::string>& input) {
       print(moons, time_step);
   }
 
-  auto energy = getEnergy(moons);
   return getEnergy(moons);
 }
 
 size_t part_two(const std::vector<std::string>& input) {
-  size_t time_step{0};
   auto moons = prepare_input(input);
   std::vector<std::vector<Moon>> history;
   std::map<size_t, size_t> periods;
