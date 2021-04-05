@@ -39,7 +39,7 @@ class Firewall {
     bool got_caught{false};
     this->m_moved = true;
     this->m_position++;
-    if (this->m_position < this->size() &&
+    if (this->m_position < static_cast<int>(this->size()) &&
         this->getScannerLayer(this->m_position) == 0) {
       severity = this->m_position * this->m_scanner_ranges[this->m_position];
       got_caught = true;
@@ -88,7 +88,8 @@ class Firewall {
     // print layers
     for (size_t layer{0}; layer <= max_range; layer++) {
       for (size_t depth{0}; depth < firewall.size(); depth++) {
-        auto is_at_package = layer == 0 && firewall.m_position == depth;
+        auto is_at_package = layer == 0 &&
+             firewall.m_position == static_cast<int>(depth);
         auto is_in_range = layer < firewall.m_scanner_ranges[depth];
         bool is_at_scanner = firewall.getScannerLayer(depth) == layer;
         if (is_in_range) {
