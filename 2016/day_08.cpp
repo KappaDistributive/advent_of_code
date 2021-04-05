@@ -1,6 +1,6 @@
 #include <array>
 #include <cassert>
-#include <regex>
+#include <regex>  // NOLINT
 
 #include "../utils/input.hpp"
 
@@ -39,7 +39,7 @@ class Display {
     }
   }
 
-  void set_rectangle(const int& width, const int& height) {
+  void set_rectangle(const size_t& width, const size_t& height) {
     assert(width >= 0 && height >= 0);
     for (size_t y{0}; y < height; y++) {
       for (size_t x{0}; x < width; x++) {
@@ -87,7 +87,8 @@ class Display {
     std::string representation;
     for (size_t y{0}; y < this->height; y++) {
       for (size_t x{0}; x < this->width; x++) {
-        representation.push_back(this->content[y * this->width + x] ? '#' : '.');
+        representation.push_back(
+          this->content[y * this->width + x] ? '#' : '.');
       }
       representation.push_back('\n');
     }
@@ -100,21 +101,27 @@ class Display {
   }
 };
 
-std::vector<std::tuple<Command, int, int>> prepare_input(const std::vector<std::string>& input) {
+std::vector<std::tuple<Command, int, int>>
+prepare_input(const std::vector<std::string>& input) {
   std::vector<std::tuple<Command, int, int>> commands;
   std::regex rectangle_regex{"^rect\\s(\\d+)x(\\d+)$"};
-  std::regex rotation_regex{"^rotate\\s(column|row)\\s(?:x|y)=(\\d+)\\sby\\s(\\d+)$"};
+  std::regex rotation_regex{"^rotate\\s(column|row)\\s(?:x|y)=(\\d+)\\sby\\s(\\d+)$"};  // NOLINT
   std::smatch matches;
-  for (auto line: input) {
+  for (auto line : input) {
     std::regex_match(line, matches, rectangle_regex);
     if (matches.size() == 3) {
-      commands.push_back({rectangle, std::stoi(matches[1].str()), std::stoi(matches[2].str())});
+      commands.push_back(
+        {rectangle, std::stoi(matches[1].str()), std::stoi(matches[2].str())});
     } else {
       std::regex_match(line, matches, rotation_regex);
       if (matches.size() == 4 && matches[1].str() == "column") {
-        commands.push_back({rotate_column, std::stoi(matches[2].str()), std::stoi(matches[3].str())});
+        commands.push_back(
+          {rotate_column,
+           std::stoi(matches[2].str()), std::stoi(matches[3].str())});
       } else if (matches.size() == 4 && matches[1].str() == "row") {
-        commands.push_back({rotate_row, std::stoi(matches[2].str()), std::stoi(matches[3].str())});
+        commands.push_back(
+          {rotate_row,
+           std::stoi(matches[2].str()), std::stoi(matches[3].str())});
       } else {
         throw std::invalid_argument("Unknown command: " + line);
       }
@@ -128,7 +135,7 @@ int part_one(const std::vector<std::string>& input) {
   Display<50, 6> display;
   auto commands = prepare_input(input);
 
-  for (auto [op, a, b]: commands) {
+  for (auto [op, a, b] : commands) {
     if (op == rectangle) {
       display.set_rectangle(a, b);
     } else if (op == rotate_column) {
@@ -151,7 +158,7 @@ std::string part_two(const std::vector<std::string>& input) {
   Display<50, 6> display;
   auto commands = prepare_input(input);
 
-  for (auto [op, a, b]: commands) {
+  for (auto [op, a, b] : commands) {
     if (op == rectangle) {
       display.set_rectangle(a, b);
     } else if (op == rotate_column) {
