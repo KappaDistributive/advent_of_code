@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cassert>
 #include <map>
-#include <regex>
+#include <regex>  // NOLINT
 #include <set>
 
 #include "../utils/input.hpp"
@@ -18,7 +18,7 @@ class Map {
       : re("^(\\w+)\\sto\\s(\\w+)\\s=\\s(\\d+)$") {
     // temporary distance storage
     std::map<std::pair<std::string, std::string>, int> distances;
-    for (auto line: input) {
+    for (auto line : input) {
       std::regex_match(line,  matches, re);
       assert(matches.size() == 4);
       std::string start{matches[1].str()};
@@ -28,15 +28,18 @@ class Map {
       if (std::find(cities.begin(), cities.end(), start) == cities.end()) {
         cities.push_back(start);
       }
-      if (std::find(cities.begin(), cities.end(), destination) == cities.end()) {
+      if (std::find(cities.begin(),
+          cities.end(),
+          destination) == cities.end()) {
         cities.push_back(destination);
       }
-      distances.insert(std::make_pair(std::make_pair(start, destination), distance));
+      distances.insert(
+        std::make_pair(std::make_pair(start, destination), distance));
     }
 
     adjacency_matrix.reserve(cities.size() * cities.size());
-    for (int j{0}; j < cities.size(); j++) {
-      for (int i{0}; i < cities.size(); i++) {
+    for (size_t j{0}; j < cities.size(); j++) {
+      for (size_t i{0}; i < cities.size(); i++) {
         try {
           auto distance = distances.at(std::make_pair(cities[i], cities[j]));
           adjacency_matrix[j * cities.size() + i] = distance;
@@ -55,8 +58,12 @@ class Map {
 
   int get_distance(std::string start, std::string destination) const {
     try {
-      int i = std::find(cities.begin(), cities.end(), start) - cities.begin();
-      int j = std::find(cities.begin(), cities.end(), destination) - cities.begin();
+      int i = std::find(cities.begin(),
+                        cities.end(),
+                        start) - cities.begin();
+      int j = std::find(cities.begin(),
+                        cities.end(),
+                        destination) - cities.begin();
       return adjacency_matrix[j * cities.size() + i];
     }
     catch (const std::out_of_range& e) {
@@ -80,14 +87,17 @@ class Map {
       candidate = 0;
       valid = true;
       for (size_t index{1}; index < indices.size(); index++) {
-        next_distance = get_distance(cities[indices[index-1]], cities[indices[index]]);
+        next_distance = get_distance(cities[indices[index-1]],
+                                     cities[indices[index]]);
         if (next_distance < 0) {
           valid = false;
           break;
         }
         candidate += next_distance;
       }
-      if (valid && (distance < 0 || (shortest && candidate < distance) || (!shortest && candidate > distance))) {
+      if (valid && (distance < 0 ||
+                    (shortest && candidate < distance) ||
+                    (!shortest && candidate > distance))) {
         distance = candidate;
         permutation = indices;
       }
@@ -95,7 +105,7 @@ class Map {
 
     if (distance >= 0) {
       std::vector<std::string> path;
-      for (auto index: permutation) {
+      for (auto index : permutation) {
         path.push_back(cities[index]);
       }
       return path;
@@ -105,13 +115,16 @@ class Map {
   }
 };
 
+
 std::ostream& operator<< (std::ostream& os, const Map& map) {
   auto cities = map.get_cities();
-  for (auto start: cities) {
-    for (auto destination: cities) {
+  for (auto start : cities) {
+    for (auto destination : cities) {
       auto distance = map.get_distance(start, destination);
       if (distance >= 0) {
-        std::cout << start << " -- " << distance << " --> " << destination << std::endl;
+        std::cout << start << " -- "
+                  << distance << " --> "
+                  << destination << std::endl;
       }
     }
   }
@@ -129,8 +142,8 @@ int part_one(const std::vector<std::string>& input) {
   return result;
 }
 
-int part_two(const std::vector<std::string>& input) {
 
+int part_two(const std::vector<std::string>& input) {
   Map map(input);
   int result{0};
   auto path = map.hamiltonian_path(false);
@@ -139,6 +152,7 @@ int part_two(const std::vector<std::string>& input) {
   }
   return result;
 }
+
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2015/data/input_09.txt"));
@@ -149,4 +163,3 @@ int main() {
 
   return 0;
 }
-
