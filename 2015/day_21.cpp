@@ -1,6 +1,6 @@
 #include <cassert>
 #include <iomanip>
-#include <regex>
+#include <regex>  // NOLINT
 #include <set>
 
 #include "../utils/input.hpp"
@@ -34,12 +34,21 @@ class Item {
   int armor, cost, damage;
 
  public:
-  Item(const std::string& name, const int& armor, const int& cost, const int& damage)
-    : name(name), armor(armor), cost(cost), damage(damage) {
+  Item(const std::string& name,
+       const int& armor,
+       const int& cost,
+       const int& damage)
+    : name(name),
+      armor(armor),
+      cost(cost),
+      damage(damage) {
   }
 
   friend std::ostream& operator<< (std::ostream& os, const Item& item) {
-    os << item.name << ":: " << "Armor: " << item.armor << " Cost: " << item.cost << " : Damage " << item.damage;
+    os << item.name << ":: "
+       << "Armor: " << item.armor
+       << " Cost: " << item.cost
+       << " : Damage " << item.damage;
     return os;
   }
 
@@ -81,13 +90,13 @@ std::tuple<std::set<Armor>, std::set<Ring>, std::set<Weapon>> init_shop() {
   std::smatch matches;
   std::string category;
 
-  for (auto line: utils::split_string(SHOP_DESCRIPTION, '\n')) {
+  for (auto line : utils::split_string(SHOP_DESCRIPTION, '\n')) {
     if (line.size() == 0) {
       continue;
     } else if (std::regex_match(line, matches, category_regex)) {
       assert(matches.size() == 2);
       category = "";
-      for (char c: matches[1].str()) {
+      for (char c : matches[1].str()) {
         category += std::tolower(c);
       }
     } else {
@@ -121,8 +130,17 @@ class Character {
   std::pair<std::optional<Ring>, std::optional<Ring>> rings;
 
  public:
-  explicit Character(const std::string& name, const int& hit_points, const Weapon& weapon, const std::optional<Armor>& armor, const std::optional<Ring>& left_ring, const std::optional<Ring>& right_right)
-    : name(name), hit_points(hit_points), weapon(weapon), armor(armor), rings({left_ring, right_right}) {
+  explicit Character(const std::string& name,
+                     const int& hit_points,
+                     const Weapon& weapon,
+                     const std::optional<Armor>& armor,
+                     const std::optional<Ring>& left_ring,
+                     const std::optional<Ring>& right_right)
+    : name(name),
+      hit_points(hit_points),
+      weapon(weapon),
+      armor(armor),
+      rings({left_ring, right_right}) {
   }
 
   std::set<Item> get_items() const {
@@ -147,7 +165,7 @@ class Character {
 
   int get_armor() const {
     int armor{0};
-    for (auto item: get_items()) {
+    for (auto item : get_items()) {
       armor += item.get_armor();
     }
     return armor;
@@ -155,7 +173,7 @@ class Character {
 
   int get_damage() const {
     int damage{0};
-    for (auto item: get_items()) {
+    for (auto item : get_items()) {
       damage += item.get_damage();
     }
     return damage;
@@ -163,14 +181,15 @@ class Character {
 
   int get_worth() const {
     int worth{0};
-    for (auto item: get_items()) {
+    for (auto item : get_items()) {
       worth += item.get_cost();
     }
     return worth;
   }
 
   int take_damage(const int& damage) {
-    int effective_damage = damage > this->get_armor() ? (damage - this->get_armor()) : 1;
+    int effective_damage = damage > this->get_armor() ?
+                           (damage - this->get_armor()) : 1;
 
     if (this->hit_points >= effective_damage) {
       this->hit_points -= effective_damage;
@@ -180,11 +199,13 @@ class Character {
     return this->get_hit_points();
   }
 
-  bool attack(Character& other) {
-    return other.take_damage(this->get_damage()) == 0;
+  bool attack(Character* other) {
+    return other->take_damage(this->get_damage()) == 0;
   }
 
-  friend std::ostream& operator<< (std::ostream& os, const Character& character) {
+  friend std::ostream&
+  operator<< (std::ostream& os,
+              const Character& character) {
     os << character.name << ": " << "\n";
     os << "  Hitpoints:  " << character.hit_points << "\n";
     os << "  Armor:      " << character.get_armor() << "\n";
@@ -210,7 +231,7 @@ Character init_villain(const std::vector<std::string>& input) {
   std::vector<std::string> splits;
   int armor, damage, hit_points;
 
-  for (auto line: input) {
+  for (auto line : input) {
     splits = utils::split_string(line, ':');
     if (splits[0] == "Armor") {
       armor = std::stoi(splits[1]);
@@ -222,16 +243,22 @@ Character init_villain(const std::vector<std::string>& input) {
       throw std::invalid_argument("Invalid line in input: " + line);
     }
   }
-  return Character("Villain", hit_points, Weapon("Frostmourne", 0, 0, damage), Armor("Helm of Domination", armor, 0, 0), {}, {});
+  return Character("Villain",
+                   hit_points,
+                   Weapon("Frostmourne", 0, 0, damage),
+                   Armor("Helm of Domination", armor, 0, 0),
+                   {},
+                   {});
 }
+
 
 bool fight(const Character& first, const Character& second) {
   Character hero = first;
   Character villain = second;
   while (hero.get_hit_points() > 0 && villain.get_hit_points() > 0) {
-    hero.attack(villain);
+    hero.attack(&villain);
     if (villain.get_hit_points() > 0) {
-      villain.attack(hero);
+      villain.attack(&hero);
     }
   }
   return hero.get_hit_points() > 0;
@@ -241,15 +268,19 @@ bool fight(const Character& first, const Character& second) {
 int part_one(const std::vector<std::string>& input) {
   auto [armor, rings, weapons] = init_shop();
   std::vector<Ring> ring_list;
-  for (auto ring: rings) {
+  for (auto ring : rings) {
     ring_list.push_back(ring);
   }
   std::vector<int> wins;
-  for (auto weapon: weapons) {
-    for (auto armor: armor) {
-      for (bool include_armor: {0, 1}) {
-        for (size_t left_ring{0}; left_ring <= ring_list.size(); left_ring++) {
-          for (size_t right_ring{left_ring + 1}; right_ring <= ring_list.size() + 1; right_ring++) {
+  for (auto weapon : weapons) {
+    for (auto armor : armor) {
+      for (bool include_armor : {0, 1}) {
+        for (size_t left_ring{0};
+             left_ring <= ring_list.size();
+             left_ring++) {
+          for (size_t right_ring{left_ring + 1};
+               right_ring <= ring_list.size() + 1;
+               right_ring++) {
             std::optional<Armor> hero_armor = {};
             std::optional<Ring> hero_left_ring = {};
             std::optional<Ring> hero_right_ring = {};
@@ -262,7 +293,12 @@ int part_one(const std::vector<std::string>& input) {
             if (right_ring < ring_list.size()) {
               hero_right_ring = ring_list[right_ring];
             }
-            Character hero("Hero", 100, weapon, hero_armor, hero_left_ring , hero_right_ring);
+            Character hero("Hero",
+                           100,
+                           weapon,
+                           hero_armor,
+                           hero_left_ring,
+                           hero_right_ring);
 
             auto villain = init_villain(input);
             if (fight(hero, villain)) {
@@ -277,18 +313,23 @@ int part_one(const std::vector<std::string>& input) {
   return *std::min_element(wins.begin(), wins.end());
 }
 
+
 int part_two(const std::vector<std::string>& input) {
   auto [armor, rings, weapons] = init_shop();
   std::vector<Ring> ring_list;
-  for (auto ring: rings) {
+  for (auto ring : rings) {
     ring_list.push_back(ring);
   }
   std::vector<int> losses;
-  for (auto weapon: weapons) {
-    for (auto armor: armor) {
-      for (bool include_armor: {0, 1}) {
-        for (size_t left_ring{0}; left_ring <= ring_list.size(); left_ring++) {
-          for (size_t right_ring{left_ring + 1}; right_ring <= ring_list.size() + 1; right_ring++) {
+  for (auto weapon : weapons) {
+    for (auto armor : armor) {
+      for (bool include_armor : {0, 1}) {
+        for (size_t left_ring{0};
+             left_ring <= ring_list.size();
+             left_ring++) {
+          for (size_t right_ring{left_ring + 1};
+               right_ring <= ring_list.size() + 1;
+               right_ring++) {
             std::optional<Armor> hero_armor = {};
             std::optional<Ring> hero_left_ring = {};
             std::optional<Ring> hero_right_ring = {};
@@ -301,7 +342,12 @@ int part_two(const std::vector<std::string>& input) {
             if (right_ring < ring_list.size()) {
               hero_right_ring = ring_list[right_ring];
             }
-            Character hero("Hero", 100, weapon, hero_armor, hero_left_ring , hero_right_ring);
+            Character hero("Hero",
+                           100,
+                           weapon,
+                           hero_armor,
+                           hero_left_ring,
+                           hero_right_ring);
 
             auto villain = init_villain(input);
             if (!fight(hero, villain)) {
@@ -315,7 +361,8 @@ int part_two(const std::vector<std::string>& input) {
   return *std::max_element(losses.begin(), losses.end());
 }
 
-int main(int argc, char** argv) {
+
+int main() {
   utils::Reader reader(std::filesystem::path("../2015/data/input_21.txt"));
   const auto input = reader.get_lines();
 
@@ -326,4 +373,3 @@ int main(int argc, char** argv) {
 
   return 0;
 }
-
