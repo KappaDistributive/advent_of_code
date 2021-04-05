@@ -111,8 +111,7 @@ std::bitset<128> knotHashToBits(std::string hash) {
 
 
 std::pair<size_t, size_t>
-findNewRegion(const std::array<bool, 128*128>& disk,
-              const std::array<int, 128*128>& ownership) {
+findNewRegion(const std::array<int, 128*128>& ownership) {
   for (size_t y{0}; y < 128; y++) {
     for (size_t x{0}; x < 128; x++) {
       if (ownership[y * 128 + x] == -1) {
@@ -181,7 +180,7 @@ int countRegions(const std::array<bool, 128*128>& disk) {
   }
 
   while (*std::min_element(ownership.begin(), ownership.end()) < 0) {
-    auto [x, y] = findNewRegion(disk, ownership);
+    auto [x, y] = findNewRegion(ownership);
     fillRegion(disk, x, y, &ownership);
   }
 
