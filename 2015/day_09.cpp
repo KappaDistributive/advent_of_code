@@ -79,7 +79,7 @@ class Map {
     bool valid;
 
     std::vector<int> indices;
-    for (int index{0}; index < cities.size(); index++) {
+    for (size_t index{0}; index < cities.size(); index++) {
       indices.push_back(index);
     }
 
