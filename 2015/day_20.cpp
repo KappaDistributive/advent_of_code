@@ -4,12 +4,14 @@
 
 static const uint64_t UPPER_BOUND = 1000000;
 
-int64_t part_one(const std::string& input) {
-  int64_t target{std::stoi(input)};
-  int64_t house;
 
-  std::array<int64_t, UPPER_BOUND> houses = std::array<int64_t, UPPER_BOUND>();
-  for (int64_t elf{1}; elf < UPPER_BOUND; elf++) {
+int64_t part_one(const std::string& input) {
+  uint64_t target{std::stoul(input)};
+  uint64_t house;
+
+  std::array<uint64_t, UPPER_BOUND> houses
+    = std::array<uint64_t, UPPER_BOUND>();
+  for (uint64_t elf{1}; elf < UPPER_BOUND; elf++) {
     house = elf;
     while (house <= UPPER_BOUND) {
       houses[house - 1] += 10 * elf;
@@ -25,13 +27,14 @@ int64_t part_one(const std::string& input) {
   return -1;
 }
 
-int part_two(const std::string& input) {
-  int64_t target{std::stol(input)};
-  int64_t house;
-  int64_t elf_exhaustion{1};
+int64_t part_two(const std::string& input) {
+  uint64_t target{std::stoul(input)};
+  uint64_t house;
+  uint64_t elf_exhaustion{1};
 
-  std::array<int64_t, UPPER_BOUND> houses = std::array<int64_t, UPPER_BOUND>();
-  for (int64_t elf{1}; elf < UPPER_BOUND; elf++) {
+  std::array<uint64_t, UPPER_BOUND> houses
+    = std::array<uint64_t, UPPER_BOUND>();
+  for (uint64_t elf{1}; elf < UPPER_BOUND; elf++) {
     house = elf;
     elf_exhaustion = 1;
     while (house <= UPPER_BOUND && elf_exhaustion <= 50) {
