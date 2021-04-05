@@ -51,7 +51,7 @@ std::ostream& operator<< (std::ostream& os, Instruction instruction) {
 class CPU {
  private:
   std::map<char, int> registers;
-  int instruction_pointer;
+  size_t instruction_pointer;
   const std::vector<Instruction> instructions;
 
  public:
