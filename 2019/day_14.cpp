@@ -93,12 +93,12 @@ find(const std::string& name,
   throw std::out_of_range("There is no reaction with name: " + name);
 }
 
-auto part_one(const std::vector<std::string>& input) {
-  auto reactions = prepare_input(input);
-
+size_t
+createFuel(const std::map<Resource, std::set<Resource>>& reactions,
+           size_t fuel_amount) {
   std::map<std::string, size_t> reagents;
   std::map<std::string, size_t> stash;
-  reagents.insert_or_assign("FUEL", 1);
+  reagents.insert_or_assign("FUEL", fuel_amount);
 
   while (!done(reagents)) {
     std::map<std::string, size_t> new_reagents;
@@ -131,8 +131,41 @@ auto part_one(const std::vector<std::string>& input) {
   return reagents.at("ORE");
 }
 
+auto part_one(const std::vector<std::string>& input) {
+  auto reactions = prepare_input(input);
+
+  return createFuel(reactions, 1);
+}
+
 auto part_two(const std::vector<std::string>& input) {
-  return 1;
+  bool verbose{true};
+  const size_t ore_stock{1000000000000};
+  auto reactions = prepare_input(input);
+  size_t fuel_amount{1};
+
+  while (createFuel(reactions, fuel_amount) <= ore_stock) {
+    if (verbose) {
+      std::cout << "Answer in [" << fuel_amount
+                << u8", ∞)" << std::endl;
+    }
+    fuel_amount *= 2;
+  }
+  size_t upper_limit{fuel_amount};
+  size_t lower_limit{fuel_amount/2};
+  fuel_amount = (upper_limit + lower_limit) / 2;
+  while (upper_limit > lower_limit + 1) {
+    if (createFuel(reactions, fuel_amount) > ore_stock) {
+      upper_limit = fuel_amount;
+    } else {
+      lower_limit = fuel_amount;
+    }
+    fuel_amount = (upper_limit + lower_limit) / 2;
+    if (verbose) {
+      std::cout << "Answer in [" << lower_limit
+                << ", " << upper_limit << ")" << std::endl;
+    }
+  }
+  return lower_limit;
 }
 
 int main() {
