@@ -283,9 +283,9 @@ class Robot {
     }
   };
 
-  Direction m_direction;
   Point m_position;
   CPU m_cpu;
+  Direction m_direction;
   std::set<Point> m_visited;
   std::map<Point, bool> m_panel;
 
@@ -500,7 +500,6 @@ int64_t part_two(const std::vector<std::string>& input) {
   bool done{false};
   std::optional<int64_t> output{std::nullopt};
   std::vector<int64_t> outputs;
-  int64_t opcode;
   char key;
   int64_t score{-1};
 
