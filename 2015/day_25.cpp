@@ -49,9 +49,9 @@ int part_one(const std::string& input) {
     return code;
 }
 
-int part_two(const std::string& input) {
-    return 2;
-}
+// int part_two(const std::string& input) {
+//     return 2;
+// }
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2015/data/input_25.txt"));
@@ -59,8 +59,8 @@ int main() {
 
   auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two = part_two(input);
-  std::cout << "The answer to part two is: " << answer_two << std::endl;
+  // auto answer_two = part_two(input);
+  // std::cout << "The answer to part two is: " << answer_two << std::endl;
 
   return 0;
 }
