@@ -40,7 +40,6 @@ class Display {
   }
 
   void set_rectangle(const size_t& width, const size_t& height) {
-    assert(width >= 0 && height >= 0);
     for (size_t y{0}; y < height; y++) {
       for (size_t x{0}; x < width; x++) {
         this->operator[]({x, y}) = 1;
