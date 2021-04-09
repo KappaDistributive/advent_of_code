@@ -17,7 +17,7 @@ int64_t part_one(const std::vector<std::string>& input) {
   do {
     position += jumps[position]++;
     step++;
-  } while (0 <= position && position < jumps.size());
+  } while (position < jumps.size());
   return step;
 }
 
@@ -36,7 +36,7 @@ int part_two(const std::vector<std::string>& input) {
     }
     position += jump_value;
     step++;
-  } while (0 <= position && position < jumps.size());
+  } while (position < jumps.size());
   return step;
 }
 
