@@ -25,7 +25,6 @@ std::map<int, std::set<std::string>>
 calculate_sleeping_patterns(const std::vector<std::string>& input) {
     auto sorted_input = sort_input(input);
     int active_guard_id{-1};
-    bool guard_sleeps{false};
     std::string bedtime;
     std::map<int, std::set<std::string>> sleeping_patterns;
 
@@ -40,14 +39,12 @@ calculate_sleeping_patterns(const std::vector<std::string>& input) {
         }
 
         if (line.find("falls asleep") != std::string::npos) {
-            guard_sleeps = true;
             bedtime = line.substr(0, 18);
 
         } else {
             assert(line.find("wakes up") != std::string::npos);
             sleeping_patterns.emplace(
                 std::make_pair(active_guard_id, std::set<std::string>()));
-            guard_sleeps = false;
             auto time = line.substr(0, 18);
 
             int bedtime_minute = std::stoi(bedtime.substr(15, 2));

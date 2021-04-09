@@ -152,16 +152,16 @@ int part_one(const std::vector<std::string>& input) {
   return result;
 }
 
-int part_two(const std::vector<std::string>& input) {
-  return 1;
-}
+// int part_two(const std::vector<std::string>& input) {
+//   return 1;
+// }
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2020/data/input_16.txt"));
   const std::vector<std::string> input = reader.get_lines();
 
   std::cout << "The answer to part one is: " << part_one(input) << std::endl;
-  std::cout << "The answer to part two is: " << part_two(input) << std::endl;
+  // std::cout << "The answer to part two is: " << part_two(input) << std::endl;
 
   return 0;
 }
