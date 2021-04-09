@@ -62,7 +62,7 @@ int part_two(const std::vector<std::string>& input) {
 
   for (size_t index{1}; index < ids.size(); index++) {
     if (ids[index] != ids[index-1]+1) {
-      assert(ids[index] = ids[index-1]+2);
+      assert(ids[index] == ids[index-1]+2);
       return ids[index] - 1;
     }
   }
