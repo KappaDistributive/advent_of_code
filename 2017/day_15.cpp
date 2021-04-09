@@ -1,3 +1,4 @@
+#include <cassert>
 #include <regex>  // NOLINT
 
 #include "../utils/input.hpp"

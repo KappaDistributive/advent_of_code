@@ -1,3 +1,4 @@
+#include <cassert>
 #include <math.h>
 #include <numeric>
 #include <optional>

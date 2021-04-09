@@ -1,3 +1,4 @@
+#include <cassert>
 #include <sstream>
 
 #include "../utils/input.hpp"

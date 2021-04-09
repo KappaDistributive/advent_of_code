@@ -1,4 +1,6 @@
 #include<stdio.h>
+
+#include <algorithm>
 #include <cassert>
 #include <limits>
 #include <map>

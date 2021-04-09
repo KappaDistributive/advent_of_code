@@ -1,3 +1,4 @@
+#include <cassert>
 #include <deque>
 #include <map>
 #include <regex>  // NOLINT
