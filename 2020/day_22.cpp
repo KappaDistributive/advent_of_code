@@ -34,7 +34,7 @@ std::pair<std::deque<int>, std::deque<int>> prepare_input(const std::vector<std:
 
 int calculate_score(const std::deque<int> deck) {
   int score{0};
-  for (int index{1}; index <= deck.size(); index++) {
+  for (int index{1}; index <= static_cast<int>(deck.size()); index++) {
     score += index * deck[deck.size() - index];
   }
   return score;
@@ -42,7 +42,6 @@ int calculate_score(const std::deque<int> deck) {
 
 int part_one(const std::vector<std::string>& input) {
   auto decks = prepare_input(input);
-  bool player_one{true};
 
   // play the game
   while (decks.first.size() != 0 && decks.second.size() != 0) {
@@ -62,16 +61,16 @@ int part_one(const std::vector<std::string>& input) {
   return calculate_score(winner);
 }
 
-int part_two(const std::vector<std::string>& input) {
-  return 3;
-}
+// int part_two(const std::vector<std::string>& input) {
+//   return 3;
+// }
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2020/data/input_22.txt"));
   const std::vector<std::string> input = reader.get_lines();
 
   std::cout << "The answer to part one is: " << part_one(input) << std::endl;
-  std::cout << "The answer to part two is: " << part_two(input) << std::endl;
+  // std::cout << "The answer to part two is: " << part_two(input) << std::endl;
 
   return 0;
 }
