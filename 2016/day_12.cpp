@@ -97,8 +97,7 @@ class CPU {
         }
         break;
     }
-    return 0 <= instruction_pointer &&
-           instruction_pointer < instructions.size();
+    return instruction_pointer < instructions.size();
   }
 
   int read_register(const char& name) const {
