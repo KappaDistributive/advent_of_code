@@ -23,7 +23,7 @@ std::pair<std::vector<int>, std::vector<int>> gather_answers(const std::vector<s
       }
     } else {
       group_size++;
-      assert(answers.size() == (group_index + 1) * ('z' - 'a' + 1));
+      assert(answers.size() == static_cast<size_t>((group_index + 1) * ('z' - 'a' + 1)));
       for (auto character: line) {
         answers[group_index * ('z' - 'a' + 1) + character - 'a']++;
       }
