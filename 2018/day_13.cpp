@@ -31,6 +31,8 @@ char repr(const Direction& direction) {
         case south: return 'v'; break;
         case west: return '<'; break;
     }
+
+    throw std::runtime_error("This should never happen.");
 }
 
 class Cart {
@@ -50,6 +52,8 @@ class Cart {
             case south: return down; break;
             case west: return left; break;
         }
+
+        throw std::runtime_error("This should never happen.");
     }
 
  public:
