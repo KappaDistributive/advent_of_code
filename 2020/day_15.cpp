@@ -36,13 +36,11 @@ int solve(const std::vector<int>& numbers, int rounds) {
 
 int part_one(const std::vector<std::string>& input) {
   auto numbers = prepare_input(input);
-  int number{numbers[numbers.size() - 1]};
   return solve(numbers, 2020);
 }
 
 int part_two(const std::vector<std::string>& input) {
   auto numbers = prepare_input(input);
-  int number{numbers[numbers.size() - 1]};
   return solve(numbers, 30000000);
 }
 
