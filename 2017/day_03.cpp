@@ -43,13 +43,13 @@ std::ostream& operator<<(std::ostream& os,
 template <size_t _height, size_t _width>
 class SpiralGrid {
  private:
+  const size_t height, width;
+  const std::pair<size_t, size_t> center;
   std::array<int, _height * _width>* data;
   std::pair<int, int> position;
   Direction direction;
   std::vector<std::pair<int, int>> path;
   size_t path_index;
-  const size_t height, width;
-  const std::pair<size_t, size_t> center;
 
  public:
   explicit SpiralGrid(bool part_two = false)
@@ -161,8 +161,8 @@ class SpiralGrid {
 
   std::optional<std::pair<int, int>> find(const int& value) {
     std::pair<int, int> position;
-    for (int y{0}; y < this->height; y++) {
-      for (int x{0}; x < this->width; x++) {
+    for (int y{0}; y < static_cast<int>(this->height); y++) {
+      for (int x{0}; x < static_cast<int>(this->width); x++) {
         position = std::make_pair(x - this->center.first,
                                   y - this->center.second);
         if (*this->operator[](position) == value) {
