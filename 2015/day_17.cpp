@@ -5,7 +5,7 @@ template<class T>
 std::vector<std::vector<T>> subsequences(const std::vector<T>& sequence) {
   std::vector<std::vector<T>> subsequences;
 
-  for (size_t mask{0}; mask < (1 << sequence.size()); mask++) {
+  for (size_t mask{0}; mask < static_cast<size_t>(1 << sequence.size()); mask++) {
     std::vector<T> subsequence;
     for (size_t index{0}; index < sequence.size(); index++) {
       if ((1 << index) & mask) {
