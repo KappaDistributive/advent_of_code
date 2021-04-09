@@ -13,7 +13,7 @@ class Map {
     width = input[0].size();
     for (auto line: input) {
       height++;
-      assert(width == line.size());
+      assert(static_cast<size_t>(width) == line.size());
 
       for (auto mark: line) {
         switch (mark) {
