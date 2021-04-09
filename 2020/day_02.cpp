@@ -74,7 +74,6 @@ std::ostream& operator<< (std::ostream& os, const Rule& rule) {
 int part_one(std::vector<std::string> input) {
   auto rules = get_rules(input);
   auto passwords = get_passwords(input);
-  bool valid_password;
   int result{0};
 
   assert(rules.size() == passwords.size());
@@ -88,7 +87,6 @@ int part_one(std::vector<std::string> input) {
 int part_two(std::vector<std::string> input) {
   auto rules = get_rules(input);
   auto passwords = get_passwords(input);
-  bool valid_password;
   int result{0};
 
   assert(rules.size() == passwords.size());
