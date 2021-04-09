@@ -12,7 +12,7 @@ std::vector<int64_t> prepare_input(const std::vector<std::string>& input) {
   return result;
 }
 
-bool valid(const std::vector<int64_t>& codes, size_t index, int range) {
+bool valid(const std::vector<int64_t>& codes, size_t index, size_t range) {
   for (size_t index_left{0}; index_left < range; index_left++) {
     for (size_t index_right{index_left+1}; index_right < range; index_right++) {
       if
