@@ -38,7 +38,7 @@ step(const std::deque<char>& state,
     for (index = -5; index < static_cast<int>(state.size()) + 5; index++) {
         std::string local_state;
         for (size_t offset{0}; offset < 5; offset++) {
-            if (index + offset >= 0 && index + offset < state.size()) {
+            if (index + offset < state.size()) {
                 local_state += state[index + offset];
             } else {
                 local_state += '.';
@@ -48,7 +48,7 @@ step(const std::deque<char>& state,
         try {
             auto pot = transformations.at(local_state);
             new_state.push_back(pot);
-        } catch (const std::out_of_range) {
+        } catch (const std::out_of_range& e) {
             new_state.push_back('.');
         }
     }
@@ -90,7 +90,7 @@ void update(std::deque<char>* state,
 
 int64_t score(const std::deque<char>& state, const int64_t& offset) {
     int64_t result{0};
-    for (int64_t index{0}; index < state.size(); index++) {
+    for (int64_t index{0}; static_cast<size_t>(index) < state.size(); index++) {
         if (state[index] == '#') {
             result += offset + index;
         }
