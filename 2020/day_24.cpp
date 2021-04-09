@@ -97,9 +97,7 @@ class Hexgrid {
   std::pair<int, int> location;
 
   void check_if_location_is_in_bounds(std::pair<int, int> location) {
-    assert(center.first + location.first >= 0);
     assert(center.first + location.first < width);
-    assert(center.second + location.second >= 0);
     assert(center.second + location.second < height);
   }
 
