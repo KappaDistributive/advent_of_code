@@ -1,10 +1,13 @@
-#include <regex>
+#include <regex>  // NOLINT
 
 #include "../utils/input.hpp"
 
 static const std::regex RE{"\\((\\d+)x(\\d+)\\)"};
 
-size_t decompress(std::string input, bool recursive = false) {
+
+size_t
+decompress(std::string input,
+           bool recursive = false) {
   std::smatch matches;
   std::regex_search(input, matches, RE);
 
@@ -26,23 +29,28 @@ size_t decompress(std::string input, bool recursive = false) {
   return input.size();
 }
 
-int64_t part_one(const std::vector<std::string>& input) {
+
+int64_t
+part_one(const std::vector<std::string>& input) {
   int64_t result{0};
-  for (auto line: input) {
+  for (auto line : input) {
     result += decompress(line);
   }
   return result;
 }
 
-int64_t part_two(const std::vector<std::string>& input) {
+
+int64_t
+part_two(const std::vector<std::string>& input) {
   int64_t result{0};
-  for (auto line: input) {
+  for (auto line : input) {
     result += decompress(line, true);
   }
   return result;
 }
 
-int main() {
+int
+main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_09.txt"));
   auto input = reader.get_lines();
 
@@ -52,4 +60,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-
