@@ -276,8 +276,8 @@ std::vector<Floors> prune(const std::vector<Floors>& candidates,
   std::vector<Floors> new_candidates;
   for (auto candidate : candidates) {
     bool found_equivalent{false};
-    for (auto it = history->begin();
-         it != history->end();
+    for (auto it = history->rbegin();
+         it != history->rend();
          it++) {
       if (candidate.isEquivalent(*it)) {
         found_equivalent = true;
