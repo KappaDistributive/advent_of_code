@@ -1,9 +1,10 @@
 #include <array>
 #include <cassert>
-#include <regex>
+#include <regex>  // NOLINT
 #include <vector>
 
 #include "../utils/input.hpp"
+
 
 class Bot {
  private:
@@ -78,13 +79,16 @@ class Bot {
   }
 };
 
-std::vector<std::pair<std::string, bool>> prepare_input(const std::vector<std::string>& input) {
+
+std::vector<std::pair<std::string, bool>>
+prepare_input(const std::vector<std::string>& input) {
   std::vector<std::pair<std::string, bool>> instructions;
-  for (auto line: input) {
+  for (auto line : input) {
     instructions.push_back({line, false});
   }
   return instructions;
 }
+
 
 int part_one(const std::vector<std::string>& input) {
   std::vector<Bot> bots;
@@ -97,7 +101,7 @@ int part_one(const std::vector<std::string>& input) {
   bool searching{true};
   auto instructions = prepare_input(input);
   std::regex assignment_regex{"^value\\s(\\d+)\\sgoes\\sto\\sbot\\s(\\d+)$"};
-  std::regex transition_regex{"^bot\\s(\\d+)\\sgives\\slow\\sto\\s(bot|output)\\s(\\d+)\\sand\\shigh\\sto\\s(bot|output)\\s(\\d+)$"};
+  std::regex transition_regex{"^bot\\s(\\d+)\\sgives\\slow\\sto\\s(bot|output)\\s(\\d+)\\sand\\shigh\\sto\\s(bot|output)\\s(\\d+)$"};  // NOLINT
   std::smatch matches;
 
   while (searching) {
@@ -143,7 +147,8 @@ int part_one(const std::vector<std::string>& input) {
             }
             if (high_receiver_is_bot) {
               bots[high_index].add(bots[sender_index].high(true));
-              if (bots[high_index].low() == 17 && bots[high_index].high() == 61) {
+              if (bots[high_index].low() == 17 &&
+                  bots[high_index].high() == 61) {
                 return high_index;
               }
             } else {
@@ -160,6 +165,7 @@ int part_one(const std::vector<std::string>& input) {
   return -1;
 }
 
+
 int part_two(const std::vector<std::string>& input) {
   std::vector<Bot> bots;
   std::vector<int> outputs;
@@ -171,7 +177,7 @@ int part_two(const std::vector<std::string>& input) {
   bool searching{true};
   auto instructions = prepare_input(input);
   std::regex assignment_regex{"^value\\s(\\d+)\\sgoes\\sto\\sbot\\s(\\d+)$"};
-  std::regex transition_regex{"^bot\\s(\\d+)\\sgives\\slow\\sto\\s(bot|output)\\s(\\d+)\\sand\\shigh\\sto\\s(bot|output)\\s(\\d+)$"};
+  std::regex transition_regex{"^bot\\s(\\d+)\\sgives\\slow\\sto\\s(bot|output)\\s(\\d+)\\sand\\shigh\\sto\\s(bot|output)\\s(\\d+)$"};  // NOLINT
   std::smatch matches;
 
   while (searching) {
@@ -226,6 +232,7 @@ int part_two(const std::vector<std::string>& input) {
   return outputs[0] * outputs[1] * outputs[2];
 }
 
+
 int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_10.txt"));
   auto input = reader.get_lines();
@@ -236,4 +243,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-
