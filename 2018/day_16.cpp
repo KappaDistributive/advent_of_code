@@ -3,19 +3,12 @@
 
 #include "../utils/input.hpp"
 
-// 4 registers
-//   starting with value 0
-// 16 opcodes
-// instruction consists of 4 values
-//   opcode
-//   first input   [A]
-//   second input  [B]
-//   output        [C]  <- always a register
 
 enum class Mode : int {
   val,
   reg
 };
+
 
 enum class Opcode : int {
   addr,
@@ -35,6 +28,26 @@ enum class Opcode : int {
   eqri,
   eqrr
 };
+
+static const std::array<Opcode, 16> ALL_OPCODES = {
+  Opcode::addr,
+  Opcode::addi,
+  Opcode::mulr,
+  Opcode::muli,
+  Opcode::banr,
+  Opcode::bani,
+  Opcode::borr,
+  Opcode::bori,
+  Opcode::setr,
+  Opcode::seti,
+  Opcode::gtir,
+  Opcode::gtri,
+  Opcode::gtrr,
+  Opcode::eqir,
+  Opcode::eqri,
+  Opcode::eqrr
+};
+
 
 std::pair<Mode, Mode> get_modes(Opcode opcode) {
   switch (opcode) {
@@ -103,6 +116,30 @@ struct Example {
     return os;
   }
 };
+
+void
+run_opcode(Opcode opcode,
+           const std::array<int, 3> instruction,
+           std::vector<int>& registers) {
+  switch (opcode) {
+  case Opcode::addr:
+    break;
+  
+  default:
+    break;
+  }
+}
+
+std::vector<Opcode>
+matching_opcodes(const Example& example) {
+  std::vector<Opcode> matches;
+
+  for (auto opcode : ALL_OPCODES) {
+    auto registers = example.registers_before;
+  }
+
+  return matches;
+}
 
 
 std::array<int, 4> extract_registers(std::string input) {
