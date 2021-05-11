@@ -2,12 +2,13 @@
 #include <cassert>
 #include <map>
 #include <optional>
+#include <queue>
 #include <variant>
 
 #include "../utils/input.hpp"
 
 
-int64_t
+inline int64_t
 modulo(int64_t a, int64_t b) {
   if (a >= 0) {
     return a % b;
@@ -131,14 +132,18 @@ prepare_instructions(const std::vector<std::string>& input) {
 class CPU {
  private:
   std::vector<Instruction> m_instructions;
-  size_t m_instruction_pointer;
+  int64_t m_instruction_pointer;
+  const int64_t m_program_id;
   std::map<char, int64_t> m_registers;
   std::optional<int64_t> m_sound;
+  const bool m_part_two;
+  std::queue<int64_t> m_message_queue;
 
   int64_t
-  get_value(const std::variant<char, int64_t>& parameter) const {
+  get_value(const std::variant<char, int64_t>& parameter) {
     if (std::holds_alternative<char>(parameter)) {
-        return (m_registers.count(std::get<char>(parameter)) > 0) ? m_registers.at(std::get<char>(parameter)) : 0;
+        m_registers.emplace(std::get<char>(parameter), 0);
+        return m_registers.at(std::get<char>(parameter));
     } else {
       assert(std::holds_alternative<int64_t>(parameter));
       return std::get<int64_t>(parameter);
@@ -161,6 +166,9 @@ class CPU {
         assert(instruction.parameters.size() == 1);
         m_sound = get_value(instruction.parameters[0]);
         m_instruction_pointer++;
+        if (m_part_two) {
+          return m_sound.value();
+        }
         break;
       case Op::set: // set X Y sets register X to the value of Y.
         assert(instruction.parameters.size() == 2);
@@ -185,16 +193,23 @@ class CPU {
         break;
       case Op::rcv: // rcv X recovers the frequency of the last sound played, but only when the value of X is not zero. (If it is zero, the command does nothing.)
         assert(instruction.parameters.size() == 1);
-        std::cout << m_sound.value() << std::endl;
-        if (get_value(instruction.parameters[0]) != 0) {
-          return m_sound;
+        if (m_part_two) {
+          if (!m_message_queue.empty()) {
+            set_value(std::get<char>(instruction.parameters[0]), m_message_queue.front());
+            m_message_queue.pop();
+            m_instruction_pointer++;
+          }
+        } else {
+          // std::cout << m_sound.value() << std::endl;
+          if (get_value(instruction.parameters[0]) != 0) {
+            return m_sound;
+          }
+          m_instruction_pointer++;
         }
-        m_instruction_pointer++;
         break;
       case Op::jgz: // jgz X Y jumps with an offset of the value of Y, but only if the value of X is greater than zero. (An offset of 2 skips the next instruction, an offset of -1 jumps to the previous instruction, and so on.)
         assert(instruction.parameters.size() == 2);
         if (get_value(instruction.parameters[0]) > 0) {
-          assert(get_value(instruction.parameters[1]) + static_cast<int64_t>(m_instruction_pointer) >= 0);
           m_instruction_pointer += get_value(instruction.parameters[1]);
         } else {
           m_instruction_pointer++;
@@ -205,16 +220,38 @@ class CPU {
   }
 
  public:
-  explicit CPU(const std::vector<Instruction> instructions) :
+  explicit CPU(const std::vector<Instruction> instructions,
+               int64_t program_id = 0,
+               bool part_two = false) :
     m_instructions(instructions),
     m_instruction_pointer(0),
-    m_sound(std::nullopt) {
+    m_program_id(program_id),
+    m_sound(std::nullopt),
+    m_part_two(part_two) {
+      m_registers.insert({'p', m_program_id}); 
   }
 
   std::optional<int64_t>
   step() {
-    std::cout << m_instructions[m_instruction_pointer] << std::endl;
+    // std::cout << "CPU: " << m_program_id << " -> " << m_instructions[m_instruction_pointer] << "; " << m_instruction_pointer << std::endl;
     return execute(m_instructions[m_instruction_pointer]);
+  }
+
+  bool is_sending() const {
+    return m_instructions[m_instruction_pointer].op == Op::snd;
+  }
+
+  bool is_waiting() const {
+    return m_instructions[m_instruction_pointer].op == Op::rcv &&
+           m_message_queue.empty();
+  }
+
+  bool is_terminated() const {
+    return m_instruction_pointer < 0 || m_instruction_pointer >= static_cast<int64_t>(m_instructions.size());
+  }
+
+  void receive_message(int64_t value) {
+    m_message_queue.push(value);
   }
 };
 
@@ -233,12 +270,36 @@ part_one(const std::vector<std::string>& input) {
 }
 
 
-// auto
-// part_two(size_t  number_of_steps) {
-//   // takes ~10 minutes with release binaries
-//   number_of_steps = 30;
-//   return run(number_of_steps, 50000000, 0);
-// }
+auto
+part_two(const std::vector<std::string>& input) {
+  auto instructions = prepare_instructions(input);
+  std::pair<CPU, CPU> cpus{CPU(instructions, 0, true), CPU(instructions, 1, true)};
+  std::pair<bool, bool> terminated{false, false};
+  std::pair<std::optional<int64_t>, std::optional<int64_t>> messages;
+
+  size_t result{0};
+
+  do {
+    messages.first = cpus.first.is_terminated() ? std::nullopt : cpus.first.step();
+    messages.second = cpus.second.is_terminated() ? std::nullopt : cpus.second.step();
+    result += cpus.second.is_sending();
+    if (messages.first.has_value()) {
+      cpus.second.receive_message(messages.first.value());
+    }
+    if (messages.second.has_value()) {
+      cpus.first.receive_message(messages.second.value());
+    }
+    terminated.first = cpus.first.is_terminated();
+    terminated.second = cpus.second.is_terminated();
+    if (cpus.first.is_waiting() && cpus.second.is_waiting()) {
+      terminated.first = true;
+      terminated.second = true;
+    }
+
+  } while (!(terminated.first && terminated.second));
+
+  return result;
+}
 
 
 int main() {
@@ -247,7 +308,7 @@ int main() {
 
   auto answer_one =  part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  // auto answer_two =  part_two(input);
-  // std::cout << "The answer to part two is: " << answer_two << std::endl;
+  auto answer_two =  part_two(input);
+  std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
