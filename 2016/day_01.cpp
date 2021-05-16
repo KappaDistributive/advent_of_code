@@ -1,7 +1,8 @@
 #include <cassert>
-#include <regex>
+#include <regex>  // NOLINT
 
 #include "../utils/input.hpp"
+
 
 enum Direction {
   north,
@@ -9,6 +10,7 @@ enum Direction {
   south,
   west
 };
+
 
 class Path {
  private:
@@ -80,7 +82,9 @@ class Path {
   }
 };
 
-int part_one(const std::vector<std::string>& input) {
+
+auto
+part_one(const std::vector<std::string>& input) {
   Path path;
   for (auto instruction: input) {
     path.step(instruction);
@@ -89,7 +93,9 @@ int part_one(const std::vector<std::string>& input) {
   return abs(location.first) + abs(location.second);
 }
 
-int part_two(const std::vector<std::string>& input) {
+
+auto
+part_two(const std::vector<std::string>& input) {
   Path path;
   for (auto instruction: input) {
     path.step(instruction);
@@ -99,7 +105,9 @@ int part_two(const std::vector<std::string>& input) {
   return abs(location.first) + abs(location.second);
 }
 
-int main() {
+
+int
+main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_01.txt"));
   auto input = utils::split_string(reader.get_lines()[0], ',');
 
