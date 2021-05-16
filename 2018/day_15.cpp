@@ -68,7 +68,7 @@ operator<<(std::ostream& os, const Path& path) {
   for (auto it{path.begin()}; it != path.end(); ++it) {
     os << *it;
     if (std::next(it) != path.end()) {
-      os << ", ";
+      os << " -> ";
     }
   }
 
@@ -233,6 +233,11 @@ class Battlefield {
           }
           bool skip{false};
           for (auto old_path : paths) {
+            // destination is allowed to occur multiple times to allow for
+            // multiple shortest paths
+            if (new_point == destination) {
+              break;
+            }
             if (std::find(old_path.begin(), old_path.end(), new_point) != old_path.end()) {
               skip = true;
               break;
