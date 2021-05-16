@@ -86,14 +86,12 @@ class Unit : public Entity {
 class Elf : public Unit {
  public:
   Elf() : Unit('E') {}
-
 };
 
 
 class Goblin : public Unit {
  public:
   Goblin() : Unit('G') {}
-
 };
 
 
@@ -201,9 +199,6 @@ auto
 part_one(const std::vector<std::string>& input) {
   Battlefield battlefield(input);
   std::cout << battlefield << std::endl;
-  // Entity entity{'.'};
-  // Goblin goblin{};
-  // std::cout << entity.is_unit() << " " << goblin.is_unit() << std::endl;
   return "";
 }
 
