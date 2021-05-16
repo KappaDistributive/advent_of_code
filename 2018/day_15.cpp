@@ -1,5 +1,6 @@
 #include <cassert>
 #include <map>
+#include <optional>
 
 #include "../utils/input.hpp"
 
@@ -15,37 +16,68 @@ struct Point {
 };
 
 
-enum class Entity: size_t {
-  open,
-  wall,
-  elf,
-  goblin,
+class Entity {
+ private:
+  char m_symbol;
+
+ public:
+  explicit Entity(char symbol)
+    : m_symbol(symbol) {
+  }
+
+  friend std::ostream&
+  operator<<(std::ostream& os, const Entity& entity) {
+    os << entity.m_symbol;
+    return os;
+  }
 };
 
 
-std::ostream&
-operator<<(std::ostream& os, Entity entity) {
-  switch (entity) {
-    case Entity::open:   os << "."; break;
-    case Entity::wall :  os << "#"; break;
-    case Entity::elf:    os << "E"; break;
-    case Entity::goblin: os << "G"; break;
-    default:
-      throw std::runtime_error("This should never happen!");
-      break;
+class Wall : public Entity {
+ public:
+  Wall() : Entity('#') {}
+};
+
+
+class Unit : public Entity {
+ private:
+  int m_hit_points;
+
+ public:
+  explicit Unit(char symbol)
+    : Entity(symbol),
+      m_hit_points(200) {
   }
-
-  return os;
-}
+};
 
 
-Entity
+class Elf : public Unit {
+ public:
+  Elf() : Unit('E') {}
+};
+
+
+class Goblin : public Unit {
+ public:
+  Goblin() : Unit('G') {}
+};
+
+
+enum class Direction: size_t {
+  north,
+  east,
+  south,
+  west,
+};
+
+
+std::optional<Entity>
 create_entity(char character) {
   switch (character) {
-    case '.': return Entity::open;   break;
-    case '#': return Entity::wall;   break;
-    case 'E': return Entity::elf;    break;
-    case 'G': return Entity::goblin; break;
+    case '.': return std::nullopt; break;
+    case '#': return Wall();       break;
+    case 'E': return Elf();        break;
+    case 'G': return Goblin();     break;
     default:
       throw std::invalid_argument("There is no entity of kind: " + std::to_string(character));
       break;
@@ -71,8 +103,8 @@ class Battlefield {
       for (size_t x{0}; x < line.size(); ++x) {
         auto character = line[x];
         auto entity = create_entity(character);
-        if (entity != Entity::open) {
-          m_entities.insert({Point{x, y}, entity});
+        if (entity.has_value()) {
+          m_entities.insert({Point{x, y}, entity.value()});
         }
       }
     }
@@ -80,7 +112,7 @@ class Battlefield {
 
   Entity
   operator[](Point point) const noexcept {
-    return m_entities.count(point) > 0 ? m_entities.at(point) : Entity::open;
+    return m_entities.count(point) > 0 ? m_entities.at(point) : Entity('.');
   }
 
   friend std::ostream&
