@@ -8,6 +8,7 @@
 #include "../utils/input.hpp"
 
 
+
 enum class Direction: size_t {
   north,
   east,
@@ -44,12 +45,33 @@ struct Point {
   operator<(const Point& other) const noexcept {
     return this->y < other.y || (this->y == other.y && this->x < other.x);
   }
+
+  bool
+  operator==(const Point& other) const noexcept {
+    return this->x == other.x && this->y == other.y;
+  }
 };
+
+
+typedef std::vector<Point> Path;
 
 
 std::ostream&
 operator<<(std::ostream& os, const Point& point) noexcept {
   os << "Point(x=" << point.x << ", y=" << point.y << ")";
+  return os;
+}
+
+
+std::ostream&
+operator<<(std::ostream& os, const Path& path) {
+  for (auto it{path.begin()}; it != path.end(); ++it) {
+    os << *it;
+    if (std::next(it) != path.end()) {
+      os << ", ";
+    }
+  }
+
   return os;
 }
 
@@ -195,6 +217,55 @@ class Battlefield {
     return result;
   }
 
+  std::optional<std::vector<Path>>
+  shortest_paths(Point origin, Point destination) {
+    std::vector<std::vector<Point>> paths;
+    paths.push_back(Path{origin});
+    bool searching{true};
+
+    while (searching) {
+      std::vector<std::vector<Point>> new_paths;
+      for (auto path : paths) {
+        auto point = path.back();
+        for (auto new_point : open_squares(point)) {
+          if (new_point == destination) {
+            searching = false;
+          }
+          bool skip{false};
+          for (auto old_path : paths) {
+            if (std::find(old_path.begin(), old_path.end(), new_point) != old_path.end()) {
+              skip = true;
+              break;
+            }
+          }
+          if (!skip) {
+            Path new_path = path;
+            new_path.push_back(new_point);
+            new_paths.push_back(new_path);
+          }
+        }
+      }
+      if (new_paths.size() > 0) {
+        paths = new_paths;
+      } else {
+        break;
+      }
+    }
+
+    std::vector<std::vector<Point>> new_paths;
+    for (auto path : paths) {
+      if (path.back() == destination) {
+        new_paths.push_back(path);
+      }
+    }
+
+    // TODO: sort new_paths
+    if (new_paths.size() > 0) {
+      return new_paths;
+    }
+    return std::nullopt;
+  }
+
  public:
   explicit Battlefield(const std::vector<std::string>& input)
     : m_wall(std::make_shared<Entity>('.')) {
@@ -265,9 +336,9 @@ class Battlefield {
   }
 
   void test() {
-    auto open = open_squares(Point{1, 21});
-    for (auto point : open) {
-      std::cout << point << std::endl;
+    auto paths = shortest_paths(Point{1, 15}, Point{7, 20});
+    for (auto path : paths.value()) {
+      std::cout << path << std::endl;
     }
   }
 };
