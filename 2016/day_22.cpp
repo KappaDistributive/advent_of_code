@@ -18,6 +18,28 @@ operator<<(std::ostream& os, const Point& point) {
 }
 
 
+enum class Direction: size_t {
+  north,
+  east,
+  south,
+  west,
+};
+
+
+std::ostream&
+operator<<(std::ostream& os, Direction direction) {
+  switch (direction) {
+    case Direction::north: os << "North"; break;
+    case Direction::east:  os << "East" ; break;
+    case Direction::south: os << "South"; break;
+    case Direction::west:  os << "West" ; break;
+    default: throw std::runtime_error("This should never happen."); break;
+  }
+
+  return os;
+}
+
+
 class Node {
  private:
   Point m_pos;
