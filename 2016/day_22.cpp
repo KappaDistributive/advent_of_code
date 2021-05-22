@@ -119,7 +119,7 @@ class Grid {
           used = grid.m_grid.at({x, y}).used();
         }
 
-        os << "(" << std::setw(2) << used << "T/" << std::setw(2) << capacity << "T)";
+        os << "(" << std::setw(3) << used << "T/" << std::setw(3) << capacity << "T)";
         if (x < max.first) {
           os << " -- ";
         }
@@ -128,9 +128,9 @@ class Grid {
       if (y < max.second) {
         for (int x{0}; x <= (max.first - min.first); ++x) {
           if (x >= 1) {
-            os << "            |";
+            os << "              |";
           } else {
-            os << "    |";
+            os << "     |";
           }
         }
         os << "\n";
@@ -212,7 +212,7 @@ part_two(const std::vector<std::string>& input) {
 
 int
 main() {
-  utils::Reader reader(std::filesystem::path("../2016/data/input_22_mock.txt"));
+  utils::Reader reader(std::filesystem::path("../2016/data/input_22.txt"));
   auto input = reader.get_lines();
 
   auto answer_one =  part_one(input);
