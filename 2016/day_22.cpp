@@ -105,7 +105,7 @@ class Grid {
       max.second = std::max(max.second, pos.second);
     }
 
-    return {min, max};
+    return std::make_pair(min, max);
   }
 
   friend std::ostream&
