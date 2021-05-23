@@ -29,6 +29,7 @@ enum class Opcode : int {
   eqrr
 };
 
+
 static const std::array<Opcode, 16> ALL_OPCODES = {
   Opcode::addr,
   Opcode::addi,
@@ -117,18 +118,91 @@ struct Example {
   }
 };
 
+
 void
 run_opcode(Opcode opcode,
            const std::array<int, 3> instruction,
            std::vector<int>& registers) {
+  int a = instruction[0];
+  int b = instruction[1];
+  int c = instruction[2];
   switch (opcode) {
   case Opcode::addr:
+    // addr (add register) stores into register C the result of adding register A and register B.
+    registers[c] = registers[a] + registers[b];
     break;
-  
+  case Opcode::addi:
+    // addi (add immediate) stores into register C the result of adding register A and value B.
+    registers[c] = registers[a] + b;
+    break;
+  case Opcode::mulr:
+    // mulr (multiply register) stores into register C the result of multiplying register A and register B.
+    registers[c] = registers[a] * registers[b];
+    break;
+  case Opcode::muli:
+    // muli (multiply immediate) stores into register C the result of multiplying register A and value B.
+    registers[c] = registers[a] * b;
+    break;
+  case Opcode::banr:
+    // banr (bitwise AND register) stores into register C the result of the bitwise AND of register A and register B.
+    registers[c] = registers[a] & registers[b];
+    break;
+  case Opcode::bani:
+    // bani (bitwise AND immediate) stores into register C the result of the bitwise AND of register A and value B.
+    registers[c] = registers[a] & b;
+    break;
+  case Opcode::borr:
+    // borr (bitwise OR register) stores into register C the result of the bitwise OR of register A and register B.
+    registers[c] = registers[a] | registers[b];
+    break;
+  case Opcode::bori:
+    // bori (bitwise OR immediate) stores into register C the result of the bitwise OR of register A and value B.
+    registers[c] = registers[a] | b;
+    break;
+  case Opcode::setr:
+    // setr (set register) copies the contents of register A into register C. (Input B is ignored.)
+    registers[c] = registers[a];
+    break;
+  case Opcode::seti:
+    // seti (set immediate) stores value A into register C. (Input B is ignored.)
+    registers[c] = a;
+    break;
+  case Opcode::gtir:
+    // gtir (greater-than immediate/register) sets register C to 1 if value A is greater than register B.
+    // Otherwise, register C is set to 0.
+    registers[c] = static_cast<int>(a > registers[b]);
+    break;
+  case Opcode::gtri:
+    // gtri (greater-than register/immediate) sets register C to 1 if register A is greater than value B.
+    // Otherwise, register C is set to 0.
+    registers[c] = static_cast<int>(registers[a] > b);
+    break;
+  case Opcode::gtrr:
+    // gtrr (greater-than register/register) sets register C to 1 if register A is greater than register B.
+    // Otherwise, register C is set to 0.
+    registers[c] = static_cast<int>(registers[a] > registers[b]);
+    break;
+  case Opcode::eqir:
+    // eqir (equal immediate/register) sets register C to 1 if value A is equal to register B.
+    // Otherwise, register C is set to 0.
+    registers[c] = static_cast<int>(a == registers[b]);
+    break;
+  case Opcode::eqri:
+    // eqri (equal register/immediate) sets register C to 1 if register A is equal to value B.
+    // Otherwise, register C is set to 0.
+    registers[c] = static_cast<int>(registers[a] == b);
+    break;
+  case Opcode::eqrr:
+    // eqrr (equal register/register) sets register C to 1 if register A is equal to register B.
+    // Otherwise, register C is set to 0.
+    registers[c] = static_cast<int>(registers[a] == registers[b]);
+    break;
   default:
+    throw std::runtime_error("This should never happen.");
     break;
   }
 }
+
 
 std::vector<Opcode>
 matching_opcodes(const Example& example) {
@@ -181,7 +255,9 @@ extract_examples(const std::vector<std::string>& input) {
   return examples;
 }
 
-int part_one(const std::vector<std::string>& input) {
+
+auto
+part_one(const std::vector<std::string>& input) {
   auto examples = extract_examples(input);
   for (auto example : examples) {
     std::cout << example << std::endl;
@@ -190,7 +266,8 @@ int part_one(const std::vector<std::string>& input) {
 }
 
 
-int part_two(const std::vector<std::string>& input) {
+auto
+part_two(const std::vector<std::string>& input) {
   return -1;
 }
 
@@ -206,3 +283,4 @@ int main() {
 
   return 0;
 }
+
