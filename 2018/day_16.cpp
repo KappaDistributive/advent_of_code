@@ -328,6 +328,28 @@ extract_examples(const std::vector<std::string>& input) {
   return examples;
 }
 
+std::vector<std::vector<int>>
+extract_instructions(const std::vector<std::string>& input) {
+  std::vector<std::vector<int>> instructions;
+  for (auto it = input.rbegin(); ; it++) {
+    auto splits = utils::split_string(*it, ' ');
+    if (splits.size() == 0) {
+      break;
+    }
+    std::vector<int> instruction;
+    std::transform(
+      splits.begin(),
+      splits.end(),
+      std::back_inserter(instruction),
+      [] (std::string number) {
+        return std::stoul(number);
+    });
+    instructions.push_back(instruction);
+  }
+  std::reverse(instructions.begin(), instructions.end());
+
+  return instructions;
+}
 
 auto
 part_one(const std::vector<std::string>& input) {
@@ -345,10 +367,14 @@ part_one(const std::vector<std::string>& input) {
 }
 
 
-// auto
-// part_two(const std::vector<std::string>& input) {
-//   return -1;
-// }
+auto
+part_two(const std::vector<std::string>& input) {
+  auto instructions = extract_instructions(input);
+  for (auto instruction : instructions) {
+    std::cout << instruction << std::endl;
+  }
+  return -1;
+}
 
 
 int main() {
@@ -357,8 +383,8 @@ int main() {
 
   auto answer_one =  part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  // auto answer_two =  part_two(input);
-  // std::cout << "The answer to part two is: " << answer_two << std::endl;
+  auto answer_two =  part_two(input);
+  std::cout << "The answer to part two is: " << answer_two << std::endl;
 
   return 0;
 }
