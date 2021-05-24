@@ -61,12 +61,12 @@ class Slice {
  private:
   std::map<Point, Tile> m_tiles;
 
-  std::pair<Point, Point> border() const noexcept {
+  std::pair<Point, Point> border(bool include_source = true) const noexcept {
     Point min{std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max()};
     Point max{0, 0};
 
     for (auto [point, tile] : m_tiles) {
-      if (tile == Tile::clay || tile == Tile::source) {
+      if (tile == Tile::clay || (include_source && tile == Tile::source)) {
         min.first = std::min(min.first, point.first);
         min.second = std::min(min.second, point.second);
         max.first = std::max(max.first, point.first);
