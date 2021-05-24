@@ -29,17 +29,21 @@ enum class Tile: size_t {
   clay,
   sand,
   source,
-  water,
+  still_water,
+  running_water,
 };
 
 std::ostream&
 operator<<(std::ostream& os, const Tile& tile) {
   switch (tile) {
-    case Tile::clay:   os << '#'; break;
-    case Tile::sand:   os << '.'; break;
-    case Tile::source: os << '+'; break;
-    case Tile::water:  os << '~'; break;
-    default: throw std::runtime_error("This should never happen."); break;
+    case Tile::clay:           os << '#'; break;
+    case Tile::sand:           os << '.'; break;
+    case Tile::source:         os << '+'; break;
+    case Tile::still_water:    os << '~'; break;
+    case Tile::running_water:  os << '|'; break;
+    default:
+      throw std::runtime_error("This should never happen.");
+      break;
   }
 
   return os;
@@ -48,11 +52,14 @@ operator<<(std::ostream& os, const Tile& tile) {
 
 Tile from_char(char character) {
   switch (character) {
-    case '#': return Tile::clay;   break;
-    case '.': return Tile::sand;   break;
-    case '+': return Tile::source; break;
-    case '~': return Tile::water;  break;
-    default: throw std::invalid_argument("Unknown tile: " + std::string{character}); break;
+    case '#': return Tile::clay;           break;
+    case '.': return Tile::sand;           break;
+    case '+': return Tile::source;         break;
+    case '~': return Tile::still_water;    break;
+    case '|': return Tile::running_water;  break;
+    default:
+      throw std::invalid_argument("Unknown tile: " + std::string{character});
+      break;
   }
 }
 
