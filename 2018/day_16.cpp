@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <map>
+#include <set>
 #include <sstream>
 
 #include "../utils/input.hpp"
@@ -329,15 +331,16 @@ extract_examples(const std::vector<std::string>& input) {
   return examples;
 }
 
-std::vector<std::vector<int>>
+
+std::vector<std::vector<uint>>
 extract_instructions(const std::vector<std::string>& input) {
-  std::vector<std::vector<int>> instructions;
+  std::vector<std::vector<uint>> instructions;
   for (auto it = input.rbegin(); ; it++) {
     auto splits = utils::split_string(*it, ' ');
     if (splits.size() == 0) {
       break;
     }
-    std::vector<int> instruction;
+    std::vector<uint> instruction;
     std::transform(
       splits.begin(),
       splits.end(),
@@ -351,6 +354,66 @@ extract_instructions(const std::vector<std::string>& input) {
 
   return instructions;
 }
+
+
+std::map<uint, Opcode>
+find_opcodes(const std::vector<Example>& examples) {
+  std::map<uint, std::set<Opcode>> opcode_candidates;
+  std::set<Opcode> opcode_set;
+  for (auto opcode : ALL_OPCODES) {
+    opcode_set.insert(opcode);
+  }
+  for (uint code{0}; code < 16; ++code) {
+    opcode_candidates.insert({code, opcode_set});
+  }
+
+  for (auto example : examples) {
+    auto code = example.instruction[0];
+    auto matches = matching_opcodes(example);
+    for (auto it{opcode_candidates.at(code).begin()};
+          it != opcode_candidates.at(code).end(); ) {
+      if (std::find(matches.begin(), matches.end(), *it) != matches.end()) {
+        ++it;
+      } else {
+        it = opcode_candidates.at(code).erase(it);
+      }
+    }
+  }
+
+  bool searching{true};
+  while (searching) {
+    searching = false;
+    for (uint ref{0}; ref < 16; ++ref) {
+      if (opcode_candidates.at(ref).size() > 1) {
+        continue;
+      } else if (opcode_candidates.at(ref).size() == 1) {
+        auto opcode = *opcode_candidates.at(ref).begin();
+        for (uint code{0}; code < 16; ++code) {
+          if (ref == code) {
+            continue;
+          }
+          if (opcode_candidates.at(code).count(opcode) > 0) {
+            opcode_candidates.at(code).erase(opcode);
+            searching = true;
+          }
+        }
+      } else {
+        throw std::runtime_error("Yikes!");
+      }
+    }
+  }
+
+
+  std::map<uint, Opcode> lookup;
+
+  for (auto [code, candidates] : opcode_candidates) {
+    assert(candidates.size() == 1);
+    lookup.insert({code, *candidates.begin()});
+  }
+
+  return lookup;
+}
+
 
 auto
 part_one(const std::vector<std::string>& input) {
@@ -370,11 +433,15 @@ part_one(const std::vector<std::string>& input) {
 
 auto
 part_two(const std::vector<std::string>& input) {
+  auto examples = extract_examples(input);
   auto instructions = extract_instructions(input);
+  auto opcode_lookup = find_opcodes(examples);
+  std::vector<uint> registers{{0, 0, 0, 0}};
+
   for (auto instruction : instructions) {
-    std::cout << instruction << std::endl;
+    run_opcode(opcode_lookup.at(instruction[0]), instruction, &registers);
   }
-  return -1;
+  return registers[0];
 }
 
 
