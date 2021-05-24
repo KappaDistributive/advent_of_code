@@ -65,11 +65,13 @@ class Slice {
     Point min{std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max()};
     Point max{0, 0};
 
-    for (auto [point, _] : m_tiles) {
-      min.first = std::min(min.first, point.first);
-      min.second = std::min(min.second, point.second);
-      max.first = std::max(max.first, point.first);
-      max.second = std::max(max.second, point.second);
+    for (auto [point, tile] : m_tiles) {
+      if (tile == Tile::clay || tile == Tile::source) {
+        min.first = std::min(min.first, point.first);
+        min.second = std::min(min.second, point.second);
+        max.first = std::max(max.first, point.first);
+        max.second = std::max(max.second, point.second);
+      }
     }
 
     return {min, max};
@@ -117,7 +119,7 @@ class Slice {
   operator<<(std::ostream& os, const Slice& slice) {
     auto [min, max] = slice.border();
     if (min.first > 0) min.first--;
-    if (min.second > 0) min.second --;
+    if (min.second > 0) min.second--;
     max.first++;
     max.second++;
 
