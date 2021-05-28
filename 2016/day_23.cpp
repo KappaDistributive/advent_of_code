@@ -189,7 +189,6 @@ class CPU {
     } else {
       instruction_pointer++;
     }
-    std::cout << instruction_pointer << std::endl;
     return 0 <= instruction_pointer &&
            instruction_pointer < static_cast<int>(instructions.size());
   }
@@ -263,10 +262,15 @@ part_one(const std::vector<std::string>& input) {
 }
 
 
-// auto
-// part_two(const std::vector<std::string>& input) {
-//   return -2;
-// }
+auto
+part_two(const std::vector<std::string>& input) {
+  auto instructions = prepare_input(input);
+  CPU cpu(instructions);
+  cpu.set_register('a', 12);
+  while (cpu.step()) {
+  }
+  return cpu.read_register('a');
+}
 
 
 int
@@ -276,8 +280,8 @@ main() {
 
   auto answer_one =  part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  // auto answer_two =  part_two(input);
-  // std::cout << "The answer to part two is: " << answer_two << std::endl;
+  auto answer_two =  part_two(input);
+  std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
 
