@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
-set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 add_library(input utils/input.cpp)
@@ -167,6 +167,9 @@ target_link_libraries(2016_21 input )
 
 add_executable(2016_22 2016/day_22.cpp)
 target_link_libraries(2016_22 input )
+
+add_executable(2016_23 2016/day_23.cpp)
+target_link_libraries(2016_23 input )
 
 add_executable(2017_01 2017/day_01.cpp)
 target_link_libraries(2017_01 input)
