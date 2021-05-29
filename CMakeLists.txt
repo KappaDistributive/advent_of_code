@@ -99,6 +99,9 @@ target_link_libraries(2015_21 input)
 add_executable(2015_23 2015/day_23.cpp)
 target_link_libraries(2015_23 input)
 
+add_executable(2015_24 2015/day_24.cpp)
+target_link_libraries(2015_24 input)
+
 add_executable(2015_25 2015/day_25.cpp)
 target_link_libraries(2015_25 input)
 
