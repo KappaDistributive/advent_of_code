@@ -1,6 +1,8 @@
 .vscode/
 tags
 build/
+debug/
+release/
 .ccls
 .ccls-cache
 .mypy_cache  
