@@ -8,6 +8,7 @@
 
 using utils::combinatorics::Powerset;
 
+
 std::vector<size_t>
 prepare_input(const std::vector<std::string>& input) {
   std::vector<size_t> weights;
@@ -17,6 +18,12 @@ prepare_input(const std::vector<std::string>& input) {
   std::reverse(weights.begin(), weights.end());
 
   return weights;
+}
+
+
+size_t
+quantum_entanglement(const std::vector<size_t> group) {
+  return std::accumulate(group.begin(), group.end(), size_t{1}, std::multiplies<size_t>());
 }
 
 
@@ -59,12 +66,6 @@ is_valid(const std::vector<size_t>& candidate,
     }
   }
   return false;
-}
-
-
-size_t
-quantum_entanglement(const std::vector<size_t> group) {
-  return std::accumulate(group.begin(), group.end(), size_t{1}, std::multiplies<size_t>());
 }
 
 
