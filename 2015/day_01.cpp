@@ -5,11 +5,17 @@
 int part_one(std::string input) {
   int floor{0};
 
-  for (auto symbol: input) {
+  for (auto symbol : input) {
     switch (symbol) {
-      case '(': floor++; break;
-      case ')': floor--; break;
-      default: throw std::runtime_error("Unrecognized symbol"); break;
+      case '(':
+        floor++;
+        break;
+      case ')':
+        floor--;
+        break;
+      default:
+        throw std::runtime_error("Unrecognized symbol");
+        break;
     }
   }
 
@@ -20,16 +26,21 @@ int part_two(std::string input) {
   int floor{0};
   int position{0};
 
-  for (auto symbol: input) {
+  for (auto symbol : input) {
     position++;
     switch (symbol) {
-      case '(': floor++; break;
-      case ')': floor--; break;
-      default: throw std::runtime_error("Unrecognized symbol"); break;
+      case '(':
+        floor++;
+        break;
+      case ')':
+        floor--;
+        break;
+      default:
+        throw std::runtime_error("Unrecognized symbol");
+        break;
     }
 
-    if (floor == -1)
-      break;
+    if (floor == -1) break;
   }
 
   return position;
