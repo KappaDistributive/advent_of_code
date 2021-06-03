@@ -15,7 +15,7 @@ std::pair<int, int> prepare_input(const std::vector<std::string>& input) {
     } else if (std::regex_match(line, matches, damage_regex)) {
       damage = std::stoi(matches[1].str());
     } else {
-      throw std::runtime_error("Found invalid line in input: " + line);
+      throw std::runtime_error("Encountered invalid line in input: " + line);
     }
   }
 
