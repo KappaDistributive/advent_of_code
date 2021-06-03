@@ -160,6 +160,14 @@ class Mob {
   }
 
   Stats& effect(Effect effect) { return this->m_effects.at(effect); }
+
+  friend std::ostream& operator<<(std::ostream& os, const Mob& mob) {
+    os << "Mob     # "                       // NOLINT
+       << " Name: " << mob.m_name            // NOLINT
+       << " # Health: " << mob.m_hit_points  // NOLINT
+       << " Armor: " << mob.m_hit_points;    // NOLINT
+    return os;
+  }
 };
 
 class Warrior : public Mob {
@@ -167,7 +175,19 @@ class Warrior : public Mob {
   size_t m_attack;
 
  public:
+  Warrior(std::string name, size_t hit_points, size_t armor, size_t attack)
+      : Mob(name, hit_points, armor), m_attack(attack) {}
+
   void attack(Mob* opponent) { opponent->take_damage(this->m_attack); }
+
+  friend std::ostream& operator<<(std::ostream& os, const Warrior& warrior) {
+    os << "Warrior # "
+       << " Name: " << warrior.m_name          // NOLINT
+       << " Health: " << warrior.m_hit_points  // NOLINT
+       << " Armor: " << warrior.m_hit_points   // NOLINT
+       << " Attack: " << warrior.m_attack;     // NOLINT
+    return os;
+  }
 };
 
 class Wizard : public Mob {
@@ -186,6 +206,9 @@ class Wizard : public Mob {
   }
 
  public:
+  Wizard(std::string name, size_t hit_points, size_t armor, size_t mana)
+      : Mob(name, hit_points, armor), m_mana(mana) {}
+
   bool cast_spell(Spell spell, Mob* opponent) {
     if (this->m_mana >= mana_cost(spell)) {
       this->m_mana -= mana_cost(spell);
@@ -214,10 +237,23 @@ class Wizard : public Mob {
     }
     return false;
   }
+
+  friend std::ostream& operator<<(std::ostream& os, const Wizard& wizard) {
+    os << "Wizard  # "
+       << " Name: " << wizard.m_name          // NOLINT
+       << " Health: " << wizard.m_hit_points  // NOLINT
+       << " Armor: " << wizard.m_hit_points   // NOLINT
+       << " Mana: " << wizard.m_mana;         // NOLINT
+    return os;
+  }
 };
 
 auto part_one(const std::vector<std::string>& input) {
   auto [hit_points, damage] = prepare_input(input);
+  Warrior villain("Villain", hit_points, 0, damage);
+  Wizard hero("Hero", 50, 0, 500);
+  std::cout << villain << std::endl;
+  std::cout << hero << std::endl;
   return hit_points * damage;
 }
 
