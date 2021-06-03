@@ -54,10 +54,19 @@ size_t mana_cost(Spell spell) {
 }
 
 enum class Effect {
-  drain,
+  drain_damage,
+  drain_heal,
   shield,
   poison,
   recharge,
+};
+
+static const Effect ALL_EFFECTS[] = {
+  Effect::drain_damage,
+  Effect::drain_heal,
+  Effect::shield,
+  Effect::poison,
+  Effect::recharge,
 };
 
 struct Stats {
@@ -67,6 +76,29 @@ struct Stats {
   size_t mana;
 };
 
+Stats stats(Effect effect, size_t duration = 0) {
+  switch (effect) {
+    case Effect::drain_damage:
+      return Stats{duration, 0, 2, 0};
+      break;
+    case Effect::drain_heal:
+      return Stats{duration, 0, 2, 0};
+      break;
+    case Effect::shield:
+      return Stats{duration, 7, 0, 0};
+      break;
+    case Effect::poison:
+      return Stats{duration, 0, 3, 0};
+      break;
+    case Effect::recharge:
+      return Stats{duration, 0, 0, 101};
+      break;
+    default:
+      throw std::runtime_error("This should never happen!");
+      break;
+  }
+}
+
 class Mob {
  protected:
   std::string m_name;
@@ -75,6 +107,15 @@ class Mob {
   std::map<Effect, Stats> m_effects;
 
  public:
+  Mob(std::string name, size_t hit_points, size_t armor)
+    : m_name(name),
+      m_hit_points(hit_points),
+      m_armor(armor) {
+      for (auto effect : ALL_EFFECTS) {
+        this->m_effects.insert({effect, stats(effect)});
+      }
+  }
+
   size_t armor() const noexcept {
     size_t true_amor{this->m_armor};
     for (auto [_, stats] : this->m_effects) {
