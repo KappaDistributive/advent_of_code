@@ -31,11 +31,8 @@ enum class Spell {
 };
 
 static const Spell ALL_SPELLS[] = {
-  Spell::magic_missile,
-  Spell::drain,
-  Spell::shield,
-  Spell::poison,
-  Spell::recharge,
+    Spell::magic_missile, Spell::drain,    Spell::shield,
+    Spell::poison,        Spell::recharge,
 };
 
 size_t mana_cost(Spell spell) {
@@ -91,9 +88,9 @@ enum class Effect {
 };
 
 static const Effect ALL_EFFECTS[] = {
-  Effect::shield,
-  Effect::poison,
-  Effect::recharge,
+    Effect::shield,
+    Effect::poison,
+    Effect::recharge,
 };
 
 struct Stats {
@@ -129,12 +126,10 @@ class Mob {
 
  public:
   Mob(std::string name, size_t hit_points, size_t armor)
-    : m_name(name),
-      m_hit_points(hit_points),
-      m_armor(armor) {
-      for (auto effect : ALL_EFFECTS) {
-        this->m_effects.insert({effect, stats(effect)});
-      }
+      : m_name(name), m_hit_points(hit_points), m_armor(armor) {
+    for (auto effect : ALL_EFFECTS) {
+      this->m_effects.insert({effect, stats(effect)});
+    }
   }
 
   size_t armor() const noexcept {
@@ -164,9 +159,7 @@ class Mob {
     }
   }
 
-  Stats& effect(Effect effect) {
-    return this->m_effects.at(effect);
-  }
+  Stats& effect(Effect effect) { return this->m_effects.at(effect); }
 };
 
 class Warrior : public Mob {
@@ -174,9 +167,7 @@ class Warrior : public Mob {
   size_t m_attack;
 
  public:
-  void attack(Mob* opponent) {
-    opponent->take_damage(this->m_attack);
-  }
+  void attack(Mob* opponent) { opponent->take_damage(this->m_attack); }
 };
 
 class Wizard : public Mob {
