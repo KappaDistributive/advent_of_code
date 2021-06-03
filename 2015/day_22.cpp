@@ -1,3 +1,4 @@
+#include <map>
 #include <regex>  // NOLINT
 
 #include "../utils/input.hpp"
@@ -20,6 +21,113 @@ std::pair<int, int> prepare_input(const std::vector<std::string>& input) {
 
   return {hit_points, damage};
 }
+
+enum class Spell {
+  magic_missile,
+  drain,
+  shield,
+  poison,
+  recharge,
+};
+
+size_t mana_cost(Spell spell) {
+  switch (spell) {
+    case Spell::magic_missile:
+      return 53;
+      break;
+    case Spell::drain:
+      return 73;
+      break;
+    case Spell::shield:
+      return 113;
+      break;
+    case Spell::poison:
+      return 173;
+      break;
+    case Spell::recharge:
+      return 229;
+      break;
+    default:
+      throw std::runtime_error("This should never happen!");
+      break;
+  }
+}
+
+enum class Effect {
+  drain,
+  shield,
+  poison,
+  recharge,
+};
+
+struct Stats {
+  size_t duration;
+  size_t armor;
+  size_t damage;
+  size_t mana;
+};
+
+class Mob {
+ protected:
+  std::string m_name;
+  size_t m_hit_points;
+  size_t m_armor;
+  std::map<Effect, Stats> m_effects;
+
+ public:
+  size_t armor() const noexcept {
+    size_t true_amor{this->m_armor};
+    for (auto [_, stats] : this->m_effects) {
+      if (stats.duration > 0) {
+        true_amor += stats.armor;
+      }
+    }
+
+    return true_amor;
+  }
+
+  bool take_damage(size_t damage, bool ingore_armor = false) noexcept {
+    size_t true_damage = damage;
+    if (!ingore_armor) {
+      true_damage =
+          this->armor() < true_damage ? (true_damage - this->armor()) : 0;
+    }
+
+    if (true_damage < this->m_hit_points) {
+      this->m_hit_points -= true_damage;
+      return false;
+    } else {
+      this->m_hit_points = 0;
+      return true;
+    }
+  }
+};
+
+class Warrior : public Mob {
+ private:
+  size_t m_attack;
+};
+
+class Wizard : public Mob {
+ private:
+  size_t m_mana;
+
+ public:
+  bool cast_spell(Spell spell, Mob* opponent) {
+    switch (spell) {
+      case Spell::magic_missile:
+        if (this->m_mana >= mana_cost(spell)) {
+          this->m_mana -= mana_cost(spell);
+          opponent->take_damage(4, true);
+          return true;
+        }
+      default:
+        throw std::runtime_error("This should never happen.");
+        break;
+    }
+    return false;
+  }
+};
 
 auto part_one(const std::vector<std::string>& input) {
   auto [hit_points, damage] = prepare_input(input);
