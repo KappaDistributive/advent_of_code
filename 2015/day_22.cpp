@@ -184,7 +184,7 @@ class Warrior : public Mob {
     os << "Warrior # "
        << " Name: " << warrior.m_name          // NOLINT
        << " Health: " << warrior.m_hit_points  // NOLINT
-       << " Armor: " << warrior.m_hit_points   // NOLINT
+       << " Armor: " << warrior.armor()        // NOLINT
        << " Attack: " << warrior.m_attack;     // NOLINT
     return os;
   }
@@ -215,6 +215,7 @@ class Wizard : public Mob {
       switch (spell) {
         case Spell::magic_missile:
           opponent->take_damage(4, true);
+          break;
         case Spell::drain:
           opponent->take_damage(2, true);
           this->m_hit_points += 2;
@@ -242,7 +243,7 @@ class Wizard : public Mob {
     os << "Wizard  # "
        << " Name: " << wizard.m_name          // NOLINT
        << " Health: " << wizard.m_hit_points  // NOLINT
-       << " Armor: " << wizard.m_hit_points   // NOLINT
+       << " Armor: " << wizard.armor()        // NOLINT
        << " Mana: " << wizard.m_mana;         // NOLINT
     return os;
   }
@@ -252,6 +253,9 @@ auto part_one(const std::vector<std::string>& input) {
   auto [hit_points, damage] = prepare_input(input);
   Warrior villain("Villain", hit_points, 0, damage);
   Wizard hero("Hero", 50, 0, 500);
+  std::cout << villain << std::endl;
+  std::cout << hero << std::endl;
+  hero.cast_spell(Spell::magic_missile, &villain);
   std::cout << villain << std::endl;
   std::cout << hero << std::endl;
   return hit_points * damage;
