@@ -1,8 +1,3 @@
-#include <cassert>
-#include <optional>
-#include <map>
-#include <regex>
-
 #include "../utils/input.hpp"
 
 enum InstructionType {
@@ -61,19 +56,14 @@ class Instruction {
     }
   }
 
-  InstructionType get_type() const {
-    return this->type;
-  }
+  InstructionType get_type() const { return this->type; }
 
-  std::optional<char> get_memory() const {
-    return this->memory;
-  }
+  std::optional<char> get_memory() const { return this->memory; }
 
-  std::optional<int> get_data() const {
-    return this->data;
-  }
+  std::optional<int> get_data() const { return this->data; }
 
-  friend std::ostream& operator<< (std::ostream& os, const Instruction& instruction) {
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const Instruction& instruction) {
     switch (instruction.get_type()) {
       case half:
         os << "hlf " << instruction.get_memory().value();
@@ -88,16 +78,17 @@ class Instruction {
         os << "jump " << instruction.get_data().value();
         break;
       case jump_if_even:
-        os << "jie " << instruction.get_memory().value() << ", " << instruction.get_data().value();
+        os << "jie " << instruction.get_memory().value() << ", "
+           << instruction.get_data().value();
         break;
       case jump_if_one:
-        os << "jio " << instruction.get_memory().value() << ", " << instruction.get_data().value();
+        os << "jio " << instruction.get_memory().value() << ", "
+           << instruction.get_data().value();
         break;
     }
     return os;
   }
 };
-
 
 class CPU {
  private:
@@ -106,13 +97,12 @@ class CPU {
   std::map<char, int> memory;
 
  public:
-  explicit CPU(const std::vector<std::string>& input)
-    : instruction_pointer(0) {
+  explicit CPU(const std::vector<std::string>& input) : instruction_pointer(0) {
     memory = {
-      {'a', 0},
-      {'b', 0},
+        {'a', 0},
+        {'b', 0},
     };
-    for (auto instruction: input) {
+    for (auto instruction : input) {
       instructions.push_back(Instruction(instruction));
     }
   }
@@ -125,9 +115,7 @@ class CPU {
     }
   }
 
-  bool step()  {
-    return this->step(instructions[instruction_pointer]);
-  }
+  bool step() { return this->step(instructions[instruction_pointer]); }
 
   bool step(const Instruction& instruction) {
     switch (instruction.get_type()) {
@@ -176,11 +164,9 @@ class CPU {
     this->memory.insert_or_assign(address, value);
   }
 
-  std::map<char, int> get_memory() const {
-    return this->memory;
-  }
+  std::map<char, int> get_memory() const { return this->memory; }
 
-  friend std::ostream& operator<< (std::ostream& os, const CPU& cpu) {
+  friend std::ostream& operator<<(std::ostream& os, const CPU& cpu) {
     os << cpu.instruction_pointer << " -> ";
     if (cpu.instruction_pointer < cpu.instructions.size()) {
       os << cpu.instructions[cpu.instruction_pointer];
@@ -188,7 +174,7 @@ class CPU {
       os << "{invalid instruction}";
     }
     os << std::endl;
-    for (auto [memory, value]: cpu.memory) {
+    for (auto [memory, value] : cpu.memory) {
       os << memory << ": " << value << "\n";
     }
     return os;

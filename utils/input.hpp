@@ -9,6 +9,7 @@
 #include <functional>
 #include <map>
 #include <numeric>
+#include <optional>
 #include <regex>  // NOLINT
 #include <set>
 #include <stdexcept>

@@ -1,6 +1,3 @@
-#include <map>
-#include <regex>  // NOLINT
-
 #include "../utils/input.hpp"
 
 std::pair<int, int> prepare_input(const std::vector<std::string>& input) {

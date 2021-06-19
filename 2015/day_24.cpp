@@ -1,16 +1,9 @@
-#include <algorithm>
-#include <numeric>
-#include <optional>
-#include <set>
-
 #include "../utils/combinatorics.hpp"
 #include "../utils/input.hpp"
 
 using utils::combinatorics::Powerset;
 
-
-std::vector<size_t>
-prepare_input(const std::vector<std::string>& input) {
+std::vector<size_t> prepare_input(const std::vector<std::string>& input) {
   std::vector<size_t> weights;
   for (auto line : input) {
     weights.push_back(std::stoull(line));
@@ -20,21 +13,18 @@ prepare_input(const std::vector<std::string>& input) {
   return weights;
 }
 
-
-size_t
-quantum_entanglement(const std::vector<size_t> group) {
-  return std::accumulate(group.begin(), group.end(), size_t{1}, std::multiplies<size_t>());
+size_t quantum_entanglement(const std::vector<size_t> group) {
+  return std::accumulate(group.begin(), group.end(), size_t{1},
+                         std::multiplies<size_t>());
 }
 
-
-bool
-is_valid(const std::vector<size_t>& candidate,
-         const std::vector<size_t>& weights,
-         size_t target_weight,
-         bool part_two = false) {
+bool is_valid(const std::vector<size_t>& candidate,
+              const std::vector<size_t>& weights, size_t target_weight,
+              bool part_two = false) {
   std::vector<size_t> remaining_weights;
   for (auto weight : weights) {
-    if (std::find(candidate.begin(), candidate.end(), weight) == candidate.end()) {
+    if (std::find(candidate.begin(), candidate.end(), weight) ==
+        candidate.end()) {
       remaining_weights.push_back(weight);
     }
   }
@@ -42,24 +32,28 @@ is_valid(const std::vector<size_t>& candidate,
   Powerset powerset{remaining_weights};
   if (!part_two) {
     for (auto subvector : powerset) {
-      if (std::accumulate(subvector.begin(), subvector.end(), size_t{0}) == target_weight) {
-          return true;
+      if (std::accumulate(subvector.begin(), subvector.end(), size_t{0}) ==
+          target_weight) {
+        return true;
       }
     }
     return false;
   }
 
   for (auto subvector : powerset) {
-    if (std::accumulate(subvector.begin(), subvector.end(), size_t{0}) == target_weight) {
+    if (std::accumulate(subvector.begin(), subvector.end(), size_t{0}) ==
+        target_weight) {
       std::vector<size_t> inner_remaining_weights;
       for (auto weight : remaining_weights) {
-        if (std::find(subvector.begin(), subvector.end(), weight) == subvector.end()) {
+        if (std::find(subvector.begin(), subvector.end(), weight) ==
+            subvector.end()) {
           inner_remaining_weights.push_back(weight);
         }
       }
       Powerset inner_powerset{inner_remaining_weights};
       for (auto inner_subvector : inner_powerset) {
-        if (std::accumulate(inner_subvector.begin(), inner_subvector.end(), size_t{0}) == target_weight) {
+        if (std::accumulate(inner_subvector.begin(), inner_subvector.end(),
+                            size_t{0}) == target_weight) {
           return true;
         }
       }
@@ -68,18 +62,18 @@ is_valid(const std::vector<size_t>& candidate,
   return false;
 }
 
-
-auto
-part_one(const std::vector<std::string>& input) {
+auto part_one(const std::vector<std::string>& input) {
   auto weights = prepare_input(input);
-  size_t target_weight = std::accumulate(weights.begin(), weights.end(), size_t{0}) / 3;
+  size_t target_weight =
+      std::accumulate(weights.begin(), weights.end(), size_t{0}) / 3;
   Powerset powerset(weights);
   std::set<std::vector<size_t>> candidates;
   size_t max_size{weights.size()};
 
   for (auto subvector : powerset) {
     if (subvector.size() > max_size ||
-        std::accumulate(subvector.begin(), subvector.end(), size_t{0}) != target_weight) {
+        std::accumulate(subvector.begin(), subvector.end(), size_t{0}) !=
+            target_weight) {
       continue;
     }
     if (is_valid(subvector, weights, target_weight)) {
@@ -106,18 +100,18 @@ part_one(const std::vector<std::string>& input) {
   return min_entanglement;
 }
 
-
-auto
-part_two(const std::vector<std::string>& input) {
+auto part_two(const std::vector<std::string>& input) {
   auto weights = prepare_input(input);
-  size_t target_weight = std::accumulate(weights.begin(), weights.end(), size_t{0}) / 4;
+  size_t target_weight =
+      std::accumulate(weights.begin(), weights.end(), size_t{0}) / 4;
   Powerset powerset(weights);
   std::set<std::vector<size_t>> candidates;
   size_t max_size{weights.size()};
 
   for (auto subvector : powerset) {
     if (subvector.size() > max_size ||
-        std::accumulate(subvector.begin(), subvector.end(), size_t{0}) != target_weight) {
+        std::accumulate(subvector.begin(), subvector.end(), size_t{0}) !=
+            target_weight) {
       continue;
     }
     if (is_valid(subvector, weights, target_weight, true)) {
@@ -144,9 +138,7 @@ part_two(const std::vector<std::string>& input) {
   return min_entanglement;
 }
 
-
-int
-main() {
+int main() {
   utils::Reader reader(std::filesystem::path("../2015/data/input_24.txt"));
   const auto input = reader.get_lines();
 
