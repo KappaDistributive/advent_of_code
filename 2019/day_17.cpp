@@ -25,6 +25,7 @@ struct Instruction {
   std::vector<int64_t> parameters;
 };
 
+
 class CPU {
  private:
   std::map<size_t, int64_t> memory;
@@ -241,6 +242,7 @@ bool execute(const Instruction& instruction) {
   }
 };
 
+
 enum class Orientation : int {
   north,
   east,
@@ -363,11 +365,12 @@ print(const std::map<Point, char>& map, size_t width, size_t height) {
   std::flush(std::cout);
 }
 
+
 auto
 part_one(const std::vector<std::string>& input) {
   auto intcodes = prepare_input(input);
   auto [map, width, height] = create_map(intcodes);
-  print(map, width, height);
+  // print(map, width, height);
   auto intersections = calculate_intersections(map, width, height);
   size_t result{0};
 
