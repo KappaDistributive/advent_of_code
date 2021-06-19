@@ -1,20 +1,18 @@
-#include <algorithm>
-
 #include "../includes/md5.hpp"
 #include "../utils/input.hpp"
 
 const int PASSWORD_LENGTH = 8;
 const int LEADING_ZEROS = 5;
 
-enum Part {
-  p_one,
-  p_two
-};
+enum Part { p_one, p_two };
 
-template<Part p> std::tuple<size_t, char, int> next_character(const std::string& input, const int offet);
+template <Part p>
+std::tuple<size_t, char, int> next_character(const std::string& input,
+                                             const int offet);
 
-template<>
-std::tuple<size_t, char, int> next_character<p_one> (const std::string& input, const int offset) {
+template <>
+std::tuple<size_t, char, int> next_character<p_one>(const std::string& input,
+                                                    const int offset) {
   int shift{offset};
   std::string candidate;
   bool done{false};
@@ -38,8 +36,9 @@ std::tuple<size_t, char, int> next_character<p_one> (const std::string& input, c
   return {0, candidate[LEADING_ZEROS], shift};
 }
 
-template<>
-std::tuple<size_t, char, int> next_character<p_two> (const std::string& input, const int offset) {
+template <>
+std::tuple<size_t, char, int> next_character<p_two>(const std::string& input,
+                                                    const int offset) {
   int shift{offset};
   std::string candidate;
   bool done{false};
@@ -62,7 +61,8 @@ std::tuple<size_t, char, int> next_character<p_two> (const std::string& input, c
     }
     shift++;
   }
-  return {static_cast<size_t>(candidate[LEADING_ZEROS] - '0'), candidate[LEADING_ZEROS + 1], shift};
+  return {static_cast<size_t>(candidate[LEADING_ZEROS] - '0'),
+          candidate[LEADING_ZEROS + 1], shift};
 }
 
 std::string part_one(const std::string& input) {
@@ -90,7 +90,8 @@ std::string part_two(const std::string& input) {
   bool verbose{true};
 
   while (std::find(result.begin(), result.end(), '_') != result.end()) {
-    auto [position, character, new_offset] = next_character<p_two>(input, offset);
+    auto [position, character, new_offset] =
+        next_character<p_two>(input, offset);
     offset = new_offset;
     if (result[position] == '_') {
       result[position] = character;

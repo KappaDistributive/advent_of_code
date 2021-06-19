@@ -1,30 +1,28 @@
-#include <algorithm>
-#include <array>
-#include <cassert>
-
 #include "../utils/input.hpp"
 
-enum Part {
-  p_one,
-  p_two
-};
+enum Part { p_one, p_two };
 
-template<Part p> char mode(const std::vector<std::string>& input, size_t position);
+template <Part p>
+char mode(const std::vector<std::string>& input, size_t position);
 
 template <>
-char mode<p_one> (const std::vector<std::string>& input, size_t position) {
-  std::array<size_t, 1 + 'z' - 'a'> frequencies = std::array<size_t, 1 + 'z' - 'a'>{};
-  for (auto word: input) {
+char mode<p_one>(const std::vector<std::string>& input, size_t position) {
+  std::array<size_t, 1 + 'z' - 'a'> frequencies =
+      std::array<size_t, 1 + 'z' - 'a'>{};
+  for (auto word : input) {
     assert(word[position] >= 'a' && word[position] <= 'z');
     frequencies[word[position] - 'a']++;
   }
-  return 'a' + std::distance(frequencies.begin(), std::max_element(frequencies.begin(), frequencies.end()));
+  return 'a' + std::distance(
+                   frequencies.begin(),
+                   std::max_element(frequencies.begin(), frequencies.end()));
 }
 
 template <>
-char mode<p_two> (const std::vector<std::string>& input, size_t position) {
-  std::array<size_t, 1 + 'z' - 'a'> frequencies = std::array<size_t, 1 + 'z' - 'a'>{};
-  for (auto word: input) {
+char mode<p_two>(const std::vector<std::string>& input, size_t position) {
+  std::array<size_t, 1 + 'z' - 'a'> frequencies =
+      std::array<size_t, 1 + 'z' - 'a'>{};
+  for (auto word : input) {
     assert(word[position] >= 'a' && word[position] <= 'z');
     frequencies[word[position] - 'a']++;
   }
@@ -33,7 +31,9 @@ char mode<p_two> (const std::vector<std::string>& input, size_t position) {
       frequencies[index] = input.size() + 1;
     }
   }
-  return 'a' + std::distance(frequencies.begin(), std::min_element(frequencies.begin(), frequencies.end()));
+  return 'a' + std::distance(
+                   frequencies.begin(),
+                   std::min_element(frequencies.begin(), frequencies.end()));
 }
 
 std::string part_one(const std::vector<std::string>& input) {

@@ -1,6 +1,3 @@
-#include <array>
-#include <cassert>
-
 #include "../utils/input.hpp"
 
 class Keypad {
@@ -42,6 +39,7 @@ class Keypad {
 
 class FancyKeypad {
  private:
+  // clang-format off
   const std::array<char, 25> keypad = {
     'X', 'X', '1', 'X', 'X',
     'X', '2', '3', '4', 'X',
@@ -49,6 +47,7 @@ class FancyKeypad {
     'X', 'A', 'B', 'C', 'X',
     'X', 'X', 'D', 'X', 'X'
   };
+  // clang-format on
   const int width{5}, height{5};
   std::pair<int, int> position{2, 2};
 

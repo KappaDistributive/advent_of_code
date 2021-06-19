@@ -1,8 +1,3 @@
-#include <cassert>
-#include <iomanip>
-#include <regex>  // NOLINT
-#include <set>
-
 #include "../utils/input.hpp"
 
 // clang-format off

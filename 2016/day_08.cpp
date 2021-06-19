@@ -1,14 +1,6 @@
-#include <array>
-#include <cassert>
-#include <regex>  // NOLINT
-
 #include "../utils/input.hpp"
 
-enum Command {
-  rotate_row,
-  rotate_column,
-  rectangle
-};
+enum Command { rotate_row, rotate_column, rectangle };
 
 template <size_t _width, size_t _height>
 class Display {
@@ -16,10 +8,8 @@ class Display {
   size_t width, height;
   std::array<bool, _width * _height> content;
 
-
  public:
-  Display()
-    : width(_width), height(_height) {
+  Display() : width(_width), height(_height) {
     content = std::array<bool, _width * _height>();
   }
 
@@ -73,7 +63,7 @@ class Display {
     return count;
   }
 
-  bool& operator[] (const std::pair<size_t, size_t>& position) {
+  bool& operator[](const std::pair<size_t, size_t>& position) {
     if (position.first >= width) {
       throw std::out_of_range("First coordinate is out of bounds.");
     } else if (position.second >= height) {
@@ -86,8 +76,8 @@ class Display {
     std::string representation;
     for (size_t y{0}; y < this->height; y++) {
       for (size_t x{0}; x < this->width; x++) {
-        representation.push_back(
-          this->content[y * this->width + x] ? '#' : '.');
+        representation.push_back(this->content[y * this->width + x] ? '#'
+                                                                    : '.');
       }
       representation.push_back('\n');
     }
@@ -100,27 +90,26 @@ class Display {
   }
 };
 
-std::vector<std::tuple<Command, int, int>>
-prepare_input(const std::vector<std::string>& input) {
+std::vector<std::tuple<Command, int, int>> prepare_input(
+    const std::vector<std::string>& input) {
   std::vector<std::tuple<Command, int, int>> commands;
   std::regex rectangle_regex{"^rect\\s(\\d+)x(\\d+)$"};
-  std::regex rotation_regex{"^rotate\\s(column|row)\\s(?:x|y)=(\\d+)\\sby\\s(\\d+)$"};  // NOLINT
+  std::regex rotation_regex{
+      "^rotate\\s(column|row)\\s(?:x|y)=(\\d+)\\sby\\s(\\d+)$"};  // NOLINT
   std::smatch matches;
   for (auto line : input) {
     std::regex_match(line, matches, rectangle_regex);
     if (matches.size() == 3) {
-      commands.push_back(
-        {rectangle, std::stoi(matches[1].str()), std::stoi(matches[2].str())});
+      commands.push_back({rectangle, std::stoi(matches[1].str()),
+                          std::stoi(matches[2].str())});
     } else {
       std::regex_match(line, matches, rotation_regex);
       if (matches.size() == 4 && matches[1].str() == "column") {
-        commands.push_back(
-          {rotate_column,
-           std::stoi(matches[2].str()), std::stoi(matches[3].str())});
+        commands.push_back({rotate_column, std::stoi(matches[2].str()),
+                            std::stoi(matches[3].str())});
       } else if (matches.size() == 4 && matches[1].str() == "row") {
-        commands.push_back(
-          {rotate_row,
-           std::stoi(matches[2].str()), std::stoi(matches[3].str())});
+        commands.push_back({rotate_row, std::stoi(matches[2].str()),
+                            std::stoi(matches[3].str())});
       } else {
         throw std::invalid_argument("Unknown command: " + line);
       }
@@ -179,9 +168,9 @@ int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_08.txt"));
   auto input = reader.get_lines();
 
-  auto answer_one =  part_one(input);
+  auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two =  part_two(input);
+  auto answer_two = part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
