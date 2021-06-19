@@ -286,21 +286,14 @@ create_map(const std::vector<int64_t>& intcodes) {
   while (!cpu.execute()) {
     auto output = cpu.get_output();
     if (output.has_value()) {
-      switch (output.value()) {
-        case 10:
-          position.second++;
-          position.first = 0;
-          height++;
-          break;
-        case 35:
-          map.insert({position, '#'});
-          position.first++;
-          width = std::max(width, position.first + 1);
-          break;
-        default:
-          map.insert({position, '.'});
-          position.first++;
-          break;
+      if (static_cast<char>(output.value()) == '\n') {
+        position.second++;
+        position.first = 0;
+        height++;
+      } else {
+        map.insert({position, static_cast<char>(output.value())});
+        position.first++;
+        width = std::max(width, position.first + 1);
       }
     }
     cpu.clear_output();
@@ -360,7 +353,7 @@ print(const std::map<Point, char>& map, size_t width, size_t height) {
   Point position{0, 0};
   for (size_t y{0}; y < height; ++y) {
     for (size_t x{0}; x < width; ++x) {
-      std::cout << (map.count(position) > 0 ? map.at(position): '.');
+      std::cout << (map.count(position) > 0 ? map.at(position) : '.');
       position.first++;
     }
     position.second++;
@@ -374,11 +367,12 @@ auto
 part_one(const std::vector<std::string>& input) {
   auto intcodes = prepare_input(input);
   auto [map, width, height] = create_map(intcodes);
+  print(map, width, height);
   auto intersections = calculate_intersections(map, width, height);
   size_t result{0};
 
   for (auto intersection : intersections) {
-    // std::cout << "Intersection at (" << intersection.first << ", " << intersection.second << ")\n" ;
+    // std::cout << "Intersection at (" << intersection.first << ", " << intersection.second << ")\n";
     result += intersection.first * intersection.second;
   }
 
