@@ -11,7 +11,7 @@ std::string dragon(const std::string& input) {
 std::string checksum(const std::string& input, bool recursive = false) {
   std::string result;
   for (size_t index{0}; index + 1 < input.size(); index += 2) {
-    if (input[index] == input[index+1]) {
+    if (input[index] == input[index + 1]) {
       result += '1';
     } else {
       result += '0';
@@ -46,9 +46,9 @@ int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_16.txt"));
   auto input = reader.get_lines()[0];
 
-  auto answer_one =  part_one(input);
+  auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two =  part_two(input);
+  auto answer_two = part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }

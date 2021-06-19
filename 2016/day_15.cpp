@@ -1,8 +1,4 @@
-#include <cassert>
-#include <regex>  // NOLINT
-
 #include "../utils/input.hpp"
-
 
 class Disc {
  private:
@@ -10,25 +6,23 @@ class Disc {
 
  public:
   Disc(size_t id, size_t size, size_t initial_position)
-    : id(id),
-      initial_position(initial_position),
-      size(size) {
-  }
+      : id(id), initial_position(initial_position), size(size) {}
 
   size_t get_position(size_t time) const {
     return (this->initial_position + time) % this->size;
   }
 
-  friend std::ostream& operator<< (std::ostream& os, const Disc& disc) {
+  friend std::ostream& operator<<(std::ostream& os, const Disc& disc) {
     os << "Disc #" << disc.id << " has " << disc.size << " positions;"
        << " at time=0 it is at position " << disc.initial_position << ".";
     return os;
   }
 };
 
-
 std::vector<Disc> prepare_input(const std::vector<std::string>& input) {
-  std::regex re{"^Disc\\s#(\\d+)\\shas\\s(\\d+)\\spositions;\\sat\\stime=0,\\sit\\sis\\sat position\\s(\\d+).$"};  // NOLINT
+  std::regex re{
+      "^Disc\\s#(\\d+)\\shas\\s(\\d+)\\spositions;\\sat\\stime=0,"
+      "\\sit\\sis\\sat position\\s(\\d+).$"};  // NOLINT
   std::smatch matches;
   std::vector<Disc> discs;
   for (auto line : input) {
@@ -40,7 +34,6 @@ std::vector<Disc> prepare_input(const std::vector<std::string>& input) {
 
   return discs;
 }
-
 
 size_t find_first_opportune_moment(const std::vector<Disc>& discs) {
   size_t global_time{0}, local_time{0};
@@ -60,12 +53,10 @@ size_t find_first_opportune_moment(const std::vector<Disc>& discs) {
   return global_time - 1;
 }
 
-
 auto part_one(const std::vector<std::string>& input) {
   auto discs = prepare_input(input);
   return find_first_opportune_moment(discs);
 }
-
 
 auto part_two(const std::vector<std::string>& input) {
   auto discs = prepare_input(input);
@@ -73,14 +64,13 @@ auto part_two(const std::vector<std::string>& input) {
   return find_first_opportune_moment(discs);
 }
 
-
 int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_15.txt"));
   auto input = reader.get_lines();
 
-  auto answer_one =  part_one(input);
+  auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two =  part_two(input);
+  auto answer_two = part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }

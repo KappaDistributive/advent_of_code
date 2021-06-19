@@ -1,8 +1,8 @@
-#include <list>
-
 #include "../utils/input.hpp"
 
-std::list<std::pair<size_t, uint64_t>>::iterator rotate(const std::list<std::pair<size_t, uint64_t>>::iterator& it, std::list<std::pair<size_t, uint64_t>>& list, const size_t& amount = 1) {
+std::list<std::pair<size_t, uint64_t>>::iterator rotate(
+    const std::list<std::pair<size_t, uint64_t>>::iterator& it,
+    std::list<std::pair<size_t, uint64_t>>& list, const size_t& amount = 1) {
   std::list<std::pair<size_t, uint64_t>>::iterator result = it;
   for (size_t index{0}; index < amount; index++) {
     result = std::next(result);
@@ -53,9 +53,9 @@ int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_19.txt"));
   auto input = reader.get_lines()[0];
 
-  auto answer_one =  part_one(input);
+  auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two =  part_two(input);
+  auto answer_two = part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }

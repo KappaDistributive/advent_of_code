@@ -1,9 +1,4 @@
-#include <cassert>
-#include <map>
-#include <optional>
-
 #include "../utils/input.hpp"
-
 
 enum Operation {
   copy,
@@ -12,14 +7,11 @@ enum Operation {
   jump_not_zero,
 };
 
-using Instruction = std::tuple<Operation,
-                               std::optional<char>,
-                               std::optional<int>,
-                               std::optional<char>,
-                               std::optional<int>>;
+using Instruction =
+    std::tuple<Operation, std::optional<char>, std::optional<int>,
+               std::optional<char>, std::optional<int>>;
 
-
-std::ostream& operator<< (std::ostream& os, Instruction instruction) {
+std::ostream& operator<<(std::ostream& os, Instruction instruction) {
   switch (std::get<0>(instruction)) {
     case copy:
       os << "cpy";
@@ -56,10 +48,9 @@ class CPU {
 
  public:
   explicit CPU(const std::vector<Instruction>& instructions)
-    : registers({{'a', 0}, {'b', 0}, {'c', 0}, {'d', 0}}),
-      instruction_pointer(0),
-      instructions(instructions) {
-  }
+      : registers({{'a', 0}, {'b', 0}, {'c', 0}, {'d', 0}}),
+        instruction_pointer(0),
+        instructions(instructions) {}
 
   bool step() {
     auto instruction = instructions[instruction_pointer];
@@ -100,15 +91,12 @@ class CPU {
     return instruction_pointer < instructions.size();
   }
 
-  int read_register(const char& name) const {
-    return registers.at(name);
-  }
+  int read_register(const char& name) const { return registers.at(name); }
 
   void set_register(const char& name, const int& value) {
     registers.insert_or_assign(name, value);
   }
 };
-
 
 std::vector<Instruction> prepare_input(const std::vector<std::string>& input) {
   std::vector<Instruction> instructions;
@@ -122,7 +110,7 @@ std::vector<Instruction> prepare_input(const std::vector<std::string>& input) {
         instructions.push_back({copy, splits[1][0], {}, splits[2][0], {}});
       } else {
         instructions.push_back(
-          {copy, {}, std::stoi(splits[1]), splits[2][0], {}});
+            {copy, {}, std::stoi(splits[1]), splits[2][0], {}});
       }
     } else if (splits[0] == "inc") {
       assert(splits.size() == 2);
@@ -134,10 +122,13 @@ std::vector<Instruction> prepare_input(const std::vector<std::string>& input) {
       assert(splits.size() == 3);
       if (splits[1][0] >= 'a' && splits[1][0] <= 'z') {
         instructions.push_back(
-          {jump_not_zero, splits[1][0], {}, {}, std::stoi(splits[2])});
+            {jump_not_zero, splits[1][0], {}, {}, std::stoi(splits[2])});
       } else {
-        instructions.push_back(
-          {jump_not_zero, {}, std::stoi(splits[1]), {}, std::stoi(splits[2])});
+        instructions.push_back({jump_not_zero,
+                                {},
+                                std::stoi(splits[1]),
+                                {},
+                                std::stoi(splits[2])});
       }
     } else {
       throw std::invalid_argument("Invalid instruction: " + line);
@@ -147,7 +138,6 @@ std::vector<Instruction> prepare_input(const std::vector<std::string>& input) {
   return instructions;
 }
 
-
 int part_one(const std::vector<std::string>& input) {
   auto instructions = prepare_input(input);
   CPU cpu(instructions);
@@ -155,7 +145,6 @@ int part_one(const std::vector<std::string>& input) {
   }
   return cpu.read_register('a');
 }
-
 
 int part_two(const std::vector<std::string>& input) {
   auto instructions = prepare_input(input);
@@ -166,14 +155,14 @@ int part_two(const std::vector<std::string>& input) {
   return cpu.read_register('a');
 }
 
-
 int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_12.txt"));
   auto input = reader.get_lines();
 
-  auto answer_one =  part_one(input);
+  auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two =  part_two(input);
+  auto answer_two = part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
+

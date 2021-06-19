@@ -1,19 +1,11 @@
-#include <array>
-#include <cassert>
-#include <regex>  // NOLINT
-#include <vector>
-
 #include "../utils/input.hpp"
-
 
 class Bot {
  private:
   std::array<int, 2> data;
 
  public:
-  Bot()
-    : data({-1, -1}) {
-  }
+  Bot() : data({-1, -1}) {}
 
   int low(bool erase = false) {
     int result;
@@ -69,26 +61,22 @@ class Bot {
     }
   }
 
-  bool is_ready() {
-    return (this->data[0] != -1 && this->data[1] != -1);
-  }
+  bool is_ready() { return (this->data[0] != -1 && this->data[1] != -1); }
 
-  friend std::ostream& operator<< (std::ostream& os, Bot& bot) {
+  friend std::ostream& operator<<(std::ostream& os, Bot& bot) {
     os << "(" << bot.low() << ", " << bot.high() << ")";
     return os;
   }
 };
 
-
-std::vector<std::pair<std::string, bool>>
-prepare_input(const std::vector<std::string>& input) {
+std::vector<std::pair<std::string, bool>> prepare_input(
+    const std::vector<std::string>& input) {
   std::vector<std::pair<std::string, bool>> instructions;
   for (auto line : input) {
     instructions.push_back({line, false});
   }
   return instructions;
 }
-
 
 int part_one(const std::vector<std::string>& input) {
   std::vector<Bot> bots;
@@ -101,12 +89,14 @@ int part_one(const std::vector<std::string>& input) {
   bool searching{true};
   auto instructions = prepare_input(input);
   std::regex assignment_regex{"^value\\s(\\d+)\\sgoes\\sto\\sbot\\s(\\d+)$"};
-  std::regex transition_regex{"^bot\\s(\\d+)\\sgives\\slow\\sto\\s(bot|output)\\s(\\d+)\\sand\\shigh\\sto\\s(bot|output)\\s(\\d+)$"};  // NOLINT
+  std::regex transition_regex{
+      "^bot\\s(\\d+)\\sgives\\slow\\sto\\s(bot|output)\\s(\\d+)"
+      "\\sand\\shigh\\sto\\s(bot|output)\\s(\\d+)$"};  // NOLINT
   std::smatch matches;
 
   while (searching) {
     for (size_t index{0}; index < instructions.size(); index++) {
-      auto [instruction, done] =  instructions[index];
+      auto [instruction, done] = instructions[index];
       // searching = false;
       if (!done) {
         if (std::regex_match(instruction, matches, assignment_regex)) {
@@ -165,7 +155,6 @@ int part_one(const std::vector<std::string>& input) {
   return -1;
 }
 
-
 int part_two(const std::vector<std::string>& input) {
   std::vector<Bot> bots;
   std::vector<int> outputs;
@@ -177,13 +166,15 @@ int part_two(const std::vector<std::string>& input) {
   bool searching{true};
   auto instructions = prepare_input(input);
   std::regex assignment_regex{"^value\\s(\\d+)\\sgoes\\sto\\sbot\\s(\\d+)$"};
-  std::regex transition_regex{"^bot\\s(\\d+)\\sgives\\slow\\sto\\s(bot|output)\\s(\\d+)\\sand\\shigh\\sto\\s(bot|output)\\s(\\d+)$"};  // NOLINT
+  std::regex transition_regex{
+      "^bot\\s(\\d+)\\sgives\\slow\\sto\\s(bot|output)\\s(\\d+)"
+      "\\sand\\shigh\\sto\\s(bot|output)\\s(\\d+)$"};  // NOLINT
   std::smatch matches;
 
   while (searching) {
     searching = false;
     for (size_t index{0}; index < instructions.size(); index++) {
-      auto [instruction, done] =  instructions[index];
+      auto [instruction, done] = instructions[index];
       if (!done) {
         searching = true;
         if (std::regex_match(instruction, matches, assignment_regex)) {
@@ -232,14 +223,13 @@ int part_two(const std::vector<std::string>& input) {
   return outputs[0] * outputs[1] * outputs[2];
 }
 
-
 int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_10.txt"));
   auto input = reader.get_lines();
 
-  auto answer_one =  part_one(input);
+  auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two =  part_two(input);
+  auto answer_two = part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }

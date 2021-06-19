@@ -12,26 +12,28 @@ class Keypad {
   int step(char direction) {
     switch (direction) {
       case 'U':
-          if (position.second > 0) {
-              position.second--;
-          }
-          break;
+        if (position.second > 0) {
+          position.second--;
+        }
+        break;
       case 'D':
-          if (position.second + 1 < height) {
-              position.second++;
-          }
-          break;
+        if (position.second + 1 < height) {
+          position.second++;
+        }
+        break;
       case 'L':
-          if (position.first > 0) {
-              position.first--;
-          }
-          break;
+        if (position.first > 0) {
+          position.first--;
+        }
+        break;
       case 'R':
-          if (position.first + 1 < width) {
-              position.first++;
-          }
-          break;
-      default: throw std::invalid_argument("Invalid direction."); break;
+        if (position.first + 1 < width) {
+          position.first++;
+        }
+        break;
+      default:
+        throw std::invalid_argument("Invalid direction.");
+        break;
     }
     return keypad[position.second * width + position.first];
   }
@@ -62,16 +64,24 @@ class FancyKeypad {
   int step(char direction) {
     switch (direction) {
       case 'U':
-        if (position.second > 0 && get(position.first, position.second -1) != 'X') position.second--;
+        if (position.second > 0 &&
+            get(position.first, position.second - 1) != 'X')
+          position.second--;
         break;
       case 'D':
-        if (position.second + 1 < height && get(position.first, position.second + 1) != 'X') position.second++;
+        if (position.second + 1 < height &&
+            get(position.first, position.second + 1) != 'X')
+          position.second++;
         break;
       case 'L':
-        if (position.first > 0 && get(position.first - 1, position.second) != 'X') position.first--;
+        if (position.first > 0 &&
+            get(position.first - 1, position.second) != 'X')
+          position.first--;
         break;
       case 'R':
-        if (position.first + 1 < width && get(position.first + 1, position.second) != 'X') position.first++;
+        if (position.first + 1 < width &&
+            get(position.first + 1, position.second) != 'X')
+          position.first++;
         break;
       default:
         throw std::invalid_argument("Invalid direction.");
@@ -86,8 +96,8 @@ int part_one(const std::vector<std::string>& input) {
   int data;
   std::string result;
 
-  for (auto line: input) {
-    for (auto direction: line) {
+  for (auto line : input) {
+    for (auto direction : line) {
       data = keypad.step(direction);
     }
     result += std::to_string(data);
@@ -100,8 +110,8 @@ std::string part_two(const std::vector<std::string>& input) {
   char data;
   std::string result;
 
-  for (auto line: input) {
-    for (auto direction: line) {
+  for (auto line : input) {
+    for (auto direction : line) {
       data = keypad.step(direction);
     }
     result += data;

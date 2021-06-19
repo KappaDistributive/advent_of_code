@@ -1,17 +1,6 @@
-#include <algorithm>
-#include <array>
-#include <cassert>
-#include <regex>  // NOLINT
-#include <set>
-
 #include "../utils/input.hpp"
 
-
-enum class Type : int {
-  generator,
-  microchip
-};
-
+enum class Type : int { generator, microchip };
 
 struct Component {
   std::string element;
@@ -23,29 +12,23 @@ struct Component {
   }
 
   bool operator==(const Component& other) const noexcept {
-    return this->element == other.element &&
-           this->type == other.type;
+    return this->element == other.element && this->type == other.type;
   }
 };
-
 
 class Floors {
  private:
   std::array<std::set<Component>, 4> m_floors;
   size_t m_elevator;
 
-  std::string
-  abbr(std::string element,
-       Type type) const {
+  std::string abbr(std::string element, Type type) const {
     switch (type) {
       case Type::generator:
-        return std::string {
-          static_cast<char>(toupper(element[0]))} + "G";
+        return std::to_string(static_cast<char>(toupper(element[0]))) + "G";
         break;
       case Type::microchip:
-        return std::string {
-          static_cast<char>(toupper(element[0]))} + "M";
-          break;
+        return std::to_string(static_cast<char>(toupper(element[0]))) + "M";
+        break;
       default:
         throw std::runtime_error("This should never happen!");
         break;
@@ -55,12 +38,10 @@ class Floors {
   bool isPowered(const std::string& element) const noexcept {
     size_t microship_floor{0};
     bool found_floor{false};
-    for (size_t floor{0};
-         !found_floor && floor < this->m_floors.size();
+    for (size_t floor{0}; !found_floor && floor < this->m_floors.size();
          floor++) {
       for (auto component : this->m_floors[floor]) {
-        if (component.element == element &&
-            component.type == Type::microchip) {
+        if (component.element == element && component.type == Type::microchip) {
           found_floor = true;
           microship_floor = floor;
           break;
@@ -70,9 +51,8 @@ class Floors {
     assert(found_floor);
 
     for (auto component : this->m_floors[microship_floor]) {
-      if (component.element == element &&
-          component.type == Type::generator) {
-            return true;
+      if (component.element == element && component.type == Type::generator) {
+        return true;
       }
     }
 
@@ -92,9 +72,8 @@ class Floors {
 
  public:
   explicit Floors(const std::vector<std::string>& input,
-                  const bool part_two = false,
-                  const bool verbose = false)
-    : m_elevator(0) {
+                  const bool part_two = false, const bool verbose = false)
+      : m_elevator(0) {
     std::regex generator_re{"(\\w+) generator"};
     std::regex microchip_re{"(\\w+)-compatible microchip"};
     std::smatch matches;
@@ -103,15 +82,15 @@ class Floors {
       auto line = input[index];
       auto tail = line;
       while (std::regex_search(tail, matches, generator_re)) {
-        if (verbose) std::cout << "  Generator match: "
-                               << matches[1].str() << std::endl;
+        if (verbose)
+          std::cout << "  Generator match: " << matches[1].str() << std::endl;
         m_floors[index].insert(Component{matches[1].str(), Type::generator});
         tail = matches.suffix();
       }
       tail = line;
       while (std::regex_search(tail, matches, microchip_re)) {
-        if (verbose) std::cout << "  Microchip match: "
-                               << matches[1].str() << std::endl;
+        if (verbose)
+          std::cout << "  Microchip match: " << matches[1].str() << std::endl;
         m_floors[index].insert(Component{matches[1].str(), Type::microchip});
         tail = matches.suffix();
       }
@@ -236,26 +215,24 @@ class Floors {
     std::vector<std::string> elements;
     for (auto floor : floors.m_floors) {
       for (auto component : floor) {
-        if (std::find(elements.begin(),
-                      elements.end(),
-                      component.element) == elements.end()) {
+        if (std::find(elements.begin(), elements.end(), component.element) ==
+            elements.end()) {
           elements.push_back(component.element);
         }
       }
     }
     std::sort(elements.begin(), elements.end());
 
-    for (size_t index {0}; index < floors.m_floors.size(); index++) {
+    for (size_t index{0}; index < floors.m_floors.size(); index++) {
       os << "F" << floors.m_floors.size() - index << " "
-         << (floors.m_floors.size() == floors.m_elevator + index + 1 ?
-             'E' : '.');
+         << (floors.m_floors.size() == floors.m_elevator + index + 1 ? 'E'
+                                                                     : '.');
       for (auto element : elements) {
         for (auto type : {Type::generator, Type::microchip}) {
           bool found{false};
           for (auto component :
                floors.m_floors[floors.m_floors.size() - index - 1]) {
-            if (component.type == type &&
-                component.element == element) {
+            if (component.type == type && component.element == element) {
               found = true;
               break;
             }
@@ -270,15 +247,12 @@ class Floors {
   }
 };
 
-
 std::vector<Floors> prune(const std::vector<Floors>& candidates,
                           std::vector<Floors>* history) {
   std::vector<Floors> new_candidates;
   for (auto candidate : candidates) {
     bool found_equivalent{false};
-    for (auto it = history->rbegin();
-         it != history->rend();
-         it++) {
+    for (auto it = history->rbegin(); it != history->rend(); it++) {
       if (candidate.isEquivalent(*it)) {
         found_equivalent = true;
         break;
@@ -327,29 +301,23 @@ int run(const Floors& initial_floors) {
   return num_moves;
 }
 
-
-int
-part_one(const std::vector<std::string>& input) {
+int part_one(const std::vector<std::string>& input) {
   Floors floors(input);
   return run(floors);
 }
 
-
-int
-part_two(const std::vector<std::string>& input) {
+int part_two(const std::vector<std::string>& input) {
   Floors floors(input, true);
   return run(floors);
 }
 
-
-int
-main() {
+int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_11.txt"));
   auto input = reader.get_lines();
 
-  auto answer_one =  part_one(input);
+  auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two =  part_two(input);
+  auto answer_two = part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }

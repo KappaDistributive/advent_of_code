@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <fstream>
 #include <functional>
+#include <list>
 #include <map>
 #include <numeric>
 #include <optional>
@@ -15,6 +16,7 @@
 #include <stdexcept>
 #include <string>
 #include <sstream>
+#include <unordered_set>
 #include <vector>
 
 namespace utils {
