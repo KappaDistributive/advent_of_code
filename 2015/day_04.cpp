@@ -1,5 +1,5 @@
-#include "../utils/input.hpp"
 #include "../includes/md5.hpp"
+#include "../utils/input.hpp"
 
 int find_offset(const std::string& input, size_t zeros) {
   int offset{-1};
@@ -19,13 +19,9 @@ int find_offset(const std::string& input, size_t zeros) {
   return offset;
 }
 
-int part_one(const std::string& input) {
-  return find_offset(input, 5);
-}
+int part_one(const std::string& input) { return find_offset(input, 5); }
 
-int part_two(const std::string& input) {
-  return find_offset(input, 6);
-}
+int part_two(const std::string& input) { return find_offset(input, 6); }
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2015/data/input_04.txt"));

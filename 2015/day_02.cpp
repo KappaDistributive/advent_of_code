@@ -1,7 +1,3 @@
-#include <algorithm>
-#include <regex>
-#include <stdexcept>
-
 #include "../utils/input.hpp"
 
 class Box {
@@ -45,15 +41,12 @@ class Box {
     return circumferences;
   }
 
-  int volume() {
-    return length * width * height;
-  }
+  int volume() { return length * width * height; }
 };
 
 std::vector<Box> get_boxes(std::vector<std::string> input) {
   std::vector<Box> boxes;
-  for (auto description: input)
-    boxes.push_back(Box(description));
+  for (auto description : input) boxes.push_back(Box(description));
 
   return boxes;
 }
@@ -61,11 +54,10 @@ std::vector<Box> get_boxes(std::vector<std::string> input) {
 int part_one(const std::vector<std::string>& input) {
   int result{0};
   auto boxes = get_boxes(input);
-  for (auto box: boxes) {
+  for (auto box : boxes) {
     std::vector<int> surface_areas = box.surface_areas();
-    result += surface_areas[0]; // slack
-    for (auto surface_area: surface_areas)
-      result += 2 * surface_area;
+    result += surface_areas[0];  // slack
+    for (auto surface_area : surface_areas) result += 2 * surface_area;
   }
   return result;
 }
@@ -73,9 +65,9 @@ int part_one(const std::vector<std::string>& input) {
 int part_two(const std::vector<std::string>& input) {
   int result{0};
   auto boxes = get_boxes(input);
-  for (auto box: boxes) {
+  for (auto box : boxes) {
     result += box.volume();
-    result += box.circumferences()[0]; // bow
+    result += box.circumferences()[0];  // bow
   }
   return result;
 }

@@ -1,8 +1,13 @@
 #pragma once
 
+#include <algorithm>
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <map>
+#include <regex>  // NOLINT
+#include <set>
+#include <stdexcept>
 #include <string>
 #include <vector>
 

@@ -1,8 +1,6 @@
-#include <stdexcept>
-
 #include "../utils/input.hpp"
 
-int part_one(std::string input) {
+auto part_one(std::string input) {
   int floor{0};
 
   for (auto symbol : input) {
@@ -22,7 +20,7 @@ int part_one(std::string input) {
   return floor;
 }
 
-int part_two(std::string input) {
+auto part_two(std::string input) {
   int floor{0};
   int position{0};
 
