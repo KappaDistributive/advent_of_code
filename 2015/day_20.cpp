@@ -1,16 +1,13 @@
-#include <array>
-
 #include "../utils/input.hpp"
 
 static const uint64_t UPPER_BOUND = 1000000;
-
 
 int64_t part_one(const std::string& input) {
   uint64_t target{std::stoul(input)};
   uint64_t house;
 
-  std::array<uint64_t, UPPER_BOUND> houses
-    = std::array<uint64_t, UPPER_BOUND>();
+  std::array<uint64_t, UPPER_BOUND> houses =
+      std::array<uint64_t, UPPER_BOUND>();
   for (uint64_t elf{1}; elf < UPPER_BOUND; elf++) {
     house = elf;
     while (house <= UPPER_BOUND) {
@@ -32,8 +29,8 @@ int64_t part_two(const std::string& input) {
   uint64_t house;
   uint64_t elf_exhaustion{1};
 
-  std::array<uint64_t, UPPER_BOUND> houses
-    = std::array<uint64_t, UPPER_BOUND>();
+  std::array<uint64_t, UPPER_BOUND> houses =
+      std::array<uint64_t, UPPER_BOUND>();
   for (uint64_t elf{1}; elf < UPPER_BOUND; elf++) {
     house = elf;
     elf_exhaustion = 1;

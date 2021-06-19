@@ -1,7 +1,3 @@
-#include <cassert>
-#include <regex>  // NOLINT
-#include <set>
-
 #include "../utils/input.hpp"
 
 class Replacement {
@@ -37,12 +33,11 @@ class Replacement {
     //           << target << std::endl;
     // std::cout << "Before: " << input << std::endl;
 
-    for (auto it = std::sregex_iterator(
-           input.begin(), input.end(), source_regex);
+    for (auto it =
+             std::sregex_iterator(input.begin(), input.end(), source_regex);
          it != std::sregex_iterator(); ++it) {
       matches = *it;
-      replacement = input.substr(0, matches.position(1)) +
-                    target +
+      replacement = input.substr(0, matches.position(1)) + target +
                     input.substr(matches.position(1) + source_pattern.size(),
                                  input.size());
       // std::cout << "After: " << replacement << std::endl;
@@ -53,9 +48,8 @@ class Replacement {
   }
 };
 
-std::pair<std::vector<Replacement>, std::string>
-prepare_input(const std::vector<std::string>& input,
-              bool inverted = false) {
+std::pair<std::vector<Replacement>, std::string> prepare_input(
+    const std::vector<std::string>& input, bool inverted = false) {
   std::string molecule;
   std::vector<Replacement> replacements;
   bool first_section{true};

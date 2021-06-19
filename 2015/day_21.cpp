@@ -5,6 +5,7 @@
 
 #include "../utils/input.hpp"
 
+// clang-format off
 static const char SHOP_DESCRIPTION[] =
   "Weapons:    Cost  Damage  Armor" "\n"
   "Dagger        8     4       0" "\n"
@@ -27,6 +28,7 @@ static const char SHOP_DESCRIPTION[] =
   "Defense +1   20     0       1" "\n"
   "Defense +2   40     0       2" "\n"
   "Defense +3   80     0       3" "\n";
+// clang-format on
 
 class Item {
  private:
@@ -34,39 +36,24 @@ class Item {
   int armor, cost, damage;
 
  public:
-  Item(const std::string& name,
-       const int& armor,
-       const int& cost,
+  Item(const std::string& name, const int& armor, const int& cost,
        const int& damage)
-    : name(name),
-      armor(armor),
-      cost(cost),
-      damage(damage) {
-  }
+      : name(name), armor(armor), cost(cost), damage(damage) {}
 
-  friend std::ostream& operator<< (std::ostream& os, const Item& item) {
+  friend std::ostream& operator<<(std::ostream& os, const Item& item) {
     os << item.name << ":: "
-       << "Armor: " << item.armor
-       << " Cost: " << item.cost
-       << " : Damage " << item.damage;
+       << "Armor: " << item.armor << " Cost: " << item.cost << " : Damage "
+       << item.damage;
     return os;
   }
 
-  bool operator< (const Item& other) const {
-    return (this->name < other.name);
-  }
+  bool operator<(const Item& other) const { return (this->name < other.name); }
 
-  int get_armor() const {
-    return armor;
-  }
+  int get_armor() const { return armor; }
 
-  int get_cost() const {
-    return cost;
-  }
+  int get_cost() const { return cost; }
 
-  int get_damage() const {
-    return damage;
-  }
+  int get_damage() const { return damage; }
 };
 
 class Armor : public Item {
@@ -118,7 +105,7 @@ std::tuple<std::set<Armor>, std::set<Ring>, std::set<Weapon>> init_shop() {
       }
     }
   }
-    return {armor, rings, weapons};
+  return {armor, rings, weapons};
 }
 
 class Character {
@@ -130,18 +117,15 @@ class Character {
   std::pair<std::optional<Ring>, std::optional<Ring>> rings;
 
  public:
-  explicit Character(const std::string& name,
-                     const int& hit_points,
-                     const Weapon& weapon,
-                     const std::optional<Armor>& armor,
+  explicit Character(const std::string& name, const int& hit_points,
+                     const Weapon& weapon, const std::optional<Armor>& armor,
                      const std::optional<Ring>& left_ring,
                      const std::optional<Ring>& right_right)
-    : name(name),
-      hit_points(hit_points),
-      weapon(weapon),
-      armor(armor),
-      rings({left_ring, right_right}) {
-  }
+      : name(name),
+        hit_points(hit_points),
+        weapon(weapon),
+        armor(armor),
+        rings({left_ring, right_right}) {}
 
   std::set<Item> get_items() const {
     std::set<Item> items;
@@ -159,9 +143,7 @@ class Character {
     return items;
   }
 
-  int get_hit_points() const {
-    return hit_points;
-  }
+  int get_hit_points() const { return hit_points; }
 
   int get_armor() const {
     int armor{0};
@@ -188,13 +170,13 @@ class Character {
   }
 
   int take_damage(const int& damage) {
-    int effective_damage = damage > this->get_armor() ?
-                           (damage - this->get_armor()) : 1;
+    int effective_damage =
+        damage > this->get_armor() ? (damage - this->get_armor()) : 1;
 
     if (this->hit_points >= effective_damage) {
       this->hit_points -= effective_damage;
     } else {
-      this ->hit_points = 0;
+      this->hit_points = 0;
     }
     return this->get_hit_points();
   }
@@ -203,10 +185,10 @@ class Character {
     return other->take_damage(this->get_damage()) == 0;
   }
 
-  friend std::ostream&
-  operator<< (std::ostream& os,
-              const Character& character) {
-    os << character.name << ": " << "\n";
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const Character& character) {
+    os << character.name << ": "
+       << "\n";
     os << "  Hitpoints:  " << character.hit_points << "\n";
     os << "  Armor:      " << character.get_armor() << "\n";
     os << "  Damage:     " << character.get_damage() << "\n";
@@ -243,14 +225,9 @@ Character init_villain(const std::vector<std::string>& input) {
       throw std::invalid_argument("Invalid line in input: " + line);
     }
   }
-  return Character("Villain",
-                   hit_points,
-                   Weapon("Frostmourne", 0, 0, damage),
-                   Armor("Helm of Domination", armor, 0, 0),
-                   {},
-                   {});
+  return Character("Villain", hit_points, Weapon("Frostmourne", 0, 0, damage),
+                   Armor("Helm of Domination", armor, 0, 0), {}, {});
 }
-
 
 bool fight(const Character& first, const Character& second) {
   Character hero = first;
@@ -264,7 +241,6 @@ bool fight(const Character& first, const Character& second) {
   return hero.get_hit_points() > 0;
 }
 
-
 int part_one(const std::vector<std::string>& input) {
   auto [armor, rings, weapons] = init_shop();
   std::vector<Ring> ring_list;
@@ -275,12 +251,9 @@ int part_one(const std::vector<std::string>& input) {
   for (auto weapon : weapons) {
     for (auto armor : armor) {
       for (bool include_armor : {0, 1}) {
-        for (size_t left_ring{0};
-             left_ring <= ring_list.size();
-             left_ring++) {
+        for (size_t left_ring{0}; left_ring <= ring_list.size(); left_ring++) {
           for (size_t right_ring{left_ring + 1};
-               right_ring <= ring_list.size() + 1;
-               right_ring++) {
+               right_ring <= ring_list.size() + 1; right_ring++) {
             std::optional<Armor> hero_armor = {};
             std::optional<Ring> hero_left_ring = {};
             std::optional<Ring> hero_right_ring = {};
@@ -293,11 +266,7 @@ int part_one(const std::vector<std::string>& input) {
             if (right_ring < ring_list.size()) {
               hero_right_ring = ring_list[right_ring];
             }
-            Character hero("Hero",
-                           100,
-                           weapon,
-                           hero_armor,
-                           hero_left_ring,
+            Character hero("Hero", 100, weapon, hero_armor, hero_left_ring,
                            hero_right_ring);
 
             auto villain = init_villain(input);
@@ -313,7 +282,6 @@ int part_one(const std::vector<std::string>& input) {
   return *std::min_element(wins.begin(), wins.end());
 }
 
-
 int part_two(const std::vector<std::string>& input) {
   auto [armor, rings, weapons] = init_shop();
   std::vector<Ring> ring_list;
@@ -324,12 +292,9 @@ int part_two(const std::vector<std::string>& input) {
   for (auto weapon : weapons) {
     for (auto armor : armor) {
       for (bool include_armor : {0, 1}) {
-        for (size_t left_ring{0};
-             left_ring <= ring_list.size();
-             left_ring++) {
+        for (size_t left_ring{0}; left_ring <= ring_list.size(); left_ring++) {
           for (size_t right_ring{left_ring + 1};
-               right_ring <= ring_list.size() + 1;
-               right_ring++) {
+               right_ring <= ring_list.size() + 1; right_ring++) {
             std::optional<Armor> hero_armor = {};
             std::optional<Ring> hero_left_ring = {};
             std::optional<Ring> hero_right_ring = {};
@@ -342,11 +307,7 @@ int part_two(const std::vector<std::string>& input) {
             if (right_ring < ring_list.size()) {
               hero_right_ring = ring_list[right_ring];
             }
-            Character hero("Hero",
-                           100,
-                           weapon,
-                           hero_armor,
-                           hero_left_ring,
+            Character hero("Hero", 100, weapon, hero_armor, hero_left_ring,
                            hero_right_ring);
 
             auto villain = init_villain(input);
@@ -360,7 +321,6 @@ int part_two(const std::vector<std::string>& input) {
   }
   return *std::max_element(losses.begin(), losses.end());
 }
-
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2015/data/input_21.txt"));
