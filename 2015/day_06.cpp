@@ -1,7 +1,3 @@
-#include <functional>
-#include <numeric>
-#include <regex>
-
 #include "../utils/input.hpp"
 
 class Interpreter {
@@ -17,14 +13,18 @@ class LegacyInterpreter : public Interpreter {
   std::smatch match;
 
  public:
-  LegacyInterpreter() : re("^(toggle|turn)(?:\\s(on|off))?\\s(\\d+),(\\d+) through (\\d+),(\\d+)$") {}
+  LegacyInterpreter()
+      : re("^(toggle|turn)(?:\\s(on|off))?\\s(\\d+),(\\d+) through "
+           "(\\d+),(\\d+)$") {}
   ~LegacyInterpreter() override = default;
 
   void execute(const std::string& command, std::vector<int>& grid) override {
     std::regex_match(command, match, re);
     std::pair<int, int> start, end;
-    start = std::pair<size_t, size_t>{std::stoi(match[3].str()), std::stoi(match[4].str())};
-    end = std::pair<size_t, size_t>{std::stoi(match[5].str()), std::stoi(match[6].str())};
+    start = std::pair<size_t, size_t>{std::stoi(match[3].str()),
+                                      std::stoi(match[4].str())};
+    end = std::pair<size_t, size_t>{std::stoi(match[5].str()),
+                                    std::stoi(match[6].str())};
 
     if (match[1] == "toggle") {
       toggle(start, end, grid);
@@ -41,34 +41,43 @@ class LegacyInterpreter : public Interpreter {
     }
   }
 
-  void toggle(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end, std::vector<int>& grid) {
+  void toggle(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end,
+              std::vector<int>& grid) {
     // std::cout << "toggle ("
     //           << std::get<0>(start) << ", " << std::get<1>(start) << ") -- ("
-    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" << std::endl;
-    for (size_t row=std::get<1>(start); row <= std::get<1>(end); row++) {
-      for (size_t column=std::get<0>(start); column <= std::get<0>(end); column++) {
+    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" <<
+    //           std::endl;
+    for (size_t row = std::get<1>(start); row <= std::get<1>(end); row++) {
+      for (size_t column = std::get<0>(start); column <= std::get<0>(end);
+           column++) {
         grid[column + 1000 * row] = 1 - grid[column + 1000 * row];
       }
     }
   }
 
-  void turn_on(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end, std::vector<int>& grid) {
+  void turn_on(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end,
+               std::vector<int>& grid) {
     // std::cout << "turn on ("
     //           << std::get<0>(start) << ", " << std::get<1>(start) << ") -- ("
-    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" << std::endl;
-    for (size_t row=std::get<1>(start); row <= std::get<1>(end); row++) {
-      for (size_t column=std::get<0>(start); column <= std::get<0>(end); column++) {
+    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" <<
+    //           std::endl;
+    for (size_t row = std::get<1>(start); row <= std::get<1>(end); row++) {
+      for (size_t column = std::get<0>(start); column <= std::get<0>(end);
+           column++) {
         grid[column + 1000 * row] = 1;
       }
     }
   }
 
-  void turn_off(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end, std::vector<int>& grid) {
+  void turn_off(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end,
+                std::vector<int>& grid) {
     // std::cout << "turn off ("
     //           << std::get<0>(start) << ", " << std::get<1>(start) << ") -- ("
-    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" << std::endl;
-    for (size_t row=std::get<1>(start); row <= std::get<1>(end); row++) {
-      for (size_t column=std::get<0>(start); column <= std::get<0>(end); column++) {
+    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" <<
+    //           std::endl;
+    for (size_t row = std::get<1>(start); row <= std::get<1>(end); row++) {
+      for (size_t column = std::get<0>(start); column <= std::get<0>(end);
+           column++) {
         grid[column + 1000 * row] = 0;
       }
     }
@@ -81,14 +90,18 @@ class NewInterpreter : public Interpreter {
   std::smatch match;
 
  public:
-  NewInterpreter() : re("^(toggle|turn)(?:\\s(on|off))?\\s(\\d+),(\\d+) through (\\d+),(\\d+)$") {}
+  NewInterpreter()
+      : re("^(toggle|turn)(?:\\s(on|off))?\\s(\\d+),(\\d+) through "
+           "(\\d+),(\\d+)$") {}
   ~NewInterpreter() override = default;
 
   void execute(const std::string& command, std::vector<int>& grid) override {
     std::regex_match(command, match, re);
     std::pair<int, int> start, end;
-    start = std::pair<size_t, size_t>{std::stoi(match[3].str()), std::stoi(match[4].str())};
-    end = std::pair<size_t, size_t>{std::stoi(match[5].str()), std::stoi(match[6].str())};
+    start = std::pair<size_t, size_t>{std::stoi(match[3].str()),
+                                      std::stoi(match[4].str())};
+    end = std::pair<size_t, size_t>{std::stoi(match[5].str()),
+                                    std::stoi(match[6].str())};
 
     if (match[1] == "toggle") {
       toggle(start, end, grid);
@@ -105,36 +118,44 @@ class NewInterpreter : public Interpreter {
     }
   }
 
-  void toggle(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end, std::vector<int>& grid) {
+  void toggle(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end,
+              std::vector<int>& grid) {
     // std::cout << "toggle ("
     //           << std::get<0>(start) << ", " << std::get<1>(start) << ") -- ("
-    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" << std::endl;
-    for (size_t row=std::get<1>(start); row <= std::get<1>(end); row++) {
-      for (size_t column=std::get<0>(start); column <= std::get<0>(end); column++) {
+    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" <<
+    //           std::endl;
+    for (size_t row = std::get<1>(start); row <= std::get<1>(end); row++) {
+      for (size_t column = std::get<0>(start); column <= std::get<0>(end);
+           column++) {
         grid[column + 1000 * row] += 2;
       }
     }
   }
 
-  void turn_on(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end, std::vector<int>& grid) {
+  void turn_on(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end,
+               std::vector<int>& grid) {
     // std::cout << "turn on ("
     //           << std::get<0>(start) << ", " << std::get<1>(start) << ") -- ("
-    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" << std::endl;
-    for (size_t row=std::get<1>(start); row <= std::get<1>(end); row++) {
-      for (size_t column=std::get<0>(start); column <= std::get<0>(end); column++) {
+    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" <<
+    //           std::endl;
+    for (size_t row = std::get<1>(start); row <= std::get<1>(end); row++) {
+      for (size_t column = std::get<0>(start); column <= std::get<0>(end);
+           column++) {
         grid[column + 1000 * row]++;
       }
     }
   }
 
-  void turn_off(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end, std::vector<int>& grid) {
+  void turn_off(std::pair<size_t, size_t> start, std::pair<size_t, size_t> end,
+                std::vector<int>& grid) {
     // std::cout << "turn off ("
     //           << std::get<0>(start) << ", " << std::get<1>(start) << ") -- ("
-    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" << std::endl;
-    for (size_t row=std::get<1>(start); row <= std::get<1>(end); row++) {
-      for (size_t column=std::get<0>(start); column <= std::get<0>(end); column++) {
-        if (grid[column + 1000 * row] > 0)
-          grid[column + 1000 * row]--;
+    //           << std::get<0>(end) << ", " << std::get<1>(end) << ")" <<
+    //           std::endl;
+    for (size_t row = std::get<1>(start); row <= std::get<1>(end); row++) {
+      for (size_t column = std::get<0>(start); column <= std::get<0>(end);
+           column++) {
+        if (grid[column + 1000 * row] > 0) grid[column + 1000 * row]--;
       }
     }
   }
@@ -146,30 +167,23 @@ class Lights {
   Interpreter* interpreter;
 
  public:
-  explicit Lights(Interpreter * interpreter) : interpreter(interpreter) {
+  explicit Lights(Interpreter* interpreter) : interpreter(interpreter) {
     grid.reserve(1000000);
-    for (size_t index{0}; index < 1000000; index ++)
-      grid.push_back(0);
+    for (size_t index{0}; index < 1000000; index++) grid.push_back(0);
   }
 
-  void step(const std::string& command) {
-    interpreter->execute(command, grid);
-  }
+  void step(const std::string& command) { interpreter->execute(command, grid); }
 
-  int brightness() {
-    return std::accumulate(grid.begin(), grid.end(), 0);
-  }
+  int brightness() { return std::accumulate(grid.begin(), grid.end(), 0); }
 
   ~Lights() = default;
 };
-
 
 int part_one(const std::vector<std::string>& input) {
   Interpreter* interpreter = new LegacyInterpreter();
   Lights lights(interpreter);
 
-  for (auto command: input)
-    lights.step(command);
+  for (auto command : input) lights.step(command);
 
   delete interpreter;
   return lights.brightness();
@@ -179,8 +193,7 @@ int part_two(const std::vector<std::string>& input) {
   Interpreter* interpreter = new NewInterpreter();
   Lights lights(interpreter);
 
-  for (auto command: input)
-    lights.step(command);
+  for (auto command : input) lights.step(command);
 
   delete interpreter;
   return lights.brightness();

@@ -1,25 +1,31 @@
-#include <cassert>
-#include <cstdint>
-#include <regex>
-#include <vector>
-
 #include "../utils/input.hpp"
 
-enum gate_type {assignment_op, not_op, and_op, or_op, lshift_op, rshift_op};
+enum gate_type { assignment_op, not_op, and_op, or_op, lshift_op, rshift_op };
 
 std::ostream& operator<<(std::ostream& os, gate_type type) {
   switch (type) {
-    case assignment_op: os << "Assignment"; break;
-    case not_op: os << "Not"; break;
-    case and_op: os << "And"; break;
-    case or_op: os << "Or"; break;
-    case lshift_op: os << "Lshift"; break;
-    case rshift_op: os << "Rshift"; break;
+    case assignment_op:
+      os << "Assignment";
+      break;
+    case not_op:
+      os << "Not";
+      break;
+    case and_op:
+      os << "And";
+      break;
+    case or_op:
+      os << "Or";
+      break;
+    case lshift_op:
+      os << "Lshift";
+      break;
+    case rshift_op:
+      os << "Rshift";
+      break;
   }
 
   return os;
 }
-
 
 class Wire {
  private:
@@ -30,24 +36,20 @@ class Wire {
  public:
   Wire() : name(""), value(0), set(false) {}
 
-  explicit Wire(std::string name, bool allow_conversion = true) : name(name), value(0), set(false) {
-    if (allow_conversion && name.size() > 0 && std::all_of(name.begin(), name.end(), ::isdigit)) {
+  explicit Wire(std::string name, bool allow_conversion = true)
+      : name(name), value(0), set(false) {
+    if (allow_conversion && name.size() > 0 &&
+        std::all_of(name.begin(), name.end(), ::isdigit)) {
       this->set_value(std::stoi(name));
       this->name = "const_" + name;
     }
   }
 
-  bool is_set() const {
-    return set;
-  }
+  bool is_set() const { return set; }
 
-  std::string get_name() const {
-    return name;
-  }
+  std::string get_name() const { return name; }
 
-  uint16_t get_value() const {
-    return value;
-  }
+  uint16_t get_value() const { return value; }
 
   void set_value(uint16_t value) {
     set = true;
@@ -60,15 +62,11 @@ class Wire {
   }
 };
 
-int part_one(std::string input) {
-  return 1;
-}
+int part_one(std::string input) { return 1; }
 
-int part_two(std::string input) {
-  return 2;
-}
+int part_two(std::string input) { return 2; }
 
-std::ostream& operator<< (std::ostream& os, const Wire& wire) {
+std::ostream& operator<<(std::ostream& os, const Wire& wire) {
   os << wire.get_name() << ": ";
   if (wire.is_set()) {
     os << wire.get_value();
@@ -85,15 +83,28 @@ class Gate {
   const gate_type type;
 
  public:
-  Gate(std::vector<Wire*>& inputs, Wire* output, const gate_type type) : inputs(inputs), output(output), type(type) {
+  Gate(std::vector<Wire*>& inputs, Wire* output, const gate_type type)
+      : inputs(inputs), output(output), type(type) {
     assert(output != nullptr);
     switch (type) {
-      case assignment_op: assert(inputs.size() == 1); break;
-      case not_op: assert(inputs.size() == 1); break;
-      case and_op: assert(inputs.size() == 2); break;
-      case or_op: assert(inputs.size() == 2); break;
-      case lshift_op: assert(inputs.size() == 2); break;
-      case rshift_op: assert(inputs.size() == 2); break;
+      case assignment_op:
+        assert(inputs.size() == 1);
+        break;
+      case not_op:
+        assert(inputs.size() == 1);
+        break;
+      case and_op:
+        assert(inputs.size() == 2);
+        break;
+      case or_op:
+        assert(inputs.size() == 2);
+        break;
+      case lshift_op:
+        assert(inputs.size() == 2);
+        break;
+      case rshift_op:
+        assert(inputs.size() == 2);
+        break;
     }
   }
 
@@ -101,17 +112,29 @@ class Gate {
     assert(this->is_ready());
 
     switch (type) {
-      case assignment_op: output->set_value(inputs[0]->get_value()); break;
-      case not_op: output->set_value(~inputs[0]->get_value()); break;
-      case and_op: output->set_value(inputs[0]->get_value() & inputs[1]->get_value()); break;
-      case or_op: output->set_value(inputs[0]->get_value() | inputs[1]->get_value()); break;
-      case lshift_op: output->set_value(inputs[0]->get_value() << inputs[1]->get_value()); break;
-      case rshift_op: output->set_value(inputs[0]->get_value() >> inputs[1]->get_value()); break;
+      case assignment_op:
+        output->set_value(inputs[0]->get_value());
+        break;
+      case not_op:
+        output->set_value(~inputs[0]->get_value());
+        break;
+      case and_op:
+        output->set_value(inputs[0]->get_value() & inputs[1]->get_value());
+        break;
+      case or_op:
+        output->set_value(inputs[0]->get_value() | inputs[1]->get_value());
+        break;
+      case lshift_op:
+        output->set_value(inputs[0]->get_value() << inputs[1]->get_value());
+        break;
+      case rshift_op:
+        output->set_value(inputs[0]->get_value() >> inputs[1]->get_value());
+        break;
     }
   }
 
   bool is_ready() const {
-    for (auto input: inputs) {
+    for (auto input : inputs) {
       if (!input->is_set()) {
         return false;
       }
@@ -119,28 +142,18 @@ class Gate {
     return true;
   }
 
-  bool is_evaluated() const {
-    return output->is_set();
-  }
+  bool is_evaluated() const { return output->is_set(); }
 
-  bool is_pending() const {
-    return is_ready() && !is_evaluated();
-  }
+  bool is_pending() const { return is_ready() && !is_evaluated(); }
 
-  const Wire* get_output() const {
-    return output;
-  }
+  const Wire* get_output() const { return output; }
 
-  const std::vector<Wire*> get_inputs() const {
-    return inputs;
-  }
+  const std::vector<Wire*> get_inputs() const { return inputs; }
 
-  gate_type get_type() const {
-    return type;
-  }
+  gate_type get_type() const { return type; }
 };
 
-std::ostream& operator<< (std::ostream& os, const Gate& gate) {
+std::ostream& operator<<(std::ostream& os, const Gate& gate) {
   os << gate.get_type() << " (";
   for (size_t index{0}; index < gate.get_inputs().size(); index++)
     os << *gate.get_inputs()[index] << ", ";
@@ -157,21 +170,17 @@ class Circuit {
   std::smatch matches;
 
   gate_type get_type(const std::smatch& matches) const {
-    if (matches[1] == "NOT")
-      return not_op;
-    if (matches[3] == "AND")
-      return and_op;
-    if (matches[3] == "OR")
-      return or_op;
-    if (matches[3] == "LSHIFT")
-      return lshift_op;
-    if (matches[3] == "RSHIFT")
-      return rshift_op;
+    if (matches[1] == "NOT") return not_op;
+    if (matches[3] == "AND") return and_op;
+    if (matches[3] == "OR") return or_op;
+    if (matches[3] == "LSHIFT") return lshift_op;
+    if (matches[3] == "RSHIFT") return rshift_op;
 
     return assignment_op;
   }
 
-  std::vector<Wire*> create_inputs(const std::smatch& matches, const gate_type type) const {
+  std::vector<Wire*> create_inputs(const std::smatch& matches,
+                                   const gate_type type) const {
     std::vector<Wire*> inputs;
     switch (type) {
       case assignment_op: {
@@ -208,7 +217,8 @@ class Circuit {
         break;
       }
 
-      default: break;
+      default:
+        break;
     }
     return inputs;
   }
@@ -217,12 +227,13 @@ class Circuit {
     return new Wire(matches[5].str());
   }
 
-  Gate* create_gate(std::vector<Wire*>& inputs, Wire* output, const gate_type type) const {
+  Gate* create_gate(std::vector<Wire*>& inputs, Wire* output,
+                    const gate_type type) const {
     return new Gate(inputs, output, type);
   }
 
   Wire* get_wire(std::string name) {
-    for (auto wire: wires) {
+    for (auto wire : wires) {
       if (wire->get_name() == name) {
         return wire;
       }
@@ -235,17 +246,14 @@ class Circuit {
 
   ~Circuit() {
     // must delete gates before deleting wires
-    for (auto gate: gates)
-      delete gate;
-    for (auto wire: wires)
-      delete wire;
+    for (auto gate : gates) delete gate;
+    for (auto wire : wires) delete wire;
   }
 
-  explicit Circuit(const std::vector<std::string>& input) :
-    re("^(?:(NOT)\\s)?([\\w\\d]+)\\s?(?:(AND|OR|LSHIFT|RSHIFT)\\s)?(?:([\\w\\d]+)\\s)?-> (\\w+)$") {
-
-    for (auto description: input)
-        create_gate(description);
+  explicit Circuit(const std::vector<std::string>& input)
+      : re("^(?:(NOT)\\s)?([\\w\\d]+)\\s?(?:(AND|OR|LSHIFT|RSHIFT)\\s)?(?:(["
+           "\\w\\d]+)\\s)?-> (\\w+)$") {
+    for (auto description : input) create_gate(description);
   }
 
   void create_gate(const std::string& description) {
@@ -253,7 +261,7 @@ class Circuit {
     gate_type type = get_type(matches);
     std::vector<Wire*> inputs = create_inputs(matches, type);
     std::vector<Wire*> gate_inputs;
-    for (auto wire: inputs) {
+    for (auto wire : inputs) {
       if (get_wire(wire->get_name()) == nullptr) {
         wires.push_back(wire);
         gate_inputs.push_back(wire);
@@ -272,12 +280,10 @@ class Circuit {
     gates.push_back(create_gate(gate_inputs, output, type));
   }
 
-  std::vector<Gate*> get_gates() const {
-    return gates;
-  }
+  std::vector<Gate*> get_gates() const { return gates; }
 
   bool step() {
-    for (auto gate: gates) {
+    for (auto gate : gates) {
       if (gate->is_pending()) {
         gate->evaluate();
         return true;
@@ -287,7 +293,7 @@ class Circuit {
   }
 
   std::pair<bool, int> read_wire(std::string name) {
-    for (auto gate: gates) {
+    for (auto gate : gates) {
       if (gate->get_output()->get_name() == name) {
         if (gate->is_ready()) {
           return std::pair<bool, int>{true, gate->get_output()->get_value()};
@@ -301,8 +307,7 @@ class Circuit {
 };
 
 std::ostream& operator<<(std::ostream& os, const Circuit& circuit) {
-  for (auto gate: circuit.get_gates())
-    os << *gate << "\n";
+  for (auto gate : circuit.get_gates()) os << *gate << "\n";
 
   return os;
 }
@@ -310,8 +315,7 @@ std::ostream& operator<<(std::ostream& os, const Circuit& circuit) {
 int part_one(std::vector<std::string> input) {
   Circuit circuit(input);
   bool running = true;
-  while (running)
-    running = circuit.step();
+  while (running) running = circuit.step();
 
   auto result = circuit.read_wire("a");
   assert(std::get<0>(result));
@@ -323,21 +327,19 @@ int part_two(std::vector<std::string> input) {
   int16_t val_a = part_one(input);
   std::vector<std::string> new_input;
   new_input.push_back(std::to_string(val_a) + " -> b");
-  for (auto description: input) {
+  for (auto description : input) {
     new_input.push_back(description);
   }
 
   Circuit circuit(new_input);
   bool running = true;
-  while (running)
-    running = circuit.step();
+  while (running) running = circuit.step();
 
   auto result = circuit.read_wire("a");
   assert(std::get<0>(result));
 
   return std::get<1>(result);
 }
-
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2015/data/input_07.txt"));

@@ -4,7 +4,9 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <map>
+#include <numeric>
 #include <regex>  // NOLINT
 #include <set>
 #include <stdexcept>

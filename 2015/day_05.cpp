@@ -1,5 +1,3 @@
-#include <regex>
-
 #include "../utils/input.hpp"
 
 class Checker {
@@ -16,14 +14,10 @@ class NiceString : Checker {
   bool has_three_vowels(const std::string& candidate) {
     int vowel_counter{0};
 
-    for (auto character: candidate) {
-      vowel_counter += static_cast<int>(
-        character == 'a' ||
-        character == 'e' ||
-        character == 'i' ||
-        character == 'o' ||
-        character == 'u'
-      );
+    for (auto character : candidate) {
+      vowel_counter += static_cast<int>(character == 'a' || character == 'e' ||
+                                        character == 'i' || character == 'o' ||
+                                        character == 'u');
     }
 
     return vowel_counter >= 3;
@@ -31,14 +25,12 @@ class NiceString : Checker {
 
   bool has_pair(const std::string& candidate) {
     for (size_t index{1}; index < candidate.length(); index++) {
-      if (candidate[index-1] == candidate[index])
-        return true;
+      if (candidate[index - 1] == candidate[index]) return true;
     }
     return false;
   }
 
   bool has_no_forbidden_pair(const std::string& candidate) {
-
     return !std::regex_match(candidate, re);
   }
 
@@ -46,11 +38,8 @@ class NiceString : Checker {
   NiceString() : re("^.*(ab|cd|pq|xy).*$") {}
 
   bool is_valid(const std::string& input) override {
-    return (
-      has_three_vowels(input) &&
-      has_pair(input) &&
-      has_no_forbidden_pair(input)
-    );
+    return (has_three_vowels(input) && has_pair(input) &&
+            has_no_forbidden_pair(input));
   }
 };
 
@@ -58,8 +47,9 @@ class SuperNiceString : Checker {
  private:
   bool has_pair(const std::string& candidate) {
     for (size_t left{0}; left + 3 < candidate.length(); left++) {
-      for (size_t right{left+2}; right + 1 < candidate.length(); right++) {
-        if (candidate[left] == candidate[right] && candidate[left+1] == candidate[right+1])
+      for (size_t right{left + 2}; right + 1 < candidate.length(); right++) {
+        if (candidate[left] == candidate[right] &&
+            candidate[left + 1] == candidate[right + 1])
           return true;
       }
     }
@@ -67,9 +57,8 @@ class SuperNiceString : Checker {
   }
 
   bool has_clamp(const std::string& candidate) {
-    for (size_t index{0}; index + 2 < candidate.length(); index ++) {
-      if (candidate[index] == candidate[index+2])
-        return true;
+    for (size_t index{0}; index + 2 < candidate.length(); index++) {
+      if (candidate[index] == candidate[index + 2]) return true;
     }
     return false;
   }
@@ -85,7 +74,7 @@ class SuperNiceString : Checker {
 int part_one(const std::vector<std::string>& input) {
   int nice_counter{0};
   NiceString checker;
-  for (auto candidate: input)
+  for (auto candidate : input)
     nice_counter += static_cast<int>(checker.is_valid(candidate));
 
   return nice_counter;
@@ -94,7 +83,7 @@ int part_one(const std::vector<std::string>& input) {
 int part_two(const std::vector<std::string>& input) {
   int nice_counter{0};
   SuperNiceString checker;
-  for (auto candidate: input)
+  for (auto candidate : input)
     nice_counter += static_cast<int>(checker.is_valid(candidate));
 
   return nice_counter;
