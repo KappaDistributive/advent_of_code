@@ -1,5 +1,7 @@
 .vscode/
 tags
+tags.lock
+tags.temp
 build/
 debug/
 release/
