@@ -1,5 +1,3 @@
-#include <cassert>
-
 #include "../utils/input.hpp"
 
 class Password {
@@ -21,7 +19,7 @@ class Password {
     }
 
     if (carry) {
-      inc(offset+1);
+      inc(offset + 1);
     }
   }
 
@@ -30,10 +28,11 @@ class Password {
       return false;
     }
     for (size_t index{2}; index < password.size(); index++) {
-      assert('a' <= password[index-2] && password[index-2] <= 'z');
-      assert('a' <= password[index-1] && password[index-1] <= 'z');
-      assert('a' <= password[ index ] && password[ index ] <= 'z');
-      if (password[index-2] +1 == password[index-1] && password[index-1]+1 == password[index]) {
+      assert('a' <= password[index - 2] && password[index - 2] <= 'z');
+      assert('a' <= password[index - 1] && password[index - 1] <= 'z');
+      assert('a' <= password[index] && password[index] <= 'z');
+      if (password[index - 2] + 1 == password[index - 1] &&
+          password[index - 1] + 1 == password[index]) {
         return true;
       }
     }
@@ -41,7 +40,7 @@ class Password {
   }
 
   bool has_ambiguous_letter() const {
-    for (auto character: password) {
+    for (auto character : password) {
       if (character == 'i' || character == 'o' || character == 'l') {
         return true;
       }
@@ -51,8 +50,10 @@ class Password {
 
   bool has_two_pairs() const {
     for (size_t index_left{0}; index_left + 3 < password.size(); index_left++) {
-      for (size_t index_right{index_left+2}; index_right + 1 < password.size(); index_right++) {
-        if (password[index_left] == password[index_left+1] && password[index_right] == password[index_right+1]) {
+      for (size_t index_right{index_left + 2};
+           index_right + 1 < password.size(); index_right++) {
+        if (password[index_left] == password[index_left + 1] &&
+            password[index_right] == password[index_right + 1]) {
           return true;
         }
       }
@@ -61,20 +62,16 @@ class Password {
   }
 
  public:
-  explicit Password(const std::string& password) : password(password) {
-  }
+  explicit Password(const std::string& password) : password(password) {}
 
-  void increment() {
-    inc(0);
-  }
+  void increment() { inc(0); }
 
   bool is_valid() const {
-    return (has_increasing_triplet() && !has_ambiguous_letter() && has_two_pairs());
+    return (has_increasing_triplet() && !has_ambiguous_letter() &&
+            has_two_pairs());
   }
 
-  std::string str() const {
-    return password;
-  }
+  std::string str() const { return password; }
 };
 
 std::string part_one(const std::string& input) {

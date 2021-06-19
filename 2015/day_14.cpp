@@ -1,6 +1,3 @@
-#include <cassert>
-#include <regex>
-
 #include "../utils/input.hpp"
 
 class Reindeer {
@@ -14,8 +11,7 @@ class Reindeer {
   int distance;
 
  public:
-  explicit Reindeer(const std::string& description)
-      : clock(0), distance(0) {
+  explicit Reindeer(const std::string& description) : clock(0), distance(0) {
     std::regex re{"^(\\w+)\\D*(\\d+)\\D*(\\d+)\\D*(\\d+).*$"};
     std::smatch matches;
 
@@ -37,19 +33,19 @@ class Reindeer {
     return distance;
   }
 
-  int get_distance() const {
-    return distance;
-  }
+  int get_distance() const { return distance; }
 
-  friend std::ostream& operator<< (std::ostream& os, const Reindeer& reindeer) {
-    os << reindeer.name << " can fly " << reindeer.speed << " km/s for " << reindeer.stamina << " seconds, but then must rest for " << reindeer.rest << " seconds.";
+  friend std::ostream& operator<<(std::ostream& os, const Reindeer& reindeer) {
+    os << reindeer.name << " can fly " << reindeer.speed << " km/s for "
+       << reindeer.stamina << " seconds, but then must rest for "
+       << reindeer.rest << " seconds.";
     return os;
   }
 };
 
 std::vector<Reindeer> create_reindeers(const std::vector<std::string>& input) {
   std::vector<Reindeer> reindeers;
-  for (auto line: input) {
+  for (auto line : input) {
     reindeers.push_back(Reindeer(line));
   }
 
@@ -87,7 +83,8 @@ int part_two(const std::vector<std::string>& input) {
     }
     size_t max_index{0};
     for (size_t index{1}; index < reindeers.size(); index++) {
-      if (reindeers[index].get_distance() > reindeers[max_index].get_distance()) {
+      if (reindeers[index].get_distance() >
+          reindeers[max_index].get_distance()) {
         max_index = index;
       }
     }

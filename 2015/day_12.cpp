@@ -1,11 +1,10 @@
-#include <regex>
-
 #include "../utils/input.hpp"
 
 int part_one(const std::string& input) {
   int result{0};
   std::regex numbers_regex{"(-?\\d+)"};
-  auto beginning = std::sregex_iterator(input.begin(), input.end(), numbers_regex);
+  auto beginning =
+      std::sregex_iterator(input.begin(), input.end(), numbers_regex);
   auto ending = std::sregex_iterator();
 
   for (std::sregex_iterator i = beginning; i != ending; i++) {
@@ -19,7 +18,7 @@ int part_one(const std::string& input) {
 // int part_two(const std::string& input) {
 //   int result{0};
 //   // TODO: solve part_two in C++
-// 
+//
 //   return result;
 // }
 

@@ -1,7 +1,3 @@
-#include <array>
-#include <cassert>
-#include <regex>
-
 #include "../utils/input.hpp"
 
 using ingredient = std::array<int, 5>;
