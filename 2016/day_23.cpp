@@ -1,8 +1,4 @@
-#include <map>
-#include <optional>
-
 #include "../utils/input.hpp"
-
 
 enum Operation {
   copy,
@@ -12,15 +8,11 @@ enum Operation {
   toggle,
 };
 
-using Instruction = std::tuple<Operation,
-                               std::optional<char>,
-                               std::optional<int>,
-                               std::optional<char>,
-                               std::optional<int>>;
+using Instruction =
+    std::tuple<Operation, std::optional<char>, std::optional<int>,
+               std::optional<char>, std::optional<int>>;
 
-
-std::ostream&
-operator<< (std::ostream& os, Instruction instruction) {
+std::ostream& operator<<(std::ostream& os, Instruction instruction) {
   switch (std::get<0>(instruction)) {
     case copy:
       os << "cpy";
@@ -58,8 +50,7 @@ class CPU {
   int instruction_pointer;
   std::vector<Instruction> instructions;
 
-  Instruction
-  perform_toggle(const Instruction& instruction) {
+  Instruction perform_toggle(const Instruction& instruction) {
     Instruction result = instruction;
     switch (std::get<0>(instruction)) {
       case Operation::copy:
@@ -82,12 +73,13 @@ class CPU {
     return result;
   }
 
-  bool
-  is_valid(const Instruction& instruction) const {
+  bool is_valid(const Instruction& instruction) const {
     switch (std::get<0>(instruction)) {
       case Operation::copy:
-        return (std::get<1>(instruction).has_value() || std::get<2>(instruction).has_value()) &&
-               (std::get<3>(instruction).has_value() || !std::get<4>(instruction).has_value());
+        return (std::get<1>(instruction).has_value() ||
+                std::get<2>(instruction).has_value()) &&
+               (std::get<3>(instruction).has_value() ||
+                !std::get<4>(instruction).has_value());
         break;
       case Operation::increment:
         return std::get<1>(instruction).has_value() &&
@@ -102,12 +94,16 @@ class CPU {
                  std::get<4>(instruction).has_value());
         break;
       case Operation::jump_not_zero:
-        return (std::get<1>(instruction).has_value() || std::get<2>(instruction).has_value()) &&
-               (std::get<3>(instruction).has_value() || std::get<4>(instruction).has_value());
+        return (std::get<1>(instruction).has_value() ||
+                std::get<2>(instruction).has_value()) &&
+               (std::get<3>(instruction).has_value() ||
+                std::get<4>(instruction).has_value());
         break;
       case Operation::toggle:
-        return (std::get<1>(instruction).has_value() || std::get<2>(instruction).has_value()) &&
-               !(std::get<3>(instruction).has_value() || std::get<4>(instruction).has_value());
+        return (std::get<1>(instruction).has_value() ||
+                std::get<2>(instruction).has_value()) &&
+               !(std::get<3>(instruction).has_value() ||
+                 std::get<4>(instruction).has_value());
         break;
     }
 
@@ -116,13 +112,11 @@ class CPU {
 
  public:
   explicit CPU(const std::vector<Instruction>& instructions)
-    : registers({{'a', 0}, {'b', 0}, {'c', 0}, {'d', 0}}),
-      instruction_pointer(0),
-      instructions(instructions) {
-  }
+      : registers({{'a', 0}, {'b', 0}, {'c', 0}, {'d', 0}}),
+        instruction_pointer(0),
+        instructions(instructions) {}
 
-  bool
-  step() {
+  bool step() {
     auto instruction = instructions[instruction_pointer];
     if (is_valid(instruction)) {
       switch (std::get<0>(instruction)) {
@@ -164,7 +158,8 @@ class CPU {
           if (value == 0) {
             instruction_pointer++;
           } else if (std::get<3>(instruction).has_value()) {
-            instruction_pointer += registers.at(std::get<3>(instruction).value());
+            instruction_pointer +=
+                registers.at(std::get<3>(instruction).value());
           } else if (std::get<4>(instruction).has_value()) {
             instruction_pointer += std::get<4>(instruction).value();
           } else {
@@ -181,7 +176,8 @@ class CPU {
             break;
           }
           if (instruction_pointer >= -value &&
-              instruction_pointer + value < static_cast<int>(instructions.size())) {
+              instruction_pointer + value <
+                  static_cast<int>(instructions.size())) {
             int target = instruction_pointer + value;
             instructions[target] = perform_toggle(instructions[target]);
           }
@@ -195,20 +191,14 @@ class CPU {
            instruction_pointer < static_cast<int>(instructions.size());
   }
 
-  int
-  read_register(const char& name) const {
-    return registers.at(name);
-  }
+  int read_register(const char& name) const { return registers.at(name); }
 
-  void
-  set_register(const char& name, const int& value) {
+  void set_register(const char& name, const int& value) {
     registers.insert_or_assign(name, value);
   }
 };
 
-
-std::vector<Instruction>
-prepare_input(const std::vector<std::string>& input) {
+std::vector<Instruction> prepare_input(const std::vector<std::string>& input) {
   std::vector<Instruction> instructions;
   std::vector<std::string> splits;
   for (auto line : input) {
@@ -218,7 +208,8 @@ prepare_input(const std::vector<std::string>& input) {
       if (splits[1][0] >= 'a' && splits[1][0] <= 'z') {
         instructions.push_back({copy, splits[1][0], {}, splits[2][0], {}});
       } else {
-        instructions.push_back({copy, {}, std::stoi(splits[1]), splits[2][0], {}});
+        instructions.push_back(
+            {copy, {}, std::stoi(splits[1]), splits[2][0], {}});
       }
     } else if (splits[0] == "inc") {
       assert(splits.size() == 2);
@@ -230,15 +221,22 @@ prepare_input(const std::vector<std::string>& input) {
       assert(splits.size() == 3);
       if (splits[1][0] >= 'a' && splits[1][0] <= 'z') {
         if (splits[2][0] >= 'a' && splits[2][0] <= 'z') {
-          instructions.push_back({jump_not_zero, splits[1][0], {}, splits[2][0], {}});
+          instructions.push_back(
+              {jump_not_zero, splits[1][0], {}, splits[2][0], {}});
         } else {
-          instructions.push_back({jump_not_zero, splits[1][0], {}, {}, std::stoi(splits[2])});
+          instructions.push_back(
+              {jump_not_zero, splits[1][0], {}, {}, std::stoi(splits[2])});
         }
       } else {
         if (splits[2][0] >= 'a' && splits[2][0] <= 'z') {
-          instructions.push_back({jump_not_zero, {}, std::stoi(splits[1]), splits[2][0], {}});
+          instructions.push_back(
+              {jump_not_zero, {}, std::stoi(splits[1]), splits[2][0], {}});
         } else {
-          instructions.push_back({jump_not_zero, {}, std::stoi(splits[1]), {}, std::stoi(splits[2])});
+          instructions.push_back({jump_not_zero,
+                                  {},
+                                  std::stoi(splits[1]),
+                                  {},
+                                  std::stoi(splits[2])});
         }
       }
     } else if (splits[0] == "tgl") {
@@ -252,9 +250,7 @@ prepare_input(const std::vector<std::string>& input) {
   return instructions;
 }
 
-
-auto
-part_one(const std::vector<std::string>& input) {
+auto part_one(const std::vector<std::string>& input) {
   auto instructions = prepare_input(input);
   CPU cpu(instructions);
   cpu.set_register('a', 7);
@@ -263,9 +259,7 @@ part_one(const std::vector<std::string>& input) {
   return cpu.read_register('a');
 }
 
-
-auto
-part_two(const std::vector<std::string>& input) {
+auto part_two(const std::vector<std::string>& input) {
   auto instructions = prepare_input(input);
   CPU cpu(instructions);
   cpu.set_register('a', 12);
@@ -274,15 +268,13 @@ part_two(const std::vector<std::string>& input) {
   return cpu.read_register('a');
 }
 
-
-int
-main() {
+int main() {
   utils::Reader reader(std::filesystem::path("../2016/data/input_23.txt"));
   auto input = reader.get_lines();
 
-  auto answer_one =  part_one(input);
+  auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two =  part_two(input);
+  auto answer_two = part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
