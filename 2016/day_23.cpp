@@ -83,7 +83,7 @@ class CPU {
   }
 
   bool
-  is_valid(const Instruction& instruction) const noexcept {
+  is_valid(const Instruction& instruction) const {
     switch (std::get<0>(instruction)) {
       case Operation::copy:
         return (std::get<1>(instruction).has_value() || std::get<2>(instruction).has_value()) &&
@@ -110,6 +110,8 @@ class CPU {
                !(std::get<3>(instruction).has_value() || std::get<4>(instruction).has_value());
         break;
     }
+
+    throw std::runtime_error("This should never happen");
   }
 
  public:

@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "../utils/input.hpp"
 
 typedef std::pair<int, int> Point;
