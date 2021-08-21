@@ -13,7 +13,8 @@ std::ostream& operator<<(std::ostream& os, const coordinate coord) {
 
 enum class Direction : int { north, east, south, west };
 
-constexpr std::ostream& operator<<(std::ostream& os, const Direction direction) {
+constexpr std::ostream& operator<<(std::ostream& os,
+                                   const Direction direction) {
   switch (direction) {
     case Direction::north:
       os << '^';
