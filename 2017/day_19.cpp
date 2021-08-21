@@ -61,6 +61,7 @@ class Grid {
   size_t m_width;
   size_t m_height;
   Direction m_direction;
+  size_t m_num_steps;
 
   auto find_starting_position(const std::vector<std::string>& input) const {
     coordinate starting_position{0, 0};
@@ -95,11 +96,9 @@ class Grid {
 
  public:
   explicit Grid(const std::vector<std::string>& input)
-      : m_direction(Direction::south) {
+      : m_direction(Direction::south), m_num_steps(1) {
     m_starting_position = find_starting_position(input);
     m_position = m_starting_position;
-
-    std::cout << m_starting_position << std::endl;
     auto dimensions = find_dimensions(input);
     m_width = dimensions.first;
     m_height = dimensions.second;
@@ -174,10 +173,16 @@ class Grid {
           m_grid[m_position.second * m_width + m_position.first]);
     }
 
+    if (moved) {
+      ++m_num_steps;
+    }
+
     return moved;
   }
 
   std::vector<char> encounters() const { return m_encounters; }
+
+  auto total_steps() const { return m_num_steps; }
 
   friend std::ostream& operator<<(std::ostream& os, const Grid& grid) {
     os << "Encounters: ";
@@ -218,7 +223,13 @@ auto part_one(const std::vector<std::string>& input) {
   return result;
 }
 
-// auto part_two(const std::vector<std::string>& input) { return 234; }
+auto part_two(const std::vector<std::string>& input) {
+  Grid grid(input);
+  do {
+    // std::cout << grid << std::endl;
+  } while (grid.step());
+  return grid.total_steps();
+}
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2017/data/input_19.txt"));
@@ -226,7 +237,7 @@ int main() {
 
   auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  // auto answer_two = part_two(input);
-  // std::cout << "The answer to part two is: " << answer_two << std::endl;
+  auto answer_two = part_two(input);
+  std::cout << "The answer to part two is: " << answer_two << std::endl;
 }
 
