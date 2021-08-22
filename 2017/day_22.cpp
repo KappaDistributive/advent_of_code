@@ -19,6 +19,7 @@ class Grid {
   coordinate m_carrier;
   Direction m_direction;
   size_t m_total_infections;
+  bool m_resistant;
 
   auto border() const {
     coordinate top_left{0, 0}, bottom_right{0, 0};
@@ -73,8 +74,10 @@ class Grid {
   }
 
  public:
-  explicit Grid(const std::vector<std::string>& input)
-      : m_direction(Direction::up), m_total_infections(0) {
+  explicit Grid(const std::vector<std::string>& input, bool resistant = false)
+      : m_direction(Direction::up),
+        m_total_infections(0),
+        m_resistant(resistant) {
     for (size_t y{0}; y < input.size(); ++y) {
       for (size_t x{0}; x < input[y].size(); ++x) {
         this->m_grid.insert(std::make_pair(std::make_pair(x, y), input[y][x]));
@@ -96,18 +99,10 @@ class Grid {
     turn(this->operator[](this->m_carrier) == '#');
 
     if (this->operator[](this->m_carrier) == '#') {
-      if (this->m_grid.count(this->m_carrier) > 0) {
-        this->m_grid.at(this->m_carrier) = '.';
-      } else {
-        this->m_grid.insert(std::make_pair(this->m_carrier, '.'));
-      }
+      this->m_grid.insert_or_assign(this->m_carrier, '.');
     } else {
       ++this->m_total_infections;
-      if (this->m_grid.count(this->m_carrier) > 0) {
-        this->m_grid.at(this->m_carrier) = '#';
-      } else {
-        this->m_grid.insert(std::make_pair(this->m_carrier, '#'));
-      }
+      this->m_grid.insert_or_assign(this->m_carrier, '#');
     }
 
     switch (this->m_direction) {
@@ -155,6 +150,7 @@ auto part_one(const std::vector<std::string>& input) {
     grid.step();
     // std::cout << grid << std::endl;
   }
+  std::cout << grid << std::endl;
   return grid.total_infections();
 }
 
