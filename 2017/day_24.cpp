@@ -69,7 +69,7 @@ auto print(const std::vector<std::pair<size_t, bool>>& bridge,
 }
 
 auto expand(const std::vector<std::vector<std::pair<size_t, bool>>>& bridges,
-            const std::vector<Component>& components) {
+            const std::vector<Component>& components, bool part_two = false) {
   std::vector<std::vector<std::pair<size_t, bool>>> new_bridges;
   size_t max_score{0};
   bool made_progress{false};
@@ -99,12 +99,16 @@ auto expand(const std::vector<std::vector<std::pair<size_t, bool>>>& bridges,
       if (components[index].in == current_out) {
         new_bridge.push_back(std::make_pair(index, false));
         used_bridge = true;
-        max_score = std::max(max_score, score(new_bridge, components));
+        max_score =
+            std::max(max_score, part_two ? new_bridge.size()
+                                         : score(new_bridge, components));
         made_progress = true;
       } else if (components[index].out == current_out) {
         new_bridge.push_back(std::make_pair(index, true));
         used_bridge = true;
-        max_score = std::max(max_score, score(new_bridge, components));
+        max_score =
+            std::max(max_score, part_two ? new_bridge.size()
+                                         : score(new_bridge, components));
         made_progress = true;
       }
 
@@ -115,9 +119,10 @@ auto expand(const std::vector<std::vector<std::pair<size_t, bool>>>& bridges,
       }
     }
 
-    if (!used_bridge && score(bridge, components) > max_score) {
+    if (!used_bridge &&
+        (part_two ? bridge.size() : score(bridge, components)) >= max_score) {
       new_bridges.push_back(bridge);
-      max_score = score(bridge, components);
+      max_score = part_two ? bridge.size() : score(bridge, components);
     }
   }
   return made_progress ? new_bridges
@@ -172,14 +177,66 @@ auto part_one(const std::vector<std::string>& input) {
   return result;
 }
 
-auto part_two(const std::vector<std::string>& input) { return 2; }
+auto part_two(const std::vector<std::string>& input) {
+  auto components = prepare_input(input);
+  std::vector<std::vector<std::pair<size_t, bool>>> bridges;
+
+  for (size_t index{0}; index < components.size(); ++index) {
+    if (components[index].in == 0) {
+      bridges.push_back(
+          std::vector<std::pair<size_t, bool>>{{std::make_pair(index, false)}});
+    }
+    if (components[index].out == 0) {
+      bridges.push_back(
+          std::vector<std::pair<size_t, bool>>{{std::make_pair(index, true)}});
+    }
+  }
+
+  while (true) {
+    auto new_bridges = expand(bridges, components, true);
+    if (new_bridges.size() > 0) {
+      bridges = new_bridges;
+      std::cout << bridges.size() << std::endl;
+      size_t result{0};
+      size_t best_index{0};
+      for (size_t index{0}; index < bridges.size(); ++index) {
+        auto bridge = bridges[index];
+        auto current_score = score(bridge, components);
+        if (current_score > result) {
+          result = current_score;
+          best_index = index;
+        }
+        // print(bridge, components);
+      }
+      std::cout << "max score: " << result << std::endl;
+      print(bridges[best_index], components);
+
+    } else {
+      break;
+    }
+  }
+
+  size_t best_distance{0};
+  size_t best_score{0};
+  for (auto bridge : bridges) {
+    if (bridge.size() > best_distance) {
+      best_score = score(bridge, components);
+      best_distance = bridge.size();
+    } else if (bridge.size() == best_distance) {
+      best_score = std::max(best_score, score(bridge, components));
+    }
+    // print(bridge, components);
+  }
+
+  return best_score;
+}
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2017/data/input_24.txt"));
   auto input = reader.get_lines();
 
-  auto answer_one = part_one(input);
-  std::cout << "The answer to part one is: " << answer_one << std::endl;
+  // auto answer_one = part_one(input);
+  // std::cout << "The answer to part one is: " << answer_one << std::endl;
   auto answer_two = part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
 }
