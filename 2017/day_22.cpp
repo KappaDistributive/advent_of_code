@@ -31,6 +31,11 @@ class Grid {
       bottom_right.second = std::max(bottom_right.second, key.second);
     }
 
+    top_left.first = std::min(this->m_carrier.first, top_left.first);
+    top_left.second = std::min(this->m_carrier.second, top_left.second);
+    bottom_right.first = std::max(this->m_carrier.first, bottom_right.first);
+    bottom_right.second = std::max(this->m_carrier.second, bottom_right.second);
+
     --top_left.first;
     --top_left.second;
     ++bottom_right.first;
@@ -96,13 +101,54 @@ class Grid {
   }
 
   void step() {
-    turn(this->operator[](this->m_carrier) == '#');
-
-    if (this->operator[](this->m_carrier) == '#') {
-      this->m_grid.insert_or_assign(this->m_carrier, '.');
+    if (this->m_resistant) {
+      switch (this->operator[](this->m_carrier)) {
+        case '.':
+          this->turn(false);
+          break;
+        case 'W':
+          break;
+        case '#':
+          this->turn(true);
+          break;
+        case 'F':
+          this->turn(true);
+          this->turn(true);
+          break;
+        default:
+          throw std::runtime_error("Encountered invalid cell.");
+          break;
+      }
     } else {
-      ++this->m_total_infections;
-      this->m_grid.insert_or_assign(this->m_carrier, '#');
+      this->turn(this->operator[](this->m_carrier) == '#');
+    }
+
+    if (this->m_resistant) {
+      switch (this->operator[](this->m_carrier)) {
+        case '.':
+          this->m_grid.insert_or_assign(this->m_carrier, 'W');
+          break;
+        case 'W':
+          this->m_grid.insert_or_assign(this->m_carrier, '#');
+          ++this->m_total_infections;
+          break;
+        case '#':
+          this->m_grid.insert_or_assign(this->m_carrier, 'F');
+          break;
+        case 'F':
+          this->m_grid.insert_or_assign(this->m_carrier, '.');
+          break;
+        default:
+          throw std::runtime_error("Encountered invalid cell.");
+          break;
+      }
+    } else {
+      if (this->operator[](this->m_carrier) == '#') {
+        this->m_grid.insert_or_assign(this->m_carrier, '.');
+      } else {
+        ++this->m_total_infections;
+        this->m_grid.insert_or_assign(this->m_carrier, '#');
+      }
     }
 
     switch (this->m_direction) {
@@ -117,6 +163,9 @@ class Grid {
         break;
       case Direction::left:
         --this->m_carrier.first;
+        break;
+      default:
+        throw std::runtime_error("Invalid direction.");
         break;
     }
   }
@@ -145,16 +194,25 @@ class Grid {
 };
 
 auto part_one(const std::vector<std::string>& input) {
-  Grid grid(input);
+  Grid grid(input, false);
   for (size_t step{0}; step < 10000; ++step) {
     grid.step();
     // std::cout << grid << std::endl;
   }
-  std::cout << grid << std::endl;
+  // std::cout << grid << std::endl;
   return grid.total_infections();
 }
 
-auto part_two(const std::vector<std::string>& input) { return -2; }
+auto part_two(const std::vector<std::string>& input) {
+  Grid grid(input, true);
+  for (size_t step{0}; step < 10000000; ++step) {
+    grid.step();
+    // std::cout << grid << std::endl;
+  }
+  // std::cout << grid << std::endl;
+
+  return grid.total_infections();
+}
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2017/data/input_22.txt"));
