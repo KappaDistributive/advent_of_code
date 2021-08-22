@@ -7,9 +7,7 @@
 
 #include "../utils/input.hpp"
 
-
-inline int64_t
-modulo(int64_t a, int64_t b) {
+inline int64_t modulo(int64_t a, int64_t b) {
   if (a >= 0) {
     return a % b;
   } else {
@@ -21,7 +19,6 @@ modulo(int64_t a, int64_t b) {
   }
 }
 
-
 enum class Op : int {
   snd,
   set,
@@ -32,17 +29,29 @@ enum class Op : int {
   jgz,
 };
 
-
-std::ostream&
-operator<<(std::ostream& os, const Op& op) {
+std::ostream& operator<<(std::ostream& os, const Op& op) {
   switch (op) {
-    case Op::snd: os << "snd"; break;
-    case Op::set: os << "set"; break;
-    case Op::add: os << "add"; break;
-    case Op::mul: os << "mul"; break;
-    case Op::mod: os << "mod"; break;
-    case Op::rcv: os << "rcv"; break;
-    case Op::jgz: os << "jgz"; break;
+    case Op::snd:
+      os << "snd";
+      break;
+    case Op::set:
+      os << "set";
+      break;
+    case Op::add:
+      os << "add";
+      break;
+    case Op::mul:
+      os << "mul";
+      break;
+    case Op::mod:
+      os << "mod";
+      break;
+    case Op::rcv:
+      os << "rcv";
+      break;
+    case Op::jgz:
+      os << "jgz";
+      break;
     default:
       throw std::runtime_error("This should never happen!");
       break;
@@ -51,16 +60,15 @@ operator<<(std::ostream& os, const Op& op) {
   return os;
 }
 
-
 struct Instruction {
   Op op;
   std::vector<std::variant<char, int64_t>> parameters;
 };
 
-std::ostream&
-operator<<(std::ostream& os, const Instruction& instruction) {
+std::ostream& operator<<(std::ostream& os, const Instruction& instruction) {
   os << instruction.op << " ";
-  for (auto it{instruction.parameters.begin()}; it != instruction.parameters.end(); ++it) {
+  for (auto it{instruction.parameters.begin()};
+       it != instruction.parameters.end(); ++it) {
     if (std::holds_alternative<char>(*it)) {
       os << std::get<char>(*it);
     } else {
@@ -95,39 +103,33 @@ Op prepare_op(const std::string& line) {
   }
 }
 
-
-Instruction
-prepare_instruction(const std::string& line) {
+Instruction prepare_instruction(const std::string& line) {
   auto splits = utils::split_string(line, ' ');
   auto op = prepare_op(splits[0]);
   std::vector<std::variant<char, int64_t>> parameters;
   for (size_t index{1}; index < splits.size(); ++index) {
     auto split = splits[index];
-    if (std::all_of(split.begin(), split.end(), [] (char c) { return c == '-' || isdigit(c); })) {
-        parameters.push_back(std::stoi(split));
+    if (std::all_of(split.begin(), split.end(),
+                    [](char c) { return c == '-' || isdigit(c); })) {
+      parameters.push_back(std::stoi(split));
     } else {
       assert(split.size() == 1);
       parameters.push_back(static_cast<char>(split[0]));
     }
   }
-  return Instruction{
-    op,
-    parameters
-  };
+  return Instruction{op, parameters};
 }
 
-
-std::vector<Instruction>
-prepare_instructions(const std::vector<std::string>& input) {
+std::vector<Instruction> prepare_instructions(
+    const std::vector<std::string>& input) {
   std::vector<Instruction> instructions;
 
-  for (auto line: input) {
+  for (auto line : input) {
     instructions.push_back(prepare_instruction(line));
   }
 
   return instructions;
 }
-
 
 class CPU {
  private:
@@ -139,11 +141,10 @@ class CPU {
   const bool m_part_two;
   std::queue<int64_t> m_message_queue;
 
-  int64_t
-  get_value(const std::variant<char, int64_t>& parameter) {
+  int64_t get_value(const std::variant<char, int64_t>& parameter) {
     if (std::holds_alternative<char>(parameter)) {
-        m_registers.emplace(std::get<char>(parameter), 0);
-        return m_registers.at(std::get<char>(parameter));
+      m_registers.emplace(std::get<char>(parameter), 0);
+      return m_registers.at(std::get<char>(parameter));
     } else {
       assert(std::holds_alternative<int64_t>(parameter));
       return std::get<int64_t>(parameter);
@@ -157,12 +158,12 @@ class CPU {
     m_registers[address] = value;
   }
 
-  std::optional<int64_t>
-  execute(const Instruction& instruction) {
+  std::optional<int64_t> execute(const Instruction& instruction) {
     auto op = instruction.op;
 
     switch (op) {
-      case Op::snd: // snd X plays a sound with a frequency equal to the value of X.
+      case Op::snd:  // snd X plays a sound with a frequency equal to the value
+                     // of X.
         assert(instruction.parameters.size() == 1);
         m_sound = get_value(instruction.parameters[0]);
         m_instruction_pointer++;
@@ -170,32 +171,45 @@ class CPU {
           return m_sound.value();
         }
         break;
-      case Op::set: // set X Y sets register X to the value of Y.
+      case Op::set:  // set X Y sets register X to the value of Y.
         assert(instruction.parameters.size() == 2);
         assert(std::holds_alternative<char>(instruction.parameters[0]));
-        set_value(std::get<char>(instruction.parameters[0]), get_value(instruction.parameters[1]));
+        set_value(std::get<char>(instruction.parameters[0]),
+                  get_value(instruction.parameters[1]));
         m_instruction_pointer++;
         break;
-      case Op::add: // add X Y increases register X by the value of Y.
+      case Op::add:  // add X Y increases register X by the value of Y.
         assert(instruction.parameters.size() == 2);
-        set_value(std::get<char>(instruction.parameters[0]), get_value(instruction.parameters[0]) + get_value(instruction.parameters[1]));
+        set_value(std::get<char>(instruction.parameters[0]),
+                  get_value(instruction.parameters[0]) +
+                      get_value(instruction.parameters[1]));
         m_instruction_pointer++;
         break;
-      case Op::mul: // mul X Y sets register X to the result of multiplying the value contained in register X by the value of Y.
+      case Op::mul:  // mul X Y sets register X to the result of multiplying the
+                     // value contained in register X by the value of Y.
         assert(instruction.parameters.size() == 2);
-        set_value(std::get<char>(instruction.parameters[0]), get_value(instruction.parameters[0]) * get_value(instruction.parameters[1]));
+        set_value(std::get<char>(instruction.parameters[0]),
+                  get_value(instruction.parameters[0]) *
+                      get_value(instruction.parameters[1]));
         m_instruction_pointer++;
         break;
-      case Op::mod: // mod X Y sets register X to the remainder of dividing the value contained in register X by the value of Y (that is, it sets X to the result of X modulo Y).
+      case Op::mod:  // mod X Y sets register X to the remainder of dividing the
+                     // value contained in register X by the value of Y (that
+                     // is, it sets X to the result of X modulo Y).
         assert(instruction.parameters.size() == 2);
-        set_value(std::get<char>(instruction.parameters[0]), modulo(get_value(instruction.parameters[0]), get_value(instruction.parameters[1])));
+        set_value(std::get<char>(instruction.parameters[0]),
+                  modulo(get_value(instruction.parameters[0]),
+                         get_value(instruction.parameters[1])));
         m_instruction_pointer++;
         break;
-      case Op::rcv: // rcv X recovers the frequency of the last sound played, but only when the value of X is not zero. (If it is zero, the command does nothing.)
+      case Op::rcv:  // rcv X recovers the frequency of the last sound played,
+                     // but only when the value of X is not zero. (If it is
+                     // zero, the command does nothing.)
         assert(instruction.parameters.size() == 1);
         if (m_part_two) {
           if (!m_message_queue.empty()) {
-            set_value(std::get<char>(instruction.parameters[0]), m_message_queue.front());
+            set_value(std::get<char>(instruction.parameters[0]),
+                      m_message_queue.front());
             m_message_queue.pop();
             m_instruction_pointer++;
           }
@@ -207,7 +221,10 @@ class CPU {
           m_instruction_pointer++;
         }
         break;
-      case Op::jgz: // jgz X Y jumps with an offset of the value of Y, but only if the value of X is greater than zero. (An offset of 2 skips the next instruction, an offset of -1 jumps to the previous instruction, and so on.)
+      case Op::jgz:  // jgz X Y jumps with an offset of the value of Y, but only
+                     // if the value of X is greater than zero. (An offset of 2
+                     // skips the next instruction, an offset of -1 jumps to the
+                     // previous instruction, and so on.)
         assert(instruction.parameters.size() == 2);
         if (get_value(instruction.parameters[0]) > 0) {
           m_instruction_pointer += get_value(instruction.parameters[1]);
@@ -221,19 +238,19 @@ class CPU {
 
  public:
   explicit CPU(const std::vector<Instruction> instructions,
-               int64_t program_id = 0,
-               bool part_two = false) :
-    m_instructions(instructions),
-    m_instruction_pointer(0),
-    m_program_id(program_id),
-    m_sound(std::nullopt),
-    m_part_two(part_two) {
-      m_registers.insert({'p', m_program_id}); 
+               int64_t program_id = 0, bool part_two = false)
+      : m_instructions(instructions),
+        m_instruction_pointer(0),
+        m_program_id(program_id),
+        m_sound(std::nullopt),
+        m_part_two(part_two) {
+    m_registers.insert({'p', m_program_id});
   }
 
-  std::optional<int64_t>
-  step() {
-    // std::cout << "CPU: " << m_program_id << " -> " << m_instructions[m_instruction_pointer] << "; " << m_instruction_pointer << std::endl;
+  std::optional<int64_t> step() {
+    // std::cout << "CPU: " << m_program_id << " -> " <<
+    // m_instructions[m_instruction_pointer] << "; " << m_instruction_pointer <<
+    // std::endl;
     return execute(m_instructions[m_instruction_pointer]);
   }
 
@@ -247,17 +264,14 @@ class CPU {
   }
 
   bool is_terminated() const {
-    return m_instruction_pointer < 0 || m_instruction_pointer >= static_cast<int64_t>(m_instructions.size());
+    return m_instruction_pointer < 0 ||
+           m_instruction_pointer >= static_cast<int64_t>(m_instructions.size());
   }
 
-  void receive_message(int64_t value) {
-    m_message_queue.push(value);
-  }
+  void receive_message(int64_t value) { m_message_queue.push(value); }
 };
 
-
-auto
-part_one(const std::vector<std::string>& input) {
+auto part_one(const std::vector<std::string>& input) {
   auto instructions = prepare_instructions(input);
   CPU cpu(instructions);
 
@@ -269,19 +283,20 @@ part_one(const std::vector<std::string>& input) {
   return frequency.value();
 }
 
-
-auto
-part_two(const std::vector<std::string>& input) {
+auto part_two(const std::vector<std::string>& input) {
   auto instructions = prepare_instructions(input);
-  std::pair<CPU, CPU> cpus{CPU(instructions, 0, true), CPU(instructions, 1, true)};
+  std::pair<CPU, CPU> cpus{CPU(instructions, 0, true),
+                           CPU(instructions, 1, true)};
   std::pair<bool, bool> terminated{false, false};
   std::pair<std::optional<int64_t>, std::optional<int64_t>> messages;
 
   size_t result{0};
 
   do {
-    messages.first = cpus.first.is_terminated() ? std::nullopt : cpus.first.step();
-    messages.second = cpus.second.is_terminated() ? std::nullopt : cpus.second.step();
+    messages.first =
+        cpus.first.is_terminated() ? std::nullopt : cpus.first.step();
+    messages.second =
+        cpus.second.is_terminated() ? std::nullopt : cpus.second.step();
     result += cpus.second.is_sending();
     if (messages.first.has_value()) {
       cpus.second.receive_message(messages.first.value());
@@ -295,20 +310,18 @@ part_two(const std::vector<std::string>& input) {
       terminated.first = true;
       terminated.second = true;
     }
-
   } while (!(terminated.first && terminated.second));
 
   return result;
 }
 
-
 int main() {
   utils::Reader reader(std::filesystem::path("../2017/data/input_18.txt"));
   auto input = reader.get_lines();
 
-  auto answer_one =  part_one(input);
+  auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  auto answer_two =  part_two(input);
+  auto answer_two = part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
