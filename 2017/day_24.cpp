@@ -148,7 +148,7 @@ auto part_one(const std::vector<std::string>& input) {
     auto new_bridges = expand(bridges, components);
     if (new_bridges.size() > 0) {
       bridges = new_bridges;
-      std::cout << bridges.size() << std::endl;
+      // std::cout << bridges.size() << std::endl;
       size_t result{0};
       size_t best_index{0};
       for (size_t index{0}; index < bridges.size(); ++index) {
@@ -160,8 +160,8 @@ auto part_one(const std::vector<std::string>& input) {
         }
         // print(bridge, components);
       }
-      std::cout << "max score: " << result << std::endl;
-      print(bridges[best_index], components);
+      // std::cout << "max score: " << result << std::endl;
+      // print(bridges[best_index], components);
 
     } else {
       break;
@@ -185,8 +185,7 @@ auto part_two(const std::vector<std::string>& input) {
     if (components[index].in == 0) {
       bridges.push_back(
           std::vector<std::pair<size_t, bool>>{{std::make_pair(index, false)}});
-    }
-    if (components[index].out == 0) {
+    } else if (components[index].out == 0) {
       bridges.push_back(
           std::vector<std::pair<size_t, bool>>{{std::make_pair(index, true)}});
     }
@@ -196,7 +195,7 @@ auto part_two(const std::vector<std::string>& input) {
     auto new_bridges = expand(bridges, components, true);
     if (new_bridges.size() > 0) {
       bridges = new_bridges;
-      std::cout << bridges.size() << std::endl;
+      // std::cout << bridges.size() << std::endl;
       size_t result{0};
       size_t best_index{0};
       for (size_t index{0}; index < bridges.size(); ++index) {
@@ -208,8 +207,8 @@ auto part_two(const std::vector<std::string>& input) {
         }
         // print(bridge, components);
       }
-      std::cout << "max score: " << result << std::endl;
-      print(bridges[best_index], components);
+      // std::cout << "max score: " << result << std::endl;
+      // print(bridges[best_index], components);
 
     } else {
       break;
@@ -235,8 +234,8 @@ int main() {
   utils::Reader reader(std::filesystem::path("../2017/data/input_24.txt"));
   auto input = reader.get_lines();
 
-  // auto answer_one = part_one(input);
-  // std::cout << "The answer to part one is: " << answer_one << std::endl;
+  auto answer_one = part_one(input);
+  std::cout << "The answer to part one is: " << answer_one << std::endl;
   auto answer_two = part_two(input);
   std::cout << "The answer to part two is: " << answer_two << std::endl;
 }
