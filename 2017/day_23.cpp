@@ -115,7 +115,6 @@ class CPU {
   const int64_t m_program_id;
   std::map<char, int64_t> m_registers;
   std::optional<int64_t> m_sound;
-  const bool m_part_two;
   std::queue<int64_t> m_message_queue;
   size_t m_num_mul;
 
@@ -129,11 +128,6 @@ class CPU {
     }
 
     throw std::runtime_error("Failed to obtain value!");
-  }
-
-  void set_value(char address, int64_t value) {
-    m_registers.emplace(address, 0);
-    m_registers[address] = value;
   }
 
   void execute(const Instruction& instruction) {
@@ -179,21 +173,25 @@ class CPU {
 
  public:
   explicit CPU(const std::vector<Instruction> instructions,
-               int64_t program_id = 0, bool part_two = false)
+               int64_t program_id = 0)
       : m_instructions(instructions),
         m_instruction_pointer(0),
         m_program_id(program_id),
         m_sound(std::nullopt),
-        m_part_two(part_two),
         m_num_mul(0) {
     m_registers.insert({'p', m_program_id});
+  }
+
+  void set_value(char address, int64_t value) {
+    m_registers.emplace(address, 0);
+    m_registers[address] = value;
   }
 
   void step() {
     // std::cout << "CPU: " << m_program_id << " -> " <<
     // m_instructions[m_instruction_pointer] << "; " << m_instruction_pointer <<
     // std::endl;
-    if (m_instruction_pointer < m_instructions.size()) {
+    if (static_cast<size_t>(m_instruction_pointer) < m_instructions.size()) {
       execute(m_instructions[m_instruction_pointer]);
     }
   }
@@ -219,37 +217,24 @@ auto part_one(const std::vector<std::string>& input) {
   return cpu.num_mul_ops();
 }
 
-// auto part_two(const std::vector<std::string>& input) {
-//   auto instructions = prepare_instructions(input);
-//   std::pair<CPU, CPU> cpus{CPU(instructions, 0, true),
-//                            CPU(instructions, 1, true)};
-//   std::pair<bool, bool> terminated{false, false};
-//   std::pair<std::optional<int64_t>, std::optional<int64_t>> messages;
-//
-//   size_t result{0};
-//
-//   do {
-//     messages.first =
-//         cpus.first.is_terminated() ? std::nullopt : cpus.first.step();
-//     messages.second =
-//         cpus.second.is_terminated() ? std::nullopt : cpus.second.step();
-//     result += cpus.second.is_sending();
-//     if (messages.first.has_value()) {
-//       cpus.second.receive_message(messages.first.value());
-//     }
-//     if (messages.second.has_value()) {
-//       cpus.first.receive_message(messages.second.value());
-//     }
-//     terminated.first = cpus.first.is_terminated();
-//     terminated.second = cpus.second.is_terminated();
-//     if (cpus.first.is_waiting() && cpus.second.is_waiting()) {
-//       terminated.first = true;
-//       terminated.second = true;
-//     }
-//   } while (!(terminated.first && terminated.second));
-//
-//   return result;
-// }
+auto part_two(const std::vector<std::string>& input) {
+  size_t h{0};  // reverse-engineering program
+  size_t offset =
+      std::stoull(utils::split_string(input[0], ' ')[2]);  // set b `offset`
+  for (size_t b{(offset * 100) + 100000}; b <= (offset * 100) + 100000 + 17000;
+       b += 17) {
+    bool is_composite{false};
+    for (size_t factor{2}; !is_composite && factor < b / 2; ++factor) {
+      if (b % factor == 0) {
+        is_composite = true;
+      }
+    }
+    if (is_composite) {
+      ++h;
+    }
+  }
+  return h;
+}
 
 int main() {
   utils::Reader reader(std::filesystem::path("../2017/data/input_23.txt"));
@@ -257,7 +242,7 @@ int main() {
 
   auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  // auto answer_two = part_two(input);
-  // std::cout << "The answer to part two is: " << answer_two << std::endl;
+  auto answer_two = part_two(input);
+  std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
