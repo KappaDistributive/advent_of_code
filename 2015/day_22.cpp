@@ -27,6 +27,31 @@ enum class Spell {
   recharge,
 };
 
+std::ostream& operator<<(std::ostream& os, const Spell spell) {
+  switch (spell) {
+    case Spell::magic_missile:
+      os << "Magic Missile";
+      break;
+    case Spell::drain:
+      os << "Drain";
+      break;
+    case Spell::shield:
+      os << "Shield";
+      break;
+    case Spell::poison:
+      os << "Poison";
+      break;
+    case Spell::recharge:
+      os << "Recharge";
+      break;
+    default:
+      throw std::runtime_error("This should never happen!");
+      break;
+  }
+
+  return os;
+}
+
 static const Spell ALL_SPELLS[] = {
     Spell::magic_missile, Spell::drain,    Spell::shield,
     Spell::poison,        Spell::recharge,
@@ -83,6 +108,25 @@ enum class Effect {
   poison,
   recharge,
 };
+
+std::ostream& operator<<(std::ostream& os, const Effect effect) {
+  switch (effect) {
+    case Effect::shield:
+      os << "Shield";
+      break;
+    case Effect::poison:
+      os << "Poison";
+      break;
+    case Effect::recharge:
+      os << "Recharge";
+      break;
+    default:
+      throw std::runtime_error("This should never happen!");
+      break;
+  }
+
+  return os;
+}
 
 static const Effect ALL_EFFECTS[] = {
     Effect::shield,
@@ -162,7 +206,17 @@ class Mob {
     os << "Mob     # "                       // NOLINT
        << " Name: " << mob.m_name            // NOLINT
        << " # Health: " << mob.m_hit_points  // NOLINT
-       << " Armor: " << mob.m_hit_points;    // NOLINT
+       << " Armor: " << mob.m_hit_points     // NOLINT
+       << " Effects: ";                      // NOLINT
+    for (auto it = mob.m_effects.begin(); it != mob.m_effects.end(); ++it) {
+      auto [effect, stats] = *it;
+      if (stats.duration > 0) {
+        os << effect << "(" << stats.duration << ")";
+        if (std::next(it) != mob.m_effects.end()) {
+          os << ", ";
+        }
+      }
+    }
     return os;
   }
 };
@@ -182,7 +236,19 @@ class Warrior : public Mob {
        << " Name: " << warrior.m_name          // NOLINT
        << " Health: " << warrior.m_hit_points  // NOLINT
        << " Armor: " << warrior.armor()        // NOLINT
-       << " Attack: " << warrior.m_attack;     // NOLINT
+       << " Attack: " << warrior.m_attack      // NOLINT
+       << " Effects: ";                        // NOLINT
+    for (auto it = warrior.m_effects.begin(); it != warrior.m_effects.end();
+         ++it) {
+      auto [effect, stats] = *it;
+      if (stats.duration > 0) {
+        os << effect << "(" << stats.duration << ")";
+        if (std::next(it) != warrior.m_effects.end()) {
+          os << ", ";
+        }
+      }
+    }
+
     return os;
   }
 };
@@ -241,7 +307,19 @@ class Wizard : public Mob {
        << " Name: " << wizard.m_name          // NOLINT
        << " Health: " << wizard.m_hit_points  // NOLINT
        << " Armor: " << wizard.armor()        // NOLINT
-       << " Mana: " << wizard.m_mana;         // NOLINT
+       << " Mana: " << wizard.m_mana          // NOLINT
+       << " Effects: ";                       // NOLINT
+    for (auto it = wizard.m_effects.begin(); it != wizard.m_effects.end();
+         ++it) {
+      auto [effect, stats] = *it;
+      if (stats.duration > 0) {
+        os << effect << "(" << stats.duration << ")";
+        if (std::next(it) != wizard.m_effects.end()) {
+          os << ", ";
+        }
+      }
+    }
+
     return os;
   }
 };
@@ -252,7 +330,7 @@ auto part_one(const std::vector<std::string>& input) {
   Wizard hero("Hero", 50, 0, 500);
   std::cout << villain << std::endl;
   std::cout << hero << std::endl;
-  hero.cast_spell(Spell::magic_missile, &villain);
+  hero.cast_spell(Spell::poison, &villain);
   std::cout << villain << std::endl;
   std::cout << hero << std::endl;
   return hit_points * damage;
