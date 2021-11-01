@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cassert>
 
 #include "../utils/input.hpp"
@@ -94,11 +95,11 @@ class LumberArea {
       for (int x{0}; x < static_cast<int>(this->m_width); ++x) {
         Position position{x, y};
         auto neigbhors = this->adjacent_acres(position);
-        std::cerr << position << std::endl;
-        for (auto neighbor : neigbhors) {
-          std::cerr << "`" << neighbor << "` ";
-        }
-        std::cerr << std::endl;
+        // std::cerr << position << std::endl;
+        // for (auto neighbor : neigbhors) {
+        //   std::cerr << "`" << neighbor << "` ";
+        // }
+        // std::cerr << std::endl;
         size_t num_open{0}, num_tree{0}, num_lumberyard{0};
         for (auto neighbor : neigbhors) {
           switch (neighbor) {
@@ -137,6 +138,10 @@ class LumberArea {
 
     assert(this->m_grid.size() == grid.size());
     this->m_grid = grid;
+  }
+
+  std::vector<char> grid() const noexcept {
+    return this->m_grid;
   }
 
   size_t resource_value() const noexcept {
@@ -178,10 +183,28 @@ auto part_one(const std::vector<std::string>& input) {
   return area.resource_value();
 }
 
-// auto
-// part_two(const std::vector<std::string>& input) {
-//   return 2;
-// }
+auto part_two(const std::vector<std::string>& input) {
+  LumberArea area(input);
+  std::vector<std::pair<std::vector<char>, size_t>> history;
+  history.push_back(std::make_pair(area.grid(), area.resource_value()));
+  size_t duplicate_offset{0};
+  size_t cycle_length{0};
+  while (true) {
+    area.step();
+    auto grid = area.grid();
+    auto score = area.resource_value();
+    auto find_result = std::find(history.begin(), history.end(), std::make_pair(grid, score));
+    if (find_result == history.end()) {
+      history.push_back(std::make_pair(area.grid(), area.resource_value()));
+    } else {
+      duplicate_offset = find_result - history.begin();
+      cycle_length = history.size() - duplicate_offset;
+      break;
+    }
+  }
+  return std::get<1>(history[duplicate_offset + ((1000000000 - duplicate_offset) % cycle_length)]);
+}
+
 
 int main() {
   // utils::Reader reader(std::filesystem::path("../2018/data/input_18_mock.txt"));
@@ -190,8 +213,8 @@ int main() {
 
   auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  // auto answer_two =  part_two(input);
-  // std::cout << "The answer to part two is: " << answer_two << std::endl;
+  auto answer_two =  part_two(input);
+  std::cout << "The answer to part two is: " << answer_two << std::endl;
 
   return 0;
 }
