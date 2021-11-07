@@ -17,6 +17,10 @@ if (GTEST_FOUND)
   enable_testing()
   include_directories(${GTEST_INCLUDE_DIRS})
 
+  add_executable(GeometryUnitTests tests/GeometryUnitTests.cpp)
+  target_link_libraries(GeometryUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
+  GTEST_DISCOVER_TESTS(GeometryUnitTests)
+
   add_executable(HexgridUnitTests tests/HexgridUnitTests.cpp)
   target_link_libraries(HexgridUnitTests ${GTEST_BOTH_LIBRARIES} pthread input hexgrid)
   GTEST_DISCOVER_TESTS(HexgridUnitTests)
