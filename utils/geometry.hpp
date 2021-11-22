@@ -15,12 +15,14 @@ class Point {
   Point<T, d>(const std::vector<T>& coordinates);
   Point<T, d>(const std::array<T, d>& coordinates);
 
-
   Point<T, d>(const Point<T, d>& point);
 
   ~Point<T, d>() = default;
 
   bool operator==(const Point<T, d>& rhs) const;
+
+  template <typename T_, size_t d_>
+  friend Point<T_, d_> operator+(const Point<T_, d_>& lhs, const Point<T_, d_>& rhs);
 
   template<typename T_, size_t d_>
   friend std::ostream& operator<<(std::ostream&, const Point<T_, d_>& point);

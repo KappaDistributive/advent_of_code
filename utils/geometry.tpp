@@ -22,6 +22,19 @@ bool Point<T, d>::operator==(const Point<T, d>& other) const {
 }
 
 template<typename T, size_t d>
+Point<T, d> operator+ (const Point<T, d>& lhs, const Point<T, d>& rhs) {
+  assert(lhs.m_coordinates.size() == d);
+  assert(rhs.m_coordinates.size() == d);
+  
+  std::array<T, d> coordinates;
+  for (size_t index{0}; index < d; ++ index) {
+    coordinates[index] = lhs.m_coordinates[index] + rhs.m_coordinates[index];
+  }
+  Point<T, d> result(coordinates);
+  return result;
+}
+
+template<typename T, size_t d>
 std::ostream& operator<<(std::ostream& os, const Point<T, d>& point) {
   os << '(';
   for (auto it{point.m_coordinates.begin()}; it != point.m_coordinates.end(); ++it) {
