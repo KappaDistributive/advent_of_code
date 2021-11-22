@@ -38,8 +38,7 @@ struct NanoBot {
   }
 
   bool is_in_range(NanoBot other) const noexcept {
-    return utils::geometry::manhatten_distance(this->position,
-                                               other.position) <= this->radius;
+    return static_cast<size_t>(this->position.manhatten_distance(other.position)) <= this->radius;
   }
 };
 

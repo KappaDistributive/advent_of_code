@@ -60,13 +60,12 @@ std::ostream& operator<<(std::ostream& os, const Point<T, d>& point) {
 }
 
 template <typename T, size_t d>
-size_t manhatten_distance(const Point<T, d>& origin,
-                          const Point<T, d>& destination) {
-  size_t distance{0};
-  auto lhs = origin.coordinates();
-  auto rhs = destination.coordinates();
+T Point<T, d>::manhatten_distance(const Point<T, d>& other) const{
+  T distance{0};
+  auto lhs = this->coordinates();
+  auto rhs = other.coordinates();
   for (size_t index{0}; index < d; ++index) {
-    distance += static_cast<size_t>(std::abs(lhs[index] - rhs[index]));
+    distance += static_cast<T>(std::abs(lhs[index] - rhs[index]));
   }
 
   return distance;
@@ -84,6 +83,14 @@ template <typename T, size_t d>
 T Cube<T, d>::radius() const noexcept {
   return this->m_radius;
 }
+
+// template <typename T, size_t d>
+// std::optional<Cube<T, d>> intersect(const Cube<T, d>& other) const {
+//   if (manhatten_distance(this->center(), other.center()) > this->radius() + other.radius()) {
+//     return std::nullptr;
+//   }
+// 
+// }
 
 template <typename T, size_t d>
 bool Cube<T, d>::operator==(const Cube<T, d>& rhs) const noexcept

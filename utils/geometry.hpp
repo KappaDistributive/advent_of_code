@@ -25,6 +25,8 @@ class Point {
   bool operator==(const Point<T, d>& rhs) const;
   std::array<T, d> coordinates() const;
 
+  T manhatten_distance(const Point<T, d>& other) const;
+
   template <typename T_, size_t d_>
   friend Point<T_, d_> operator+(const Point<T_, d_>& lhs,
                                  const Point<T_, d_>& rhs);
@@ -50,7 +52,7 @@ class Cube {
 
   T radius() const noexcept;
 
-  // std::optional<Cube> intersect(const Cube<T, d>& other);
+  // std::optional<Cube> intersect(const Cube<T, d>& other) const;
 
   bool operator==(const Cube<T, d>& rhs) const noexcept;
 
