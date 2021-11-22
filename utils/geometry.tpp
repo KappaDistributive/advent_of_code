@@ -72,5 +72,15 @@ size_t manhatten_distance(const Point<T, d>& origin,
   return distance;
 }
 
+template <typename T, size_t d>
+Cube<T, d>::Cube() : m_center(Point<T, d>()), m_radius(0) {};
+
+template <typename T_, size_t d_>
+std::ostream& operator<<(std::ostream& os, const Cube<T_, d_>& cube) {
+  os << "Center: " << cube.m_center << " Radius: " << cube.m_radius;
+
+  return os;
+}
+
 }  // namespace geometry
 }  // namespace utils

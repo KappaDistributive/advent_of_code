@@ -1,4 +1,4 @@
-#pragma  once
+#pragma once
 
 #include <array>
 #include <iostream>
@@ -7,10 +7,11 @@
 namespace utils {
 namespace geometry {
 
-template<typename T, size_t d>
+template <typename T, size_t d>
 class Point {
  private:
   std::array<T, d> m_coordinates;
+
  public:
   Point<T, d>();
   Point<T, d>(const std::vector<T>& coordinates);
@@ -24,14 +25,33 @@ class Point {
   std::array<T, d> coordinates() const;
 
   template <typename T_, size_t d_>
-  friend Point<T_, d_> operator+(const Point<T_, d_>& lhs, const Point<T_, d_>& rhs);
+  friend Point<T_, d_> operator+(const Point<T_, d_>& lhs,
+                                 const Point<T_, d_>& rhs);
 
-  template<typename T_, size_t d_>
+  template <typename T_, size_t d_>
   friend std::ostream& operator<<(std::ostream&, const Point<T_, d_>& point);
 };
 
-template<typename T, size_t d>
-size_t manhatten_distance(const Point<T, d>& origin, const Point<T, d>& destination);
+template <typename T, size_t d>
+size_t manhatten_distance(const Point<T, d>& origin,
+                          const Point<T, d>& destination);
+
+template <typename T, size_t d>
+class Cube {
+ private:
+  Point<T, d> m_center;
+  T m_radius;
+
+ public:
+  Cube<T, d>();
+
+  Point<T, d> center() const noexcept { return m_center; }
+
+  T radius() const noexcept { return m_radius; }
+
+  template <typename T_, size_t d_>
+  friend std::ostream& operator<<(std::ostream& os, const Cube<T_, d_>& cube);
+};
 
 }  // namespace geometry
 }  // namespace utils

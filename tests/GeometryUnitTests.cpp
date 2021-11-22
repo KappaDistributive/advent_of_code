@@ -5,6 +5,7 @@
 #include "../utils/geometry.hpp"
 
 namespace geometry {
+using utils::geometry::Cube;
 using utils::geometry::Point;
 
 TEST(Point, DefaultConstructor) {
@@ -65,6 +66,15 @@ TEST(Point, Addition) {
 
   auto got = lhs + rhs;
   Point<int, 3> want(std::vector<int>{5, 7, 9});
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(Cube, DefaultConstrutorCenter) {
+  Cube<int, 3> cube;
+
+  Point<int, 3> want(std::vector<int>{0, 0, 0});
+  auto got = cube.center();
 
   EXPECT_EQ(want, got);
 }
