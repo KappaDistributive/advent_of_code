@@ -2,6 +2,7 @@
 
 #include <array>
 #include <iostream>
+#include <optional>
 #include <vector>
 
 namespace utils {
@@ -45,9 +46,13 @@ class Cube {
  public:
   Cube<T, d>();
 
-  Point<T, d> center() const noexcept { return m_center; }
+  Point<T, d> center() const noexcept;
 
-  T radius() const noexcept { return m_radius; }
+  T radius() const noexcept;
+
+  // std::optional<Cube> intersect(const Cube<T, d>& other);
+
+  bool operator==(const Cube<T, d>& rhs) const noexcept;
 
   template <typename T_, size_t d_>
   friend std::ostream& operator<<(std::ostream& os, const Cube<T_, d_>& cube);

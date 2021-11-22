@@ -73,7 +73,21 @@ size_t manhatten_distance(const Point<T, d>& origin,
 }
 
 template <typename T, size_t d>
-Cube<T, d>::Cube() : m_center(Point<T, d>()), m_radius(0) {};
+Cube<T, d>::Cube() : m_center(Point<T, d>()), m_radius(0){};
+
+template <typename T, size_t d>
+Point<T, d> Cube<T, d>::center() const noexcept {
+  return this->m_center;
+}
+
+template <typename T, size_t d>
+T Cube<T, d>::radius() const noexcept {
+  return this->m_radius;
+}
+
+template <typename T, size_t d>
+bool Cube<T, d>::operator==(const Cube<T, d>& rhs) const noexcept
+{ return this->center() == rhs.center() && this->radius() == rhs.radius(); }
 
 template <typename T_, size_t d_>
 std::ostream& operator<<(std::ostream& os, const Cube<T_, d_>& cube) {
