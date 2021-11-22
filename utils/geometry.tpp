@@ -85,9 +85,15 @@ RasterCuboid<T, d>::RasterCuboid() : m_base(Point<T, d>()) {
 //   }
 // }
 
-// Point<T, d> corner(std::bitset<d> corner) const noexcept {
-//   Point<T, d> result = this->m_base;
-// }
+template <typename T, size_t d>
+Point<T, d> RasterCuboid<T, d>::corner(std::bitset<d> corner) const {
+  std::array<T, d> offset;
+  for (size_t index{0}; index < d; ++index) {
+    offset[index] = corner[d - index - 1] ? this->m_lengths[index] : 0;
+  }
+
+  return this->m_base + Point<T, d>(offset);
+}
 
 template <typename T, size_t d>
 bool RasterCuboid<T, d>::operator==(

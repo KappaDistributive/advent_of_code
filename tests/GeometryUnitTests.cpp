@@ -80,4 +80,24 @@ TEST(RasterCuboid, Representation) {
   EXPECT_EQ(want, got);
 }
 
+TEST(RasterCuboid, Corner) {
+  RasterCuboid<int, 3> cuboid;
+  std::vector<Point<int, 3>> wants{
+      {Point<int, 3>(std::array<int, 3>{0, 0, 0}),
+       Point<int, 3>(std::array<int, 3>{0, 0, 1}),
+       Point<int, 3>(std::array<int, 3>{0, 1, 0}),
+       Point<int, 3>(std::array<int, 3>{0, 1, 1}),
+       Point<int, 3>(std::array<int, 3>{1, 0, 0}),
+       Point<int, 3>(std::array<int, 3>{1, 0, 1}),
+       Point<int, 3>(std::array<int, 3>{1, 1, 0}),
+       Point<int, 3>(std::array<int, 3>{1, 1, 1})}};
+
+  for (int corner{0}; corner < 8; ++corner) {
+    std::cerr << std::bitset<3>(corner) << std::endl;
+    auto want = wants[corner];
+    auto got = cuboid.corner(std::bitset<3>(corner));
+    EXPECT_EQ(want, got);
+  }
+}
+
 }  // namespace geometry

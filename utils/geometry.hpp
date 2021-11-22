@@ -56,17 +56,16 @@ constexpr size_t num_corners = constexpr_pow(2, d);
 template <typename T, size_t d>
 class RasterCuboid {
  private:
-  Point<T, d> m_base;  // lexicographically-minimal corner
+  Point<T, d> m_base;          // lexicographically-minimal corner
   std::array<T, d> m_lengths;  // lengths alogn Cartesian coordinate axes
 
  public:
   // creates the `unit RasterCuboid`
   RasterCuboid<T, d>();
 
-  Point<T, d> corner(std::bitset<d> corner) const noexcept;
+  Point<T, d> corner(std::bitset<d> corner) const;
 
-  // std::optional<RasterCuboid> intersect(const RasterCuboid<T, d>& other)
-  // const;
+  std::optional<RasterCuboid> intersect(const RasterCuboid<T, d>& other) const noexcept;
 
   bool operator==(const RasterCuboid<T, d>& rhs) const noexcept;
 
