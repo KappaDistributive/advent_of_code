@@ -5,8 +5,8 @@
 #include "../utils/geometry.hpp"
 
 namespace geometry {
-using utils::geometry::RasterCuboid;
 using utils::geometry::Point;
+using utils::geometry::RasterCuboid;
 
 TEST(Point, DefaultConstructor) {
   Point<int, 3> point;
@@ -70,7 +70,6 @@ TEST(Point, Addition) {
   EXPECT_EQ(want, got);
 }
 
-
 TEST(RasterCuboid, Representation) {
   RasterCuboid<int, 3> cuboid;
   std::string want{"Base: (0, 0, 0) Lengths: (1, 1)"};
@@ -80,6 +79,5 @@ TEST(RasterCuboid, Representation) {
 
   EXPECT_EQ(want, got);
 }
-
 
 }  // namespace geometry

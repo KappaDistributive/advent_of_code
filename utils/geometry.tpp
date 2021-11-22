@@ -77,7 +77,8 @@ RasterCuboid<T, d>::RasterCuboid() : m_base(Point<T, d>()) {
 };
 
 // template <typename T, size_t d>
-// std::optional<RasterCuboid<T, d>> intersect(const RasterCuboid<T, d>& other) const {
+// std::optional<RasterCuboid<T, d>> intersect(const RasterCuboid<T, d>& other)
+// const {
 //   if (this->manhatten_distance(other.center()) >
 //       this->radius() + other.radius()) {
 //     return std::nullptr;
@@ -85,7 +86,8 @@ RasterCuboid<T, d>::RasterCuboid() : m_base(Point<T, d>()) {
 // }
 
 template <typename T, size_t d>
-bool RasterCuboid<T, d>::operator==(const RasterCuboid<T, d>& rhs) const noexcept {
+bool RasterCuboid<T, d>::operator==(
+    const RasterCuboid<T, d>& rhs) const noexcept {
   return this->m_base == rhs.m_base && this->m_lengths == rhs.m_lengths;
 }
 
@@ -93,7 +95,7 @@ template <typename T_, size_t d_>
 std::ostream& operator<<(std::ostream& os, const RasterCuboid<T_, d_>& cuboid) {
   os << "Base: " << cuboid.m_base << " Lengths: (";
   for (size_t dimension{1}; dimension < d_; ++dimension) {
-    os << cuboid.m_lengths[dimension -1];
+    os << cuboid.m_lengths[dimension - 1];
     os << ((dimension + 1 < d_) ? ", " : ")");
   }
 
