@@ -63,6 +63,34 @@ class RasterCuboid {
   // creates the `unit RasterCuboid`
   RasterCuboid<T, d>();
 
+  // The i-th entry in the bitset of a corner (from left to right) specifies the i-th dimension
+  // in a Cartesian coordinate system.
+  // In the example below, corners are labeled with their (x,y,z)-offsets:
+  //        ┌──────────────────────────────────┐
+  //       /│011                              /│111
+  //      / │                                / │
+  //     /  │                               /  │
+  //    /   │                              /   │
+  //   /                                  /    │
+  //  ┌──────────────────────────────────┐     │
+  //  │010                               │110  │
+  //  │     │                            │     │
+  //  │     │                            │     │
+  //  │     │                            │     │
+  //  │     │                            │     │
+  //  │     │                            │     │
+  //  │     │                            │     │
+  //  │     │                            │     │
+  //  │     │                            │     │
+  //  │     │                            │     │
+  //  │     └─────────────────────────── │ ────┘
+  //  │    / 001                         │    / 101
+  //  │   /                              │   /
+  //  │  /                               │  /
+  //  │ /                                │ /
+  //  │/                                 │/
+  //  └──────────────────────────────────┘
+  //   000                                100
   Point<T, d> corner(std::bitset<d> corner) const;
 
   std::optional<RasterCuboid> intersect(const RasterCuboid<T, d>& other) const noexcept;
