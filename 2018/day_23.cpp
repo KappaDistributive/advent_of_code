@@ -74,9 +74,9 @@ auto part_one(const std::vector<std::string>& input) {
 // auto part_two(const std::vector<std::string>& input) { return 8; }
 
 int main() {
-  // utils::Reader
-  // reader(std::filesystem::path("../2018/data/input_23_mock.txt"));
-  utils::Reader reader(std::filesystem::path("../2018/data/input_23.txt"));
+  // std::filesystem::path input_path{"../2018/data/input_23_mock.txt"};
+  std::filesystem::path input_path{"../2018/data/input_23.txt"};
+  utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
   auto answer_one = part_one(input);
