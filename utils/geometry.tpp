@@ -72,7 +72,9 @@ T Point<T, d>::manhatten_distance(const Point<T, d>& other) const {
 }
 
 template <typename T, size_t d>
-RasterCuboid<T, d>::RasterCuboid() : m_base(Point<T, d>()), m_lengths(std::array<T, d-1>()){};
+RasterCuboid<T, d>::RasterCuboid() : m_base(Point<T, d>()) {
+  std::fill(this->m_lengths.begin(), this->m_lengths.end(), 1);
+};
 
 // template <typename T, size_t d>
 // std::optional<RasterCuboid<T, d>> intersect(const RasterCuboid<T, d>& other) const {

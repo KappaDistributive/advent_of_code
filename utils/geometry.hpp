@@ -58,14 +58,14 @@ class RasterCuboid {
   std::array<T, d-1> m_lengths;
 
  public:
+  // creates the `unit RasterCuboid`
   RasterCuboid<T, d>();
-  RasterCuboid<T, d>(const std::array<Point<T, d>, d>& corners);
 
-  // std::array<Point<T, d>, num_corners<d>> corners() const noexcept;
-
-  Point<T, d> operator[](std::bitset<d> corner) const noexcept;
+  Point<T, d> corner(std::bitset<d> corner) const noexcept;
 
   // std::optional<RasterCuboid> intersect(const RasterCuboid<T, d>& other) const;
+
+  
 
   bool operator==(const RasterCuboid<T, d>& rhs) const noexcept;
 
