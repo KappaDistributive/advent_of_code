@@ -2,8 +2,8 @@
 #include <cassert>
 #include <regex>  // NOLINT
 
-#include "../utils/input.hpp"
 #include "../utils/geometry.hpp"
+#include "../utils/input.hpp"
 
 #ifdef DEBUG
 #define DBGVAR(os, var)                                                    \
@@ -18,8 +18,7 @@
 static const std::regex bot_regex{
     "pos=<(-?\\d+),(-?\\d+),(-?\\d+)>, r=(-?\\d+)"};
 
-
-using Position  = utils::geometry::Point<int, 3>;
+using Position = utils::geometry::Point<int, 3>;
 
 struct NanoBot {
   Position position;
@@ -39,7 +38,8 @@ struct NanoBot {
   }
 
   bool is_in_range(NanoBot other) const noexcept {
-    return utils::geometry::manhatten_distance(this->position, other.position) <= this->radius;
+    return utils::geometry::manhatten_distance(this->position,
+                                               other.position) <= this->radius;
   }
 };
 
@@ -74,7 +74,8 @@ auto part_one(const std::vector<std::string>& input) {
 // auto part_two(const std::vector<std::string>& input) { return 8; }
 
 int main() {
-  // utils::Reader reader(std::filesystem::path("../2018/data/input_23_mock.txt"));
+  // utils::Reader
+  // reader(std::filesystem::path("../2018/data/input_23_mock.txt"));
   utils::Reader reader(std::filesystem::path("../2018/data/input_23.txt"));
   auto input = reader.get_lines();
 

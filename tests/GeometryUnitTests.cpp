@@ -7,7 +7,6 @@
 namespace geometry {
 using utils::geometry::Point;
 
-
 TEST(Point, DefaultConstructor) {
   Point<int, 3> point;
   auto got = point.coordinates();
@@ -15,6 +14,7 @@ TEST(Point, DefaultConstructor) {
 
   EXPECT_EQ(want, got);
 }
+
 TEST(Point, Coordinates) {
   Point<int, 3> point(std::array<int, 3>{1, 2, 3});
   auto got = point.coordinates();
