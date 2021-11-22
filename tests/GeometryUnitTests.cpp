@@ -5,7 +5,7 @@
 #include "../utils/geometry.hpp"
 
 namespace geometry {
-using utils::geometry::Cube;
+using utils::geometry::RasterCuboid;
 using utils::geometry::Point;
 
 TEST(Point, DefaultConstructor) {
@@ -70,13 +70,16 @@ TEST(Point, Addition) {
   EXPECT_EQ(want, got);
 }
 
-TEST(Cube, DefaultConstrutorCenter) {
-  Cube<int, 3> cube;
 
-  Point<int, 3> want(std::vector<int>{0, 0, 0});
-  auto got = cube.center();
+TEST(RasterCuboid, Representation) {
+  RasterCuboid<int, 3> cuboid;
+  std::string want{"Base: (0, 0, 0) Lengths: (0, 0)"};
+  std::stringstream ss;
+  ss << cuboid;
+  std::string got{ss.str()};
 
   EXPECT_EQ(want, got);
 }
+
 
 }  // namespace geometry

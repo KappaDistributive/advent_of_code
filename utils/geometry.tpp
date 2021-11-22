@@ -60,7 +60,7 @@ std::ostream& operator<<(std::ostream& os, const Point<T, d>& point) {
 }
 
 template <typename T, size_t d>
-T Point<T, d>::manhatten_distance(const Point<T, d>& other) const{
+T Point<T, d>::manhatten_distance(const Point<T, d>& other) const {
   T distance{0};
   auto lhs = this->coordinates();
   auto rhs = other.coordinates();
@@ -72,33 +72,28 @@ T Point<T, d>::manhatten_distance(const Point<T, d>& other) const{
 }
 
 template <typename T, size_t d>
-Cube<T, d>::Cube() : m_center(Point<T, d>()), m_radius(0){};
-
-template <typename T, size_t d>
-Point<T, d> Cube<T, d>::center() const noexcept {
-  return this->m_center;
-}
-
-template <typename T, size_t d>
-T Cube<T, d>::radius() const noexcept {
-  return this->m_radius;
-}
+RasterCuboid<T, d>::RasterCuboid() : m_base(Point<T, d>()), m_lengths(std::array<T, d-1>()){};
 
 // template <typename T, size_t d>
-// std::optional<Cube<T, d>> intersect(const Cube<T, d>& other) const {
-//   if (manhatten_distance(this->center(), other.center()) > this->radius() + other.radius()) {
+// std::optional<RasterCuboid<T, d>> intersect(const RasterCuboid<T, d>& other) const {
+//   if (this->manhatten_distance(other.center()) >
+//       this->radius() + other.radius()) {
 //     return std::nullptr;
 //   }
-// 
 // }
 
 template <typename T, size_t d>
-bool Cube<T, d>::operator==(const Cube<T, d>& rhs) const noexcept
-{ return this->center() == rhs.center() && this->radius() == rhs.radius(); }
+bool RasterCuboid<T, d>::operator==(const RasterCuboid<T, d>& rhs) const noexcept {
+  return this->m_base == rhs.m_base && this->m_lengths == rhs.m_lengths;
+}
 
 template <typename T_, size_t d_>
-std::ostream& operator<<(std::ostream& os, const Cube<T_, d_>& cube) {
-  os << "Center: " << cube.m_center << " Radius: " << cube.m_radius;
+std::ostream& operator<<(std::ostream& os, const RasterCuboid<T_, d_>& cuboid) {
+  os << "Base: " << cuboid.m_base << " Lengths: (";
+  for (size_t dimension{1}; dimension < d_; ++dimension) {
+    os << cuboid.m_lengths[dimension -1];
+    os << ((dimension + 1 < d_) ? ", " : ")");
+  }
 
   return os;
 }

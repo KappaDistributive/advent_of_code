@@ -1,9 +1,11 @@
 #pragma once
 
 #include <array>
+#include <bitset>
 #include <iostream>
 #include <optional>
 #include <vector>
+#include <set>
 
 namespace utils {
 namespace geometry {
@@ -39,25 +41,37 @@ template <typename T, size_t d>
 size_t manhatten_distance(const Point<T, d>& origin,
                           const Point<T, d>& destination);
 
+template <typename T>
+constexpr auto constexpr_pow(T base, unsigned int exponent) -> decltype(base + 1) {
+  return exponent ? base * constexpr_pow(base, exponent - 1) : 1;
+}
+
+template <size_t d>
+constexpr size_t num_corners = constexpr_pow(2, d);
+
+// A RasterCuboid is a Cuboid whose faces are parallel with those of the Cartesian coordinate system.
+// In other words: Any RasterCuboid can be obtained by scaling and shifting the UnitCuboid, without rotation.
 template <typename T, size_t d>
-class Cube {
+class RasterCuboid {
  private:
-  Point<T, d> m_center;
-  T m_radius;
+  Point<T, d> m_base;  // lexicographically-minimal corner
+  std::array<T, d-1> m_lengths;
 
  public:
-  Cube<T, d>();
+  RasterCuboid<T, d>();
+  RasterCuboid<T, d>(const std::array<Point<T, d>, d>& corners);
 
-  Point<T, d> center() const noexcept;
+  // std::array<Point<T, d>, num_corners<d>> corners() const noexcept;
 
-  T radius() const noexcept;
+  Point<T, d> operator[](std::bitset<d> corner) const noexcept;
 
-  // std::optional<Cube> intersect(const Cube<T, d>& other) const;
+  // std::optional<RasterCuboid> intersect(const RasterCuboid<T, d>& other) const;
 
-  bool operator==(const Cube<T, d>& rhs) const noexcept;
+  bool operator==(const RasterCuboid<T, d>& rhs) const noexcept;
 
   template <typename T_, size_t d_>
-  friend std::ostream& operator<<(std::ostream& os, const Cube<T_, d_>& cube);
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const RasterCuboid<T_, d_>& RasterCuboid);
 };
 
 }  // namespace geometry
