@@ -72,7 +72,7 @@ TEST(Point, Addition) {
 
 TEST(RasterCuboid, Representation) {
   RasterCuboid<int, 3> cuboid;
-  std::string want{"Base: (0, 0, 0) Lengths: (1, 1)"};
+  std::string want{"Base: (0, 0, 0) Lengths: (1, 1, 1)"};
   std::stringstream ss;
   ss << cuboid;
   std::string got{ss.str()};

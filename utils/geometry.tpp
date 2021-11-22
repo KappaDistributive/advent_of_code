@@ -85,6 +85,10 @@ RasterCuboid<T, d>::RasterCuboid() : m_base(Point<T, d>()) {
 //   }
 // }
 
+// Point<T, d> corner(std::bitset<d> corner) const noexcept {
+//   Point<T, d> result = this->m_base;
+// }
+
 template <typename T, size_t d>
 bool RasterCuboid<T, d>::operator==(
     const RasterCuboid<T, d>& rhs) const noexcept {
@@ -94,8 +98,8 @@ bool RasterCuboid<T, d>::operator==(
 template <typename T_, size_t d_>
 std::ostream& operator<<(std::ostream& os, const RasterCuboid<T_, d_>& cuboid) {
   os << "Base: " << cuboid.m_base << " Lengths: (";
-  for (size_t dimension{1}; dimension < d_; ++dimension) {
-    os << cuboid.m_lengths[dimension - 1];
+  for (size_t dimension{0}; dimension < d_; ++dimension) {
+    os << cuboid.m_lengths[dimension];
     os << ((dimension + 1 < d_) ? ", " : ")");
   }
 

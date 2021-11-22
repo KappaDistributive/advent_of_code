@@ -57,7 +57,7 @@ template <typename T, size_t d>
 class RasterCuboid {
  private:
   Point<T, d> m_base;  // lexicographically-minimal corner
-  std::array<T, d - 1> m_lengths;
+  std::array<T, d> m_lengths;  // lengths alogn Cartesian coordinate axes
 
  public:
   // creates the `unit RasterCuboid`
