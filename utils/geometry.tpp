@@ -2,6 +2,9 @@ namespace utils {
 namespace geometry {
 
 template<typename  T, size_t d>
+Point<T, d>::Point() : m_coordinates(std::array<T, d>()) {};
+
+template<typename  T, size_t d>
 Point<T, d>::Point(const std::vector<T>& coordinates) {
   assert(coordinates.size() == d);
   this->m_coordinates = std::array<T, d>();
@@ -19,6 +22,11 @@ Point<T, d>::Point(const Point<T, d>& point) : m_coordinates(point.m_coordinates
 template<typename T, size_t d>
 bool Point<T, d>::operator==(const Point<T, d>& other) const {
   return this->m_coordinates == other.m_coordinates;
+}
+
+template<typename T, size_t d>
+std::array<T, d> Point<T, d>::coordinates() const {
+  return this->m_coordinates;
 }
 
 template<typename T, size_t d>
@@ -48,6 +56,17 @@ std::ostream& operator<<(std::ostream& os, const Point<T, d>& point) {
   return os;
 }
 
+template<typename T, size_t d>
+size_t manhatten_distance(const Point<T, d>& origin, const Point<T, d>& destination) {
+  size_t distance{0};
+  auto lhs = origin.coordinates();
+  auto rhs = destination.coordinates();
+  for (size_t index{0}; index < d; ++index) {
+    distance += static_cast<size_t>(std::abs(lhs[index] - rhs[index]));
+  }
+
+  return distance;
+}
 
 }  // namespace geometry
 }  // namespace utils

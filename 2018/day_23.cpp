@@ -3,6 +3,7 @@
 #include <regex>  // NOLINT
 
 #include "../utils/input.hpp"
+#include "../utils/geometry.hpp"
 
 #ifdef DEBUG
 #define DBGVAR(os, var)                                                    \
@@ -17,16 +18,8 @@
 static const std::regex bot_regex{
     "pos=<(-?\\d+),(-?\\d+),(-?\\d+)>, r=(-?\\d+)"};
 
-struct Position {
-  int x;
-  int y;
-  int z;
-};
 
-std::ostream& operator<<(std::ostream& os, Position position) {
-  os << '<' << position.x << ',' << position.y << ',' << position.z << '>';
-  return os;
-}
+using Position  = utils::geometry::Point<int, 3>;
 
 struct NanoBot {
   Position position;
@@ -37,19 +30,16 @@ struct NanoBot {
     std::regex_match(description, matches, bot_regex);
     assert(matches.size() == 5);
 
-    this->position = Position{
+    this->position = Position{std::vector<int>{
         std::stoi(matches[1].str()),
         std::stoi(matches[2].str()),
         std::stoi(matches[3].str()),
-    };
+    }};
     this->radius = std::stoi(matches[4].str());
   }
 
   bool is_in_range(NanoBot other) const noexcept {
-    return static_cast<size_t>(std::abs(this->position.x - other.position.x) +
-                               std::abs(this->position.y - other.position.y) +
-                               std::abs(this->position.z - other.position.z)) <=
-           this->radius;
+    return utils::geometry::manhatten_distance(this->position, other.position) <= this->radius;
   }
 };
 
