@@ -114,9 +114,8 @@ class RasterCuboid {
   std::array<std::pair<T, T>, d> intervals() const;
 
   // Returns the result of intersecting this RasterCuboid with another
-  // RasterCuboid. Returns std::nullptr if the intersection is empty.
-  std::optional<RasterCuboid> intersect(
-      const RasterCuboid<T, d>& other) const;
+  // RasterCuboid. Returns std::nullopt if the intersection is empty.
+  std::optional<RasterCuboid> intersect(const RasterCuboid<T, d>& other) const;
 
   bool operator==(const RasterCuboid<T, d>& rhs) const noexcept;
 
