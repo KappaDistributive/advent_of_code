@@ -173,4 +173,36 @@ TEST(RasterCuboid, Corners) {
   EXPECT_EQ(want, got);
 }
 
+TEST(RasterCuboid, Intervals) {
+  Point<int, 3> base{std::array<int, 3>{-1, 2, -3}};
+  std::array<int, 3> lengths{4, 5, 6};
+  RasterCuboid<int, 3> cuboid(base, lengths);
+  std::array<std::pair<int, int>, 3> want{{{-1, 3}, {2, 7}, {-3, 3}}};
+  auto got = cuboid.intervals();
+
+  EXPECT_EQ(want, got);
+}
+
+// TODO
+// TEST(RasterCuboid, IntersectionNoOp) {
+//   Point<int, 3> base{std::array<int, 3>{-1, 2, -3}};
+//   std::array<int, 3> lengths{4, 5, 6};
+//   RasterCuboid<int, 3> want(base, lengths);
+//   auto got = want.intersect(want);
+//
+//   EXPECT_EQ(want, got);
+// }
+
+// TODO
+// TEST(RasterCuboid, IntersectionEmpty) {
+//   Point<int, 3> base_lhs{std::array<int, 3>{-1, 2, -3}};
+//   Point<int, 3> base_rhs{std::array<int, 3>{7, 2, -3}};
+//   std::array<int, 3> lengths{4, 5, 6};
+//   RasterCuboid<int, 3> lhs(base_lhs, lengths);
+//   RasterCuboid<int, 3> rhs(base_rhs, lengths);
+//   auto got = rhs.intersect(rhs);
+//
+//   EXPECT_FALSE(got.has_value());
+// }
+
 }  // namespace geometry

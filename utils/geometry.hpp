@@ -7,8 +7,8 @@
 #include <optional>
 #include <set>
 #include <sstream>
-#include <stdexcept>
 #include <vector>
+#include <utility>
 
 namespace utils {
 namespace geometry {
@@ -73,6 +73,8 @@ class RasterCuboid {
 
   explicit RasterCuboid<T, d>(const std::array<Point<T, d>, num_corners<d>>& corners);
 
+  explicit RasterCuboid<T, d>(const std::array<std::pair<T, T>, d>& intervals); // TODO
+
   // The i-th entry in the bitset of a corner (from left to right) specifies the
   // i-th dimension in a Cartesian coordinate system. In the example below,
   // corners are labeled with their (x,y,z)-offsets:
@@ -106,8 +108,11 @@ class RasterCuboid {
   // Return all corners in the order of increasing bitset values (from 0 to 2^d - 1).
   std::array<Point<T, d>, num_corners<d>> corners() const;
 
-  std::optional<RasterCuboid> intersect(
-      const RasterCuboid<T, d>& other) const noexcept;
+  std::array<std::pair<T, T>, d> intervals() const;
+
+  // Returns the result of intersecting this RasterCuboid with another RasterCuboid. Returns std::nullptr if
+  // the intersection is empty.
+  std::optional<RasterCuboid> intersect(const RasterCuboid<T, d>& other) const;  // TODO
 
   bool operator==(const RasterCuboid<T, d>& rhs) const noexcept;
 
