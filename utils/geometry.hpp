@@ -96,6 +96,7 @@ class RasterCuboid {
   //   000                                100
   Point<T, d> corner(std::bitset<d> corner) const;
 
+  // Return all corners in the order of increasing bitset values (from 0 to 2^d - 1).
   std::array<Point<T, d>, num_corners<d>> corners() const;
 
   std::optional<RasterCuboid> intersect(
