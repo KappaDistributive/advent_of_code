@@ -1,10 +1,13 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <bitset>
 #include <iostream>
 #include <optional>
 #include <set>
+#include <sstream>
+#include <stdexcept>
 #include <vector>
 
 namespace utils {
@@ -66,7 +69,9 @@ class RasterCuboid {
   // creates the `unit RasterCuboid`
   RasterCuboid<T, d>();
 
-  RasterCuboid<T, d>(const Point<T, d>& base, const std::array<T, d>& lengths);
+  explicit RasterCuboid<T, d>(const Point<T, d>& base, const std::array<T, d>& lengths);
+
+  explicit RasterCuboid<T, d>(const std::array<Point<T, d>, num_corners<d>>& corners);
 
   // The i-th entry in the bitset of a corner (from left to right) specifies the
   // i-th dimension in a Cartesian coordinate system. In the example below,

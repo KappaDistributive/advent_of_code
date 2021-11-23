@@ -88,6 +88,64 @@ RasterCuboid<T, d>::RasterCuboid(const Point<T, d>& base,
                                  const std::array<T, d>& lengths)
     : m_base(base), m_lengths(lengths) {}
 
+template <typename T, size_t d>
+RasterCuboid<T, d>::RasterCuboid(const std::array<Point<T, d>, num_corners<d>>& corners) {
+  std::array<std::set<T>, d> borders;
+  for (auto corner: corners) {
+    auto coordinates = corner.coordinates();
+    for (size_t dimension{0}; dimension < d; ++dimension) {
+      borders[dimension].insert(coordinates[dimension]);
+    }
+  }
+  std::array<T, d> base_coordinates;
+
+  for (size_t dimension{0}; dimension <d; ++dimension) {
+    auto min = *std::min_element(borders[dimension].begin(), borders[dimension].end());
+    auto max = *std::max_element(borders[dimension].begin(), borders[dimension].end());
+    base_coordinates[dimension] = min;
+    this->m_lengths[dimension] = max - min;
+  }
+
+  this->m_base = Point<T, d>(base_coordinates);
+
+  //////////////////////////
+  // Perform a sanity check.
+  //////////////////////////
+  // Check that our RasterCuboid contains all corners
+  auto got_corners = this->corners();
+  for (auto corner : corners) {
+    if (std::find(got_corners.begin(), got_corners.end(), corner) == got_corners.end()) {
+      std::stringstream ss;
+      ss << "Encountered inconsistent corner information!\n";
+      ss << "The provided corner " << corner << " is not contained in the RasterCuboid that has been constructed:\n";
+      for (auto it{got_corners.begin()}; it != got_corners.end(); ++it) {
+        ss << *it;
+        if (std::next(it) != got_corners.end()) {
+          ss << ", ";
+        }
+      }
+      throw std::runtime_error(ss.str());
+    }
+  }
+
+  // Check that our RasterCuboid only contains provided corners.
+  for (auto corner : got_corners) {
+    if (std::find(corners.begin(), corners.end(), corner) == corners.end()) {
+      std::stringstream ss;
+      ss << "Encountered inconsistent corner information!\n";
+      ss << "The constructed corner " << corner << " is not contained in the corners you've provided:\n";
+      for (auto it{corners.begin()}; it != corners.end(); ++it) {
+        ss << *it;
+        if (std::next(it) != corners.end()) {
+          ss << ", ";
+        }
+      }
+      throw std::runtime_error(ss.str());
+    }
+  }
+
+}
+
 // template <typename T, size_t d>
 // std::optional<RasterCuboid<T, d>> intersect(const RasterCuboid<T, d>&
 // other) const {

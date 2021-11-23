@@ -71,6 +71,42 @@ TEST(Point, Addition) {
   EXPECT_EQ(want, got);
 }
 
+TEST(RaserCuboid, ConstructFromCorners) {
+  std::array<Point<int, 3>, 8> corners{
+      {Point<int, 3>(std::array<int, 3>{0, 0, 0}),
+       Point<int, 3>(std::array<int, 3>{0, 0, 1}),
+       Point<int, 3>(std::array<int, 3>{0, 1, 0}),
+       Point<int, 3>(std::array<int, 3>{0, 1, 1}),
+       Point<int, 3>(std::array<int, 3>{1, 0, 0}),
+       Point<int, 3>(std::array<int, 3>{1, 0, 1}),
+       Point<int, 3>(std::array<int, 3>{1, 1, 0}),
+       Point<int, 3>(std::array<int, 3>{1, 1, 1})}};
+  RasterCuboid<int, 3> cuboid{corners};
+
+  std::string want{"Base: (0, 0, 0) Lengths: (1, 1, 1)"};
+  std::stringstream ss;
+  ss << cuboid;
+  std::string got{ss.str()};
+
+  EXPECT_EQ(want, got);
+}
+
+TEST(RaserCuboid, ConstructFromCornersIllegal) {
+  std::array<Point<int, 3>, 8> corners{
+      {Point<int, 3>(std::array<int, 3>{0, 0, 0}),
+       Point<int, 3>(std::array<int, 3>{0, 0, 1}),
+       Point<int, 3>(std::array<int, 3>{0, 1, 0}),
+       Point<int, 3>(std::array<int, 3>{0, 1, 1}),
+       Point<int, 3>(std::array<int, 3>{1, 0, 0}),
+       Point<int, 3>(std::array<int, 3>{1, 0, 1}),
+       Point<int, 3>(std::array<int, 3>{1, 1, 0}),
+       Point<int, 3>(std::array<int, 3>{1, 1, 2})}};
+  using RasterCuboid = RasterCuboid<int, 3>;
+  RasterCuboid cuboid;
+  ASSERT_THROW(cuboid = RasterCuboid(corners), std::runtime_error);
+}
+
+
 TEST(RasterCuboid, Representation) {
   RasterCuboid<int, 3> cuboid;
   std::string want{"Base: (0, 0, 0) Lengths: (1, 1, 1)"};
@@ -92,7 +128,6 @@ TEST(RasterCuboid, RepresentationBase) {
 
   EXPECT_EQ(want, got);
 }
-
 
 TEST(RasterCuboid, Corner) {
   RasterCuboid<int, 3> cuboid;
