@@ -193,26 +193,44 @@ TEST(RasterCuboid, Intervals) {
   EXPECT_EQ(want, got);
 }
 
-// TODO
-// TEST(RasterCuboid, IntersectionNoOp) {
-//   Point<int, 3> base{std::array<int, 3>{-1, 2, -3}};
-//   std::array<int, 3> lengths{4, 5, 6};
-//   RasterCuboid<int, 3> want(base, lengths);
-//   auto got = want.intersect(want);
-//
-//   EXPECT_EQ(want, got);
-// }
+TEST(RasterCuboid, IntersectionNoOp) {
+  Point<int, 3> base{std::array<int, 3>{-1, 2, -3}};
+  std::array<int, 3> lengths{4, 5, 6};
+  RasterCuboid<int, 3> want(base, lengths);
+  auto got = want.intersect(want);
 
-// TODO
-// TEST(RasterCuboid, IntersectionEmpty) {
-//   Point<int, 3> base_lhs{std::array<int, 3>{-1, 2, -3}};
-//   Point<int, 3> base_rhs{std::array<int, 3>{7, 2, -3}};
-//   std::array<int, 3> lengths{4, 5, 6};
-//   RasterCuboid<int, 3> lhs(base_lhs, lengths);
-//   RasterCuboid<int, 3> rhs(base_rhs, lengths);
-//   auto got = rhs.intersect(rhs);
-//
-//   EXPECT_FALSE(got.has_value());
-// }
+  EXPECT_EQ(want, got);
+}
+
+TEST(RasterCuboid, IntersectionEmpty_1d) {
+  Point<int, 1> base_lhs{std::array<int, 1>{0}};
+  Point<int, 1> base_rhs{std::array<int, 1>{2}};
+  std::array<int, 1> lengths{1};
+  RasterCuboid<int, 1> lhs(base_lhs, lengths);
+  RasterCuboid<int, 1> rhs(base_rhs, lengths);
+  auto got = lhs.intersect(rhs);
+
+  if (got.has_value()) {
+    std::cerr << got.value() << std::endl;
+  }
+
+  EXPECT_FALSE(got.has_value());
+}
+
+TEST(RasterCuboid, IntersectionEmpty_3d) {
+  Point<int, 3> base_lhs{std::array<int, 3>{1, 2, 3}};
+  std::array<int, 3> lengths_lhs{1, 2, 3};
+  Point<int, 3> base_rhs{std::array<int, 3>{4, 2, 3}};
+  std::array<int, 3> lengths_rhs{2, 3, 4};
+  RasterCuboid<int, 3> lhs(base_lhs, lengths_lhs);
+  RasterCuboid<int, 3> rhs(base_rhs, lengths_rhs);
+  auto got = lhs.intersect(rhs);
+
+  if (got.has_value()) {
+    std::cerr << got.value() << std::endl;
+  }
+
+  EXPECT_FALSE(got.has_value());
+}
 
 }  // namespace geometry

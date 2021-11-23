@@ -7,8 +7,8 @@
 #include <optional>
 #include <set>
 #include <sstream>
-#include <vector>
 #include <utility>
+#include <vector>
 
 namespace utils {
 namespace geometry {
@@ -69,11 +69,13 @@ class RasterCuboid {
   // creates the `unit RasterCuboid`
   RasterCuboid<T, d>();
 
-  explicit RasterCuboid<T, d>(const Point<T, d>& base, const std::array<T, d>& lengths);
+  explicit RasterCuboid<T, d>(const Point<T, d>& base,
+                              const std::array<T, d>& lengths);
 
-  explicit RasterCuboid<T, d>(const std::array<Point<T, d>, num_corners<d>>& corners);
+  explicit RasterCuboid<T, d>(
+      const std::array<Point<T, d>, num_corners<d>>& corners);
 
-  explicit RasterCuboid<T, d>(const std::array<std::pair<T, T>, d>& intervals); // TODO
+  explicit RasterCuboid<T, d>(const std::array<std::pair<T, T>, d>& intervals);
 
   // The i-th entry in the bitset of a corner (from left to right) specifies the
   // i-th dimension in a Cartesian coordinate system. In the example below,
@@ -105,14 +107,16 @@ class RasterCuboid {
   //   000                                100
   Point<T, d> corner(std::bitset<d> corner) const;
 
-  // Return all corners in the order of increasing bitset values (from 0 to 2^d - 1).
+  // Return all corners in the order of increasing bitset values (from 0 to 2^d
+  // - 1).
   std::array<Point<T, d>, num_corners<d>> corners() const;
 
   std::array<std::pair<T, T>, d> intervals() const;
 
-  // Returns the result of intersecting this RasterCuboid with another RasterCuboid. Returns std::nullptr if
-  // the intersection is empty.
-  std::optional<RasterCuboid> intersect(const RasterCuboid<T, d>& other) const;  // TODO
+  // Returns the result of intersecting this RasterCuboid with another
+  // RasterCuboid. Returns std::nullptr if the intersection is empty.
+  std::optional<RasterCuboid> intersect(
+      const RasterCuboid<T, d>& other) const;
 
   bool operator==(const RasterCuboid<T, d>& rhs) const noexcept;
 
