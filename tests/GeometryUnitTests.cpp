@@ -23,6 +23,7 @@ TEST(Point, Coordinates) {
   std::array<int, 3> want{{1, 2, 3}};
 
   EXPECT_EQ(want, got);
+  EXPECT_FALSE(want != got);
 }
 
 TEST(Point, Print) {
@@ -99,7 +100,6 @@ TEST(RaserCuboid, ConstructFromCornersConsistency) {
 
   EXPECT_EQ(want, got);
 }
-
 
 TEST(RasterCuboid, ConstructFromIntervalsConsistency) {
   Point<int, 3> base{std::array<int, 3>{-1, 2, -3}};
