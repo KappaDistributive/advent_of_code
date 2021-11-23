@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <filesystem>
 #include <regex>  // NOLINT
 
 #include "../utils/geometry.hpp"
@@ -14,6 +15,8 @@
   do {                  \
   } while (0)
 #endif
+
+using std::size_t;
 
 static const std::regex bot_regex{
     "pos=<(-?\\d+),(-?\\d+),(-?\\d+)>, r=(-?\\d+)"};

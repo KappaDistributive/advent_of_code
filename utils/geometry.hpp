@@ -10,6 +10,8 @@
 namespace utils {
 namespace geometry {
 
+using std::size_t;
+
 template <typename T, size_t d>
 class Point {
  private:
@@ -24,6 +26,7 @@ class Point {
 
   ~Point<T, d>() = default;
 
+  void operator=(const Point<T, d>& rhs);
   bool operator==(const Point<T, d>& rhs) const;
   std::array<T, d> coordinates() const;
 
