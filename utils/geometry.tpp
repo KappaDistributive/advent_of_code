@@ -89,9 +89,10 @@ RasterCuboid<T, d>::RasterCuboid(const Point<T, d>& base,
     : m_base(base), m_lengths(lengths) {}
 
 template <typename T, size_t d>
-RasterCuboid<T, d>::RasterCuboid(const std::array<Point<T, d>, num_corners<d>>& corners) {
+RasterCuboid<T, d>::RasterCuboid(
+    const std::array<Point<T, d>, num_corners<d>>& corners) {
   std::array<std::set<T>, d> borders;
-  for (auto corner: corners) {
+  for (auto corner : corners) {
     auto coordinates = corner.coordinates();
     for (size_t dimension{0}; dimension < d; ++dimension) {
       borders[dimension].insert(coordinates[dimension]);
@@ -99,9 +100,11 @@ RasterCuboid<T, d>::RasterCuboid(const std::array<Point<T, d>, num_corners<d>>& 
   }
   std::array<T, d> base_coordinates;
 
-  for (size_t dimension{0}; dimension <d; ++dimension) {
-    auto min = *std::min_element(borders[dimension].begin(), borders[dimension].end());
-    auto max = *std::max_element(borders[dimension].begin(), borders[dimension].end());
+  for (size_t dimension{0}; dimension < d; ++dimension) {
+    auto min =
+        *std::min_element(borders[dimension].begin(), borders[dimension].end());
+    auto max =
+        *std::max_element(borders[dimension].begin(), borders[dimension].end());
     base_coordinates[dimension] = min;
     this->m_lengths[dimension] = max - min;
   }
@@ -114,10 +117,13 @@ RasterCuboid<T, d>::RasterCuboid(const std::array<Point<T, d>, num_corners<d>>& 
   // Check that our RasterCuboid contains all corners
   auto got_corners = this->corners();
   for (auto corner : corners) {
-    if (std::find(got_corners.begin(), got_corners.end(), corner) == got_corners.end()) {
+    if (std::find(got_corners.begin(), got_corners.end(), corner) ==
+        got_corners.end()) {
       std::stringstream ss;
       ss << "Encountered inconsistent corner information!\n";
-      ss << "The provided corner " << corner << " is not contained in the RasterCuboid that has been constructed:\n";
+      ss << "The provided corner " << corner
+         << " is not contained in the RasterCuboid that has been "
+            "constructed:\n";
       for (auto it{got_corners.begin()}; it != got_corners.end(); ++it) {
         ss << *it;
         if (std::next(it) != got_corners.end()) {
@@ -133,7 +139,8 @@ RasterCuboid<T, d>::RasterCuboid(const std::array<Point<T, d>, num_corners<d>>& 
     if (std::find(corners.begin(), corners.end(), corner) == corners.end()) {
       std::stringstream ss;
       ss << "Encountered inconsistent corner information!\n";
-      ss << "The constructed corner " << corner << " is not contained in the corners you've provided:\n";
+      ss << "The constructed corner " << corner
+         << " is not contained in the corners you've provided:\n";
       for (auto it{corners.begin()}; it != corners.end(); ++it) {
         ss << *it;
         if (std::next(it) != corners.end()) {
@@ -143,18 +150,31 @@ RasterCuboid<T, d>::RasterCuboid(const std::array<Point<T, d>, num_corners<d>>& 
       throw std::runtime_error(ss.str());
     }
   }
+}
 
+template <typename T, size_t d>
+RasterCuboid<T, d>::RasterCuboid(
+    const std::array<std::pair<T, T>, d>& intervals) {
+  std::array<T, d> base_coordinates;
+  for (size_t dimension{0}; dimension < d; ++dimension) {
+    base_coordinates[dimension] = intervals[dimension].first;
+    assert(intervals[dimension].first <= intervals[dimension].second);
+    this->m_lengths[dimension] =
+        intervals[dimension].second - intervals[dimension].first;
+  }
+
+  this->m_base = Point<T, d>(base_coordinates);
 }
 
 // TODO
 // template <typename T, size_t d>
-// std::optional<RasterCuboid<T, d>> RasterCuboid<T, d>::intersect(const RasterCuboid<T, d>&
-// other) const {
+// std::optional<RasterCuboid<T, d>> RasterCuboid<T, d>::intersect(const
+// RasterCuboid<T, d>& other) const {
 //     auto corners_lhs = this->corners();
 //     auto corners_rhs = other.corners();
 //     std::array<T, num_corners<d>> corners;
-// 
-// 
+//
+//
 //     return std::nullopt;
 // }
 
@@ -186,24 +206,22 @@ std::array<std::pair<T, T>, d> RasterCuboid<T, d>::intervals() const {
   auto min_point_coordinates = this->corner(std::bitset<d>(0)).coordinates();
   auto max_point_coordinates = this->corner(~std::bitset<d>(0)).coordinates();
 
-
   for (size_t dimension{0}; dimension < d; ++dimension) {
-    result[dimension] = std::make_pair(min_point_coordinates[dimension], max_point_coordinates[dimension]);
+    result[dimension] = std::make_pair(min_point_coordinates[dimension],
+                                       max_point_coordinates[dimension]);
   }
 
   return result;
 }
 
-
 template <typename T, size_t d>
-bool RasterCuboid<T, d>::operator==(const RasterCuboid<T, d>& rhs)
-    const noexcept {
+bool RasterCuboid<T, d>::operator==(
+    const RasterCuboid<T, d>& rhs) const noexcept {
   return this->m_base == rhs.m_base && this->m_lengths == rhs.m_lengths;
 }
 
 template <typename T_, size_t d_>
-std::ostream& operator<<(std::ostream& os,
-                          const RasterCuboid<T_, d_>& cuboid) {
+std::ostream& operator<<(std::ostream& os, const RasterCuboid<T_, d_>& cuboid) {
   os << "Base: " << cuboid.m_base << " Lengths: (";
   for (size_t dimension{0}; dimension < d_; ++dimension) {
     os << cuboid.m_lengths[dimension];

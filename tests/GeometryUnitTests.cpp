@@ -100,6 +100,16 @@ TEST(RaserCuboid, ConstructFromCornersConsistency) {
   EXPECT_EQ(want, got);
 }
 
+
+TEST(RasterCuboid, ConstructFromIntervalsConsistency) {
+  Point<int, 3> base{std::array<int, 3>{-1, 2, -3}};
+  std::array<int, 3> lengths{4, 5, 6};
+  RasterCuboid<int, 3> want{base, lengths};
+  auto got = RasterCuboid<int, 3>(want.intervals());
+
+  EXPECT_EQ(want, got);
+}
+
 TEST(RaserCuboid, ConstructFromCornersIllegal) {
   std::array<Point<int, 3>, 8> corners{
       {Point<int, 3>(std::array<int, 3>{0, 0, 0}),
