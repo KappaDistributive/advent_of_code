@@ -1,11 +1,16 @@
 #include <cassert>
 #include <deque>
+#include <filesystem>
 #include <list>
+#include <stdexcept>
 #include <vector>
 
 #include "input.hpp"
 
 namespace utils {
+
+using std::size_t;
+
 Reader::Reader(std::filesystem::path input) : input(input) {}
 
 
@@ -14,10 +19,16 @@ std::vector<std::string> Reader::get_lines() {
   std::vector<std::string> result;
   std::ifstream input_file(input);
 
-  while (std::getline(input_file, line)) {
-    result.push_back(line);
+  if (std::filesystem::exists(input)) {
+    while (std::getline(input_file, line)) {
+      result.push_back(line);
+    }
+    input_file.close();
+  } else {
+    std::stringstream ss;
+    ss << "Input file " << input << " doesn't exist.";
+    throw std::runtime_error(std::string(ss.str()));
   }
-  input_file.close();
 
   return result;
 }
