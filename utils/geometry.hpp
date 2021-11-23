@@ -66,6 +66,8 @@ class RasterCuboid {
   // creates the `unit RasterCuboid`
   RasterCuboid<T, d>();
 
+  RasterCuboid<T, d>(const Point<T, d>& base, const std::array<T, d>& lengths);
+
   // The i-th entry in the bitset of a corner (from left to right) specifies the
   // i-th dimension in a Cartesian coordinate system. In the example below,
   // corners are labeled with their (x,y,z)-offsets:

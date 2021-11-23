@@ -83,52 +83,58 @@ RasterCuboid<T, d>::RasterCuboid() : m_base(Point<T, d>()) {
   std::fill(this->m_lengths.begin(), this->m_lengths.end(), 1);
 };
 
+template <typename T, size_t d>
+RasterCuboid<T, d>::RasterCuboid(const Point<T, d>& base,
+                                 const std::array<T, d>& lengths)
+    : m_base(base), m_lengths(lengths) {}
+
 // template <typename T, size_t d>
-// std::optional<RasterCuboid<T, d>> intersect(const RasterCuboid<T, d>& other)
-// const {
+// std::optional<RasterCuboid<T, d>> intersect(const RasterCuboid<T, d>&
+// other) const {
 //   if (this->manhatten_distance(other.center()) >
 //       this->radius() + other.radius()) {
 //     return std::nullptr;
 //   }
 // }
 
-template <typename T, size_t d>
-Point<T, d> RasterCuboid<T, d>::corner(std::bitset<d> corner) const {
-  std::array<T, d> offset;
-  for (size_t index{0}; index < d; ++index) {
-    offset[index] = corner[d - index - 1] ? this->m_lengths[index] : 0;
+  template <typename T, size_t d>
+  Point<T, d> RasterCuboid<T, d>::corner(std::bitset<d> corner) const {
+    std::array<T, d> offset;
+    for (size_t index{0}; index < d; ++index) {
+      offset[index] = corner[d - index - 1] ? this->m_lengths[index] : 0;
+    }
+
+    return this->m_base + Point<T, d>(offset);
   }
 
-  return this->m_base + Point<T, d>(offset);
-}
+  template <typename T, size_t d>
+  std::array<Point<T, d>, num_corners<d>> RasterCuboid<T, d>::corners() const {
+    std::array<Point<T, d>, num_corners<d>> result;
 
-template <typename T, size_t d>
-std::array<Point<T, d>, num_corners<d>> RasterCuboid<T, d>::corners() const {
-  std::array<Point<T, d>, num_corners<d>> result;
+    for (size_t index{0}; index < num_corners<d>; ++index) {
+      result[index] = this->corner(std::bitset<d>(index));
+    }
 
-  for (size_t index{0}; index < num_corners<d>; ++index) {
-    result[index] = this->corner(std::bitset<d>(index));
+    return result;
   }
 
-  return result;
-}
-
-template <typename T, size_t d>
-bool RasterCuboid<T, d>::operator==(
-    const RasterCuboid<T, d>& rhs) const noexcept {
-  return this->m_base == rhs.m_base && this->m_lengths == rhs.m_lengths;
-}
-
-template <typename T_, size_t d_>
-std::ostream& operator<<(std::ostream& os, const RasterCuboid<T_, d_>& cuboid) {
-  os << "Base: " << cuboid.m_base << " Lengths: (";
-  for (size_t dimension{0}; dimension < d_; ++dimension) {
-    os << cuboid.m_lengths[dimension];
-    os << ((dimension + 1 < d_) ? ", " : ")");
+  template <typename T, size_t d>
+  bool RasterCuboid<T, d>::operator==(const RasterCuboid<T, d>& rhs)
+      const noexcept {
+    return this->m_base == rhs.m_base && this->m_lengths == rhs.m_lengths;
   }
 
-  return os;
-}
+  template <typename T_, size_t d_>
+  std::ostream& operator<<(std::ostream& os,
+                           const RasterCuboid<T_, d_>& cuboid) {
+    os << "Base: " << cuboid.m_base << " Lengths: (";
+    for (size_t dimension{0}; dimension < d_; ++dimension) {
+      os << cuboid.m_lengths[dimension];
+      os << ((dimension + 1 < d_) ? ", " : ")");
+    }
+
+    return os;
+  }
 
 }  // namespace geometry
 }  // namespace utils

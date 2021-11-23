@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <array>
 #include <sstream>
 
 #include "../utils/geometry.hpp"
@@ -79,6 +80,19 @@ TEST(RasterCuboid, Representation) {
 
   EXPECT_EQ(want, got);
 }
+
+TEST(RasterCuboid, RepresentationBase) {
+  Point<int, 3> base{std::array<int, 3>{-1, 2, -3}};
+  std::array<int, 3> lengths{4, 5, 6};
+  RasterCuboid<int, 3> cuboid(base, lengths);
+  std::string want{"Base: (-1, 2, -3) Lengths: (4, 5, 6)"};
+  std::stringstream ss;
+  ss << cuboid;
+  std::string got{ss.str()};
+
+  EXPECT_EQ(want, got);
+}
+
 
 TEST(RasterCuboid, Corner) {
   RasterCuboid<int, 3> cuboid;
