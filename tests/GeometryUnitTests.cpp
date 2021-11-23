@@ -91,6 +91,15 @@ TEST(RaserCuboid, ConstructFromCorners) {
   EXPECT_EQ(want, got);
 }
 
+TEST(RaserCuboid, ConstructFromCornersConsistency) {
+  Point<int, 3> base{std::array<int, 3>{-1, 2, -3}};
+  std::array<int, 3> lengths{4, 5, 6};
+  RasterCuboid<int, 3> want{base, lengths};
+  auto got = RasterCuboid<int, 3>(want.corners());
+
+  EXPECT_EQ(want, got);
+}
+
 TEST(RaserCuboid, ConstructFromCornersIllegal) {
   std::array<Point<int, 3>, 8> corners{
       {Point<int, 3>(std::array<int, 3>{0, 0, 0}),
@@ -105,7 +114,6 @@ TEST(RaserCuboid, ConstructFromCornersIllegal) {
   RasterCuboid cuboid;
   ASSERT_THROW(cuboid = RasterCuboid(corners), std::runtime_error);
 }
-
 
 TEST(RasterCuboid, Representation) {
   RasterCuboid<int, 3> cuboid;
