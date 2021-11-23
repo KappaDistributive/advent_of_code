@@ -100,4 +100,20 @@ TEST(RasterCuboid, Corner) {
   }
 }
 
+TEST(RasterCuboid, Corners) {
+  RasterCuboid<int, 3> cuboid;
+  std::array<Point<int, 3>, 8> want{
+      {Point<int, 3>(std::array<int, 3>{0, 0, 0}),
+       Point<int, 3>(std::array<int, 3>{0, 0, 1}),
+       Point<int, 3>(std::array<int, 3>{0, 1, 0}),
+       Point<int, 3>(std::array<int, 3>{0, 1, 1}),
+       Point<int, 3>(std::array<int, 3>{1, 0, 0}),
+       Point<int, 3>(std::array<int, 3>{1, 0, 1}),
+       Point<int, 3>(std::array<int, 3>{1, 1, 0}),
+       Point<int, 3>(std::array<int, 3>{1, 1, 1})}};
+
+  auto got = cuboid.corners();
+  EXPECT_EQ(want, got);
+}
+
 }  // namespace geometry

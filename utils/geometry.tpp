@@ -23,8 +23,8 @@ Point<T, d>::Point(const Point<T, d>& point)
 
 template <typename T, size_t d>
 void Point<T, d>::operator=(const Point<T, d>& rhs) {
-  assert (this->m_coordinates.size() == d);
-  assert (rhs.m_coordinates.size() == d);
+  assert(this->m_coordinates.size() == d);
+  assert(rhs.m_coordinates.size() == d);
   this->m_coordinates = rhs.m_coordinates;
 }
 
@@ -100,6 +100,17 @@ Point<T, d> RasterCuboid<T, d>::corner(std::bitset<d> corner) const {
   }
 
   return this->m_base + Point<T, d>(offset);
+}
+
+template <typename T, size_t d>
+std::array<Point<T, d>, num_corners<d>> RasterCuboid<T, d>::corners() const {
+  std::array<Point<T, d>, num_corners<d>> result;
+
+  for (size_t index{0}; index < num_corners<d>; ++index) {
+    result[index] = this->corner(std::bitset<d>(index));
+  }
+
+  return result;
 }
 
 template <typename T, size_t d>
