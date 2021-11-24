@@ -184,8 +184,6 @@ std::optional<RasterCuboid<T, d>> RasterCuboid<T, d>::intersect(
                                 intervals_rhs[dimension].first),
                        std::min(intervals_lhs[dimension].second,
                                 intervals_rhs[dimension].second));
-    std::cerr << '(' << intervals[dimension].first << ", "
-              << intervals[dimension].second << ')' << std::endl;
     if (intervals[dimension].first > intervals[dimension].second) {
       return std::nullopt;
     }
