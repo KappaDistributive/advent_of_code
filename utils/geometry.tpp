@@ -39,6 +39,21 @@ bool Point<T, d>::operator!=(const Point<T, d>& other) const {
 }
 
 template <typename T, size_t d>
+bool Point<T, d>::operator<(const Point<T, d>& other) const {
+  auto coordinates_lhs = this->coordinates();
+  auto coordinates_rhs = other.coordinates();
+
+  for (size_t index{0}; index < d; ++index) {
+    if (coordinates_lhs[index] < coordinates_rhs[index]) {
+      return true;
+    } else if (coordinates_lhs[index] > coordinates_rhs[index]) {
+      return false;
+    }
+  }
+  return false;
+}
+
+template <typename T, size_t d>
 std::array<T, d> Point<T, d>::coordinates() const {
   return this->m_coordinates;
 }

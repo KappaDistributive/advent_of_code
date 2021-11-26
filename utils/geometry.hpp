@@ -35,6 +35,9 @@ class Point {
 
   bool operator!=(const Point<T, d>& other) const;
 
+  // Strict lexicographical order.
+  bool operator<(const Point<T, d>& other) const;
+
   std::array<T, d> coordinates() const;
 
   T manhatten_distance(const Point<T, d>& other) const;

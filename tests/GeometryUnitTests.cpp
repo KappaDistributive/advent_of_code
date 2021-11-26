@@ -72,6 +72,48 @@ TEST(Point, Addition) {
   EXPECT_EQ(want, got);
 }
 
+TEST(Point, Order) {
+  Point<int, 3> a(std::vector<int>{-3, 1, -2});
+  Point<int, 3> b(std::vector<int>{0, -1, -4});
+  Point<int, 3> c(std::vector<int>{0, 0, 0});
+  Point<int, 3> d(std::vector<int>{1, 2, 3});
+  Point<int, 3> e(std::vector<int>{1, 2, 4});
+
+  EXPECT_TRUE(a < b);
+  EXPECT_TRUE(a < c);
+  EXPECT_TRUE(a < d);
+  EXPECT_TRUE(a < e);
+
+  EXPECT_TRUE(b < c);
+  EXPECT_TRUE(b < d);
+  EXPECT_TRUE(b < e);
+
+  EXPECT_TRUE(c < d);
+  EXPECT_TRUE(c < e);
+
+  EXPECT_TRUE(d < e);
+
+  EXPECT_FALSE(a < a);
+  EXPECT_FALSE(b < a);
+  EXPECT_FALSE(c < a);
+  EXPECT_FALSE(d < a);
+  EXPECT_FALSE(e < a);
+
+  EXPECT_FALSE(b < b);
+  EXPECT_FALSE(c < b);
+  EXPECT_FALSE(d < b);
+  EXPECT_FALSE(e < b);
+
+  EXPECT_FALSE(c < c);
+  EXPECT_FALSE(d < c);
+  EXPECT_FALSE(e < c);
+
+  EXPECT_FALSE(d < d);
+  EXPECT_FALSE(e < d);
+
+  EXPECT_FALSE(e < e);
+}
+
 TEST(RaserCuboid, ConstructFromCorners) {
   std::array<Point<int, 3>, 8> corners{
       {Point<int, 3>(std::array<int, 3>{0, 0, 0}),
