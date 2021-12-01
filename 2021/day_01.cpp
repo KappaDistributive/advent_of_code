@@ -14,21 +14,29 @@ auto prepare_input(const std::vector<std::string>& input) {
   return result;
 }
 
-
 auto part_one(const std::vector<std::string>& input) {
   auto depths = prepare_input(input);
   size_t result{0};
 
   for (size_t index{1}; index < depths.size(); ++index) {
-    result += depths[index] > depths[index-1];
+    result += depths[index] > depths[index - 1];
   }
-  
+
   return result;
 }
 
-// int64_t part_two(const std::vector<std::string>& input) {
-//   return 17;
-// }
+auto part_two(const std::vector<std::string>& input) {
+  auto depths = prepare_input(input);
+  size_t result{0};
+
+  for (size_t index{3}; index < depths.size(); ++index) {
+    auto previous = depths[index - 3] + depths[index - 2] + depths[index - 1];
+    auto current = depths[index - 2] + depths[index - 1] + depths[index];
+    result += current > previous;
+  }
+
+  return result;
+}
 
 int main() {
   // std::filesystem::path input_path{"../2021/data/input_01_mock.txt"};
@@ -37,7 +45,7 @@ int main() {
   auto input = reader.get_lines();
 
   std::cout << "The answer to part one is: " << part_one(input) << std::endl;
-  // std::cout << "The answer to part two is: " << part_two(input) << std::endl;
+  std::cout << "The answer to part two is: " << part_two(input) << std::endl;
 
   return 0;
 }
