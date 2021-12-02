@@ -42,15 +42,23 @@ class Point {
 
   T manhatten_distance(const Point<T, d>& other) const;
 
+  template <typename T_, size_t d_>
+  friend Point<T_, d_> operator+(const Point<T_, d_>& lhs,
+                                 const Point<T_, d_>& rhs);
+
   void operator+=(const Point<T, d>& other);
 
   void operator+=(const std::array<T, d>& coordinates);
 
-  void operator*=(const T& factor);
-
   template <typename T_, size_t d_>
-  friend Point<T_, d_> operator+(const Point<T_, d_>& lhs,
+  friend Point<T_, d_> operator-(const Point<T_, d_>& lhs,
                                  const Point<T_, d_>& rhs);
+
+  void operator-=(const Point<T, d>& other);
+
+  void operator-=(const std::array<T, d>& coordinates);
+
+  void operator*=(const T& factor);
 
   template <typename T_, size_t d_>
   friend std::ostream& operator<<(std::ostream&, const Point<T_, d_>& point);

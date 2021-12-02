@@ -59,27 +59,6 @@ std::array<T, d> Point<T, d>::coordinates() const {
 }
 
 template <typename T, size_t d>
-void Point<T, d>::operator+=(const Point<T, d>& other) {
-  for (size_t index{0}; index < d; ++index) {
-    this->m_coordinates[index] += other.m_coordinates[index];
-  }
-}
-
-template <typename T, size_t d>
-void Point<T, d>::operator+=(const std::array<T, d>& coordinates) {
-  for (size_t index{0}; index < d; ++index) {
-    this->m_coordinates[index] += coordinates[index];
-  }
-}
-
-template <typename T, size_t d>
-void Point<T, d>::operator*=(const T& factor) {
-  for (size_t index{0}; index < d; ++index) {
-    this->m_coordinates[index] *= factor;
-  }
-}
-
-template <typename T, size_t d>
 Point<T, d> operator+(const Point<T, d>& lhs, const Point<T, d>& rhs) {
   assert(lhs.m_coordinates.size() == d);
   assert(rhs.m_coordinates.size() == d);
@@ -90,6 +69,50 @@ Point<T, d> operator+(const Point<T, d>& lhs, const Point<T, d>& rhs) {
   }
   Point<T, d> result(coordinates);
   return result;
+}
+
+template <typename T, size_t d>
+void Point<T, d>::operator+=(const Point<T, d>& other) {
+  this->operator+=(other.coordinates());
+}
+
+template <typename T, size_t d>
+void Point<T, d>::operator+=(const std::array<T, d>& coordinates) {
+  for (size_t index{0}; index < d; ++index) {
+    this->m_coordinates[index] += coordinates[index];
+  }
+}
+
+template <typename T, size_t d>
+Point<T, d> operator-(const Point<T, d>& lhs, const Point<T, d>& rhs) {
+  assert(lhs.m_coordinates.size() == d);
+  assert(rhs.m_coordinates.size() == d);
+
+  std::array<T, d> coordinates;
+  for (size_t index{0}; index < d; ++index) {
+    coordinates[index] = lhs.m_coordinates[index] - rhs.m_coordinates[index];
+  }
+  Point<T, d> result(coordinates);
+  return result;
+}
+
+template <typename T, size_t d>
+void Point<T, d>::operator-=(const Point<T, d>& other) {
+  this->operator-=(other.coordinates());
+}
+
+template <typename T, size_t d>
+void Point<T, d>::operator-=(const std::array<T, d>& coordinates) {
+  for (size_t index{0}; index < d; ++index) {
+    this->m_coordinates[index] -= coordinates[index];
+  }
+}
+
+template <typename T, size_t d>
+void Point<T, d>::operator*=(const T& factor) {
+  for (size_t index{0}; index < d; ++index) {
+    this->m_coordinates[index] *= factor;
+  }
 }
 
 template <typename T, size_t d>
