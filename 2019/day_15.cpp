@@ -22,6 +22,29 @@ struct Instruction {
 
 enum class Status { ok, input_required, output_produced };
 
+enum class Direction { north, south, west, east };
+
+int64_t decode(Direction direction) {
+  int64_t result{-1};
+
+  switch (direction) {
+    case Direction::north:
+      result = 1;
+      break;
+    case Direction::south:
+      result = 2;
+      break;
+    case Direction::west:
+      result = 3;
+      break;
+    case Direction::east:
+      result = 4;
+      break;
+  }
+
+  return result;
+}
+
 std::ostream& operator<<(std::ostream& os, Status status) {
   switch (status) {
     case Status::ok:
@@ -93,104 +116,106 @@ class CPU {
     std::string input{""};
     bool update_instruction_pointer{true};
     auto status{Status::ok};
-    switch (instruction.opcode % 100) {
-      case 1:
-        assert(instruction.parameters.size() == 3);
-        assertm(get_mode(instruction, 2) != 1,
-                "Parameters that an instruction writes to cannot be in "
-                "immediate mode.");  // NOLINT
-        this->get_parameter(instruction, 2) =
-            get_parameter(instruction, 0) + get_parameter(instruction, 1);
-        break;
-      case 2:
-        assert(instruction.parameters.size() == 3);
-        assertm(get_mode(instruction, 2) != 1,
-                "Parameters that an instruction writes to cannot be in "
-                "immediate mode.");  // NOLINT
-        this->get_parameter(instruction, 2) =
-            get_parameter(instruction, 0) * get_parameter(instruction, 1);
-        break;
-      case 3:
-        assert(instruction.parameters.size() == 1);
-        assertm(get_mode(instruction, 2) != 1,
-                "Parameters that an instruction writes to cannot be in "
-                "immediate mode.");  // NOLINT
-        assert(get_mode(instruction, 0) != 1);
+    if (!this->m_waiting_for_input) {
+      switch (instruction.opcode % 100) {
+        case 1:
+          assert(instruction.parameters.size() == 3);
+          assertm(get_mode(instruction, 2) != 1,
+                  "Parameters that an instruction writes to cannot be in "
+                  "immediate mode.");  // NOLINT
+          this->get_parameter(instruction, 2) =
+              get_parameter(instruction, 0) + get_parameter(instruction, 1);
+          break;
+        case 2:
+          assert(instruction.parameters.size() == 3);
+          assertm(get_mode(instruction, 2) != 1,
+                  "Parameters that an instruction writes to cannot be in "
+                  "immediate mode.");  // NOLINT
+          this->get_parameter(instruction, 2) =
+              get_parameter(instruction, 0) * get_parameter(instruction, 1);
+          break;
+        case 3:
+          assert(instruction.parameters.size() == 1);
+          assertm(get_mode(instruction, 2) != 1,
+                  "Parameters that an instruction writes to cannot be in "
+                  "immediate mode.");  // NOLINT
+          assert(get_mode(instruction, 0) != 1);
 
-        status = Status::input_required;
-        if (this->m_interactive || this->m_verbose) {
-          std::cout << "Input required:" << std::endl;
-          this->get_parameter(instruction, 0) =
-              std::strtoll(input.c_str(), NULL, 10);
-        }
-        if (this->m_interactive) {
-          std::cin >> input;
-          status = Status::ok;
-        } else {
-          this->m_waiting_for_input = true;
-          update_instruction_pointer = false;
-        }
-        break;
-      case 4:
-        assert(instruction.parameters.size() == 1);
-        status = Status::output_produced;
-        this->m_output = get_parameter(instruction, 0);
-        if (this->m_verbose) {
-          std::cout << "Output: " << this->m_output << std::endl;
-        }
-        break;
-      case 5:
-        assert(instruction.parameters.size() == 2);
-        if (get_parameter(instruction, 0) != 0) {
-          this->m_instruction_pointer = get_parameter(instruction, 1);
-          update_instruction_pointer = false;
-        }
-        break;
-      case 6:
-        assert(instruction.parameters.size() == 2);
-        if (get_parameter(instruction, 0) == 0) {
-          this->m_instruction_pointer = get_parameter(instruction, 1);
-          update_instruction_pointer = false;
-        }
-        break;
-      case 7:
-        assert(instruction.parameters.size() == 3);
-        assertm(get_mode(instruction, 2) != 1,
-                "Parameters that an instruction writes to cannot be in "
-                "immediate mode.");  // NOLINT
-        assert(get_mode(instruction, 2) != 1);
-        this->get_parameter(instruction, 2) = static_cast<int64_t>(
-            get_parameter(instruction, 0) < get_parameter(instruction, 1));
-        break;
-      case 8:
-        assert(instruction.parameters.size() == 3);
-        assertm(get_mode(instruction, 2) != 1,
-                "Parameters that an instruction writes to cannot be in "
-                "immediate mode.");  // NOLINT
-        this->get_parameter(instruction, 2) = static_cast<int64_t>(
-            get_parameter(instruction, 0) == get_parameter(instruction, 1));
-        break;
-      case 9:
-        assert(instruction.parameters.size() == 1);
-        this->m_relative_base += get_parameter(instruction, 0);
-        break;
-      case 99:
-        halting = true;
-        break;
-      default:
-        throw std::runtime_error("Encountered invalid opcode: " +
-                                 std::to_string(instruction.opcode));
-        break;
-    }
+          status = Status::input_required;
+          if (this->m_interactive || this->m_verbose) {
+            std::cout << "Input required:" << std::endl;
+          }
+          if (this->m_interactive) {
+            std::cin >> input;
+            this->get_parameter(instruction, 0) =
+                std::strtoll(input.c_str(), NULL, 10);
+            status = Status::ok;
+          } else {
+            this->m_waiting_for_input = true;
+            update_instruction_pointer = false;
+          }
+          break;
+        case 4:
+          assert(instruction.parameters.size() == 1);
+          status = Status::output_produced;
+          this->m_output = get_parameter(instruction, 0);
+          if (this->m_verbose) {
+            std::cout << "Output: " << this->m_output << std::endl;
+          }
+          break;
+        case 5:
+          assert(instruction.parameters.size() == 2);
+          if (get_parameter(instruction, 0) != 0) {
+            this->m_instruction_pointer = get_parameter(instruction, 1);
+            update_instruction_pointer = false;
+          }
+          break;
+        case 6:
+          assert(instruction.parameters.size() == 2);
+          if (get_parameter(instruction, 0) == 0) {
+            this->m_instruction_pointer = get_parameter(instruction, 1);
+            update_instruction_pointer = false;
+          }
+          break;
+        case 7:
+          assert(instruction.parameters.size() == 3);
+          assertm(get_mode(instruction, 2) != 1,
+                  "Parameters that an instruction writes to cannot be in "
+                  "immediate mode.");  // NOLINT
+          assert(get_mode(instruction, 2) != 1);
+          this->get_parameter(instruction, 2) = static_cast<int64_t>(
+              get_parameter(instruction, 0) < get_parameter(instruction, 1));
+          break;
+        case 8:
+          assert(instruction.parameters.size() == 3);
+          assertm(get_mode(instruction, 2) != 1,
+                  "Parameters that an instruction writes to cannot be in "
+                  "immediate mode.");  // NOLINT
+          this->get_parameter(instruction, 2) = static_cast<int64_t>(
+              get_parameter(instruction, 0) == get_parameter(instruction, 1));
+          break;
+        case 9:
+          assert(instruction.parameters.size() == 1);
+          this->m_relative_base += get_parameter(instruction, 0);
+          break;
+        case 99:
+          halting = true;
+          break;
+        default:
+          throw std::runtime_error("Encountered invalid opcode: " +
+                                   std::to_string(instruction.opcode));
+          break;
+      }
 
-    if (update_instruction_pointer) {
-      this->m_instruction_pointer += 1 + instruction.parameters.size();
+      if (update_instruction_pointer) {
+        this->m_instruction_pointer += 1 + instruction.parameters.size();
+      }
     }
 
     return std::make_pair(halting, status);
   }
 
-  std::pair<bool, Status> execute() {
+  auto get_current_instruction() {
     int64_t opcode = this->get_memory(this->m_instruction_pointer);
     Instruction instruction;
     instruction.opcode = opcode;
@@ -238,6 +263,12 @@ class CPU {
         break;
     }
     instruction.parameters = parameters;
+
+    return instruction;
+  }
+
+  std::pair<bool, Status> execute() {
+    auto instruction = this->get_current_instruction();
     return execute(instruction);
   }
 
@@ -249,8 +280,10 @@ class CPU {
       status = std::get<1>(update);
     }
     if ((!halting) && status == Status::input_required) {
-      std::cout << "Stopping because I encountered status `" << status << "`. "
-        << "Are you unintentionally running the CPU in non-interactive-mode?" << std::endl;;
+      std::cout
+          << "Stopping because I encountered status `" << status << "`. "
+          << "Are you unintentionally running the CPU in non-interactive-mode?"
+          << std::endl;
     }
     return this->get_memory(0);
   }
@@ -262,22 +295,54 @@ class CPU {
     return this->m_memory.at(index);
   }
 
+  void set_input(int64_t input) {
+    if (this->m_verbose) {
+      std::cout << "Setting input: " << input << std::endl;
+    }
+
+    auto instruction = this->get_current_instruction();
+    assert(instruction.parameters.size() == 1);
+    assertm(get_mode(instruction, 2) != 1,
+            "Parameters that an instruction writes to cannot be in "
+            "immediate mode.");  // NOLINT
+    assert(get_mode(instruction, 0) != 1);
+    this->get_parameter(instruction, 0) = input;
+    this->m_instruction_pointer += 1 + instruction.parameters.size();
+    this->m_waiting_for_input = false;
+  }
+
   int64_t get_output() const { return this->m_output; }
 };
+
+auto step(CPU* cpu, Direction direction) {
+  auto state = cpu->execute();
+  while ((!std::get<0>(state)) && std::get<1>(state) == Status::ok) {
+    state = cpu->execute();
+  }
+  if ((!std::get<0>(state)) && std::get<1>(state) == Status::input_required) {
+    cpu->set_input(decode(direction));
+    state = cpu->execute();
+  }
+  while ((!std::get<0>(state)) && std::get<1>(state) == Status::ok) {
+    state = cpu->execute();
+  }
+  assert(std::get<1>(state) == Status::output_produced);
+  return cpu->get_output();
+}
 
 int64_t part_one(const std::vector<std::string>& input) {
   auto intcodes = prepare_input(input);
   CPU cpu(intcodes, true, false);
-  cpu.run();
+  std::cout << step(&cpu, Direction::north) << std::endl;
   return cpu.get_output();
 }
 
-int64_t part_two(const std::vector<std::string>& input) {
-  auto intcodes = prepare_input(input);
-  CPU cpu(intcodes);
-  cpu.run();
-  return cpu.get_output();
-}
+// int64_t part_two(const std::vector<std::string>& input) {
+//   auto intcodes = prepare_input(input);
+//   CPU cpu(intcodes);
+//   std::cout << step(&cpu, Direction::south) << std::endl;
+//   return cpu.get_output();
+// }
 
 int main() {
   std::filesystem::path input_path{"../2019/data/input_15.txt"};
