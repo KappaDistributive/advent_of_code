@@ -22,10 +22,11 @@ Point<T, d>::Point(const Point<T, d>& point)
     : m_coordinates(point.m_coordinates) {}
 
 template <typename T, size_t d>
-void Point<T, d>::operator=(const Point<T, d>& other) {
+Point<T, d>& Point<T, d>::operator=(const Point<T, d>& other) {
   assert(this->m_coordinates.size() == d);
   assert(other.m_coordinates.size() == d);
   this->m_coordinates = other.m_coordinates;
+  return *this;
 }
 
 template <typename T, size_t d>

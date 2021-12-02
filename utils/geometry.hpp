@@ -29,7 +29,7 @@ class Point {
 
   ~Point<T, d>() = default;
 
-  void operator=(const Point<T, d>& other);
+  Point<T, d>& operator=(const Point<T, d>& other);
 
   bool operator==(const Point<T, d>& other) const;
 
