@@ -72,15 +72,16 @@ Point<T, d> operator+(const Point<T, d>& lhs, const Point<T, d>& rhs) {
 }
 
 template <typename T, size_t d>
-void Point<T, d>::operator+=(const Point<T, d>& other) {
-  this->operator+=(other.coordinates());
+Point<T, d>& Point<T, d>::operator+=(const Point<T, d>& other) {
+  return this->operator+=(other.coordinates());
 }
 
 template <typename T, size_t d>
-void Point<T, d>::operator+=(const std::array<T, d>& coordinates) {
+Point<T, d>& Point<T, d>::operator+=(const std::array<T, d>& coordinates) {
   for (size_t index{0}; index < d; ++index) {
     this->m_coordinates[index] += coordinates[index];
   }
+  return *this;
 }
 
 template <typename T, size_t d>
@@ -107,22 +108,24 @@ Point<T, d> Point<T, d>::operator-() {
 }
 
 template <typename T, size_t d>
-void Point<T, d>::operator-=(const Point<T, d>& other) {
-  this->operator-=(other.coordinates());
+Point<T, d>& Point<T, d>::operator-=(const Point<T, d>& other) {
+  return this->operator-=(other.coordinates());
 }
 
 template <typename T, size_t d>
-void Point<T, d>::operator-=(const std::array<T, d>& coordinates) {
+Point<T, d>& Point<T, d>::operator-=(const std::array<T, d>& coordinates) {
   for (size_t index{0}; index < d; ++index) {
     this->m_coordinates[index] -= coordinates[index];
   }
+  return *this;
 }
 
 template <typename T, size_t d>
-void Point<T, d>::operator*=(const T& factor) {
+Point<T, d>& Point<T, d>::operator*=(const T& factor) {
   for (size_t index{0}; index < d; ++index) {
     this->m_coordinates[index] *= factor;
   }
+  return *this;
 }
 
 template <typename T, size_t d>
