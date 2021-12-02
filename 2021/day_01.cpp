@@ -1,7 +1,3 @@
-#include <iostream>
-#include <string>
-#include <vector>
-
 #include "../utils/input.hpp"
 
 auto prepare_input(const std::vector<std::string>& input) {
