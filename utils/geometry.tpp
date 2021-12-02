@@ -97,6 +97,16 @@ Point<T, d> operator-(const Point<T, d>& lhs, const Point<T, d>& rhs) {
 }
 
 template <typename T, size_t d>
+Point<T, d> Point<T, d>::operator-() {
+  std::array<T, d> coordinates;
+  for (size_t index{0}; index < d; ++index) {
+    coordinates[index] = -this->m_coordinates[index];
+  }
+
+  return Point<T, d>{coordinates};
+}
+
+template <typename T, size_t d>
 void Point<T, d>::operator-=(const Point<T, d>& other) {
   this->operator-=(other.coordinates());
 }

@@ -94,6 +94,16 @@ TEST(Point, AdditionInPlaceCoordinates) {
   EXPECT_EQ(want, got);
 }
 
+TEST(Point, Negation) {
+  Point<int, 3> lhs(std::vector<int>{1, 2, 3});
+
+  auto got = -lhs;
+  Point<int, 3> want(std::vector<int>{-1, -2, -3});
+
+  EXPECT_EQ(want, got);
+}
+
+
 TEST(Point, Subtraction) {
   Point<int, 3> lhs(std::vector<int>{1, 2, 3});
   Point<int, 3> rhs(std::vector<int>{4, 5, 6});
@@ -103,7 +113,6 @@ TEST(Point, Subtraction) {
 
   EXPECT_EQ(want, got);
 }
-
 
 TEST(Point, SubtractionInPlace) {
   Point<int, 3> lhs(std::vector<int>{1, 2, 3});

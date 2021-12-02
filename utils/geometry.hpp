@@ -54,6 +54,8 @@ class Point {
   friend Point<T_, d_> operator-(const Point<T_, d_>& lhs,
                                  const Point<T_, d_>& rhs);
 
+  Point<T, d> operator-();
+
   void operator-=(const Point<T, d>& other);
 
   void operator-=(const std::array<T, d>& coordinates);
