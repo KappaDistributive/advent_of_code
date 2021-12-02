@@ -94,6 +94,15 @@ TEST(Point, AdditionInPlaceCoordinates) {
   EXPECT_EQ(want, got);
 }
 
+TEST(Point, Scaling) {
+  Point<int, 3> lhs(std::vector<int>{1, 2, 3});
+  auto got = lhs;
+  got *= 2;
+  Point<int, 3> want(std::vector<int>{2, 4, 6});
+
+  EXPECT_EQ(want, got);
+}
+
 TEST(Point, Order) {
   Point<int, 3> a(std::vector<int>{-3, 1, -2});
   Point<int, 3> b(std::vector<int>{0, -1, -4});
