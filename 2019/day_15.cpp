@@ -2,9 +2,12 @@
 #include <cassert>
 #include <map>
 
+#include "../utils/geometry.hpp"
 #include "../utils/input.hpp"
 
 #define assertm(exp, msg) assert(((void)msg, exp))
+
+using Position = utils::geometry::Point<int64_t, 2>;
 
 std::vector<int64_t> prepare_input(const std::vector<std::string>& input) {
   std::vector<int64_t> intcodes;
@@ -43,6 +46,26 @@ int64_t decode(Direction direction) {
   }
 
   return result;
+}
+
+char decode(int64_t output) {
+  char cell;
+  switch (output) {
+    case 0:
+      cell = '#';
+      break;
+    case 1:
+      cell = '.';
+      break;
+    case 2:
+      cell = 'X';
+      break;
+    default:
+      throw std::runtime_error("Encountered illegal output");
+      break;
+  }
+
+  return cell;
 }
 
 std::ostream& operator<<(std::ostream& os, Status status) {
@@ -314,7 +337,122 @@ class CPU {
   int64_t get_output() const { return this->m_output; }
 };
 
-auto step(CPU* cpu, Direction direction) {
+class Map {
+ private:
+  const Position m_origin;
+  Position m_droid;
+  std::map<Position, char> m_cells;
+
+  std::pair<Position, Position> edges() const {
+    auto top_left = m_droid.coordinates();
+    auto bottom_right = m_droid.coordinates();
+
+    for (auto [position, _] : this->m_cells) {
+      auto coordinates = position.coordinates();
+      for (size_t dimension{0}; dimension <= 1; ++dimension) {
+        top_left[dimension] =
+            std::min(top_left[dimension], coordinates[dimension]);
+        bottom_right[dimension] =
+            std::max(bottom_right[dimension], coordinates[dimension]);
+      }
+    }
+
+    return std::make_pair(Position{top_left}, Position{bottom_right});
+  }
+
+ public:
+  Map()
+      : m_origin(Position(std::array<int64_t, 2>{0, 0})),
+        m_droid(Position(std::array<int64_t, 2>{0, 0})) {
+    this->m_cells.insert(std::make_pair(m_origin, '.'));
+  }
+
+  void step(Direction direction, char cell) {
+    Position position;
+    switch (direction) {
+      case Direction::north:
+        position = Position{std::array<int64_t, 2>{0, -1}};
+        break;
+      case Direction::south:
+        position = Position{std::array<int64_t, 2>{0, 1}};
+        break;
+      case Direction::west:
+        position = Position{std::array<int64_t, 2>{-1, 0}};
+        break;
+      case Direction::east:
+        position = Position{std::array<int64_t, 2>{1, 0}};
+        break;
+    }
+    position = this->m_droid + position;
+
+    if (this->m_cells.count(position) == 0) {
+      this->m_cells.insert(std::make_pair(position, cell));
+    }
+    assert(this->m_cells.at(position) == cell);
+
+    if (cell != '#') {
+      this->m_droid = position;
+    }
+  }
+
+  size_t distance_to_oxygen_system() const {
+    std::set<std::vector<Position>> paths{{{this->m_origin}}};
+    const std::vector<Position> offsets{
+        {Position{std::array<int64_t, 2>{0, -1}},
+         Position{std::array<int64_t, 2>{0, 1}},
+         Position{std::array<int64_t, 2>{-1, 0}},
+         Position{std::array<int64_t, 2>{1, 0}}}};
+    while (true) {
+      std::set<std::vector<Position>> new_paths;
+      for (auto path : paths) {
+        auto position = path.back();
+        for (auto offset : offsets) {
+          auto candidate_position = position + offset;
+          if (this->m_cells.count(candidate_position) > 0 && this->m_cells.at(candidate_position) != '#') {
+
+            // no loops
+            if (std::find(path.begin(), path.end(), candidate_position) == path.end()) {
+              auto new_path = path;
+              new_path.push_back(candidate_position);
+              new_paths.insert(new_path);
+            }
+          }
+        }
+      }
+      for (auto path : new_paths) {
+        if (this->m_cells.at(path.back()) == 'X') {
+          return path.size() - 1;
+        }
+      }
+      paths = new_paths;
+    }
+  }
+
+  friend std::ostream& operator<<(std::ostream& os, const Map& map) {
+    auto [top_left_pos, bottom_right_pos] = map.edges();
+    auto top_left = top_left_pos.coordinates();
+    auto bottom_right = bottom_right_pos.coordinates();
+    for (int64_t y{top_left[1] - 1}; y <= bottom_right[1] + 1; ++y) {
+      for (int64_t x{top_left[0] - 1}; x <= bottom_right[0] + 1; ++x) {
+        Position position{std::array<int64_t, 2>{x, y}};
+        if (map.m_origin == position) {
+          os << 'O';
+        } else if (map.m_droid == position) {
+          os << 'D';
+        } else if (map.m_cells.count(position) > 0) {
+          os << map.m_cells.at(position);
+        } else {
+          os << ' ';
+        }
+      }
+      os << '\n';
+    }
+
+    return os;
+  }
+};
+
+int64_t step(CPU* cpu, Direction direction) {
   auto state = cpu->execute();
   while ((!std::get<0>(state)) && std::get<1>(state) == Status::ok) {
     state = cpu->execute();
@@ -332,9 +470,39 @@ auto step(CPU* cpu, Direction direction) {
 
 int64_t part_one(const std::vector<std::string>& input) {
   auto intcodes = prepare_input(input);
-  CPU cpu(intcodes, true, false);
-  std::cout << step(&cpu, Direction::north) << std::endl;
-  return cpu.get_output();
+  CPU cpu(intcodes, false, false);
+  Map map;
+  Direction direction;
+  char cell;
+  bool found_oxygen_system{false};
+  for (size_t index{0}; index < 100000; ++index) {
+    switch (std::rand() % 4) {
+      case 0:
+        direction = Direction::north;
+        break;
+      case 1:
+        direction = Direction::south;
+        break;
+      case 2:
+        direction = Direction::west;
+        break;
+      case 3:
+        direction = Direction::east;
+        break;
+      default:
+        throw std::runtime_error("This should never happen!");
+        break;
+    }
+    cell = decode(step(&cpu, direction));
+    map.step(direction, cell);
+    if (!found_oxygen_system && cell != 'X') {
+      index = 0;
+    } else {
+      found_oxygen_system = true;
+    }
+  }
+  std::cout << map << std::endl;
+  return map.distance_to_oxygen_system();
 }
 
 // int64_t part_two(const std::vector<std::string>& input) {
