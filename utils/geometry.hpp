@@ -42,6 +42,8 @@ class Point {
 
   T manhatten_distance(const Point<T, d>& other) const;
 
+  void operator+=(const Point<T, d>& other);
+
   template <typename T_, size_t d_>
   friend Point<T_, d_> operator+(const Point<T_, d_>& lhs,
                                  const Point<T_, d_>& rhs);
