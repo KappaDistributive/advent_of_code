@@ -402,16 +402,19 @@ class Map {
          Position{std::array<int64_t, 2>{0, 1}},
          Position{std::array<int64_t, 2>{-1, 0}},
          Position{std::array<int64_t, 2>{1, 0}}}};
+
+    // breadth-first search
     while (true) {
       std::set<std::vector<Position>> new_paths;
       for (auto path : paths) {
         auto position = path.back();
         for (auto offset : offsets) {
           auto candidate_position = position + offset;
-          if (this->m_cells.count(candidate_position) > 0 && this->m_cells.at(candidate_position) != '#') {
-
+          if (this->m_cells.count(candidate_position) > 0 &&
+              this->m_cells.at(candidate_position) != '#') {
             // no loops
-            if (std::find(path.begin(), path.end(), candidate_position) == path.end()) {
+            if (std::find(path.begin(), path.end(), candidate_position) ==
+                path.end()) {
               auto new_path = path;
               new_path.push_back(candidate_position);
               new_paths.insert(new_path);
@@ -426,6 +429,44 @@ class Map {
       }
       paths = new_paths;
     }
+  }
+
+  size_t flood_fill() const {
+    std::set<Position> frontier;
+    std::set<Position> empty;
+    const std::vector<Position> offsets{
+        {Position{std::array<int64_t, 2>{0, -1}},
+         Position{std::array<int64_t, 2>{0, 1}},
+         Position{std::array<int64_t, 2>{-1, 0}},
+         Position{std::array<int64_t, 2>{1, 0}}}};
+
+    for (auto [position, cell] : this->m_cells) {
+      if (cell == '.') {
+        empty.insert(position);
+      } else if (cell == 'X') {
+        frontier.insert(position);
+      }
+    }
+
+    assert(frontier.size() == 1);
+
+    std::size_t result{0};
+    while (empty.size() > 0) {
+      std::set<Position> new_frontier;
+      for (auto position : frontier) {
+        for (auto offset : offsets) {
+          auto candidate_position = position + offset;
+          if (empty.count(candidate_position) > 0) {
+            new_frontier.insert(candidate_position);
+            empty.erase(candidate_position);
+          }
+        }
+      }
+      frontier = new_frontier;
+      ++result;
+    }
+
+    return result;
   }
 
   friend std::ostream& operator<<(std::ostream& os, const Map& map) {
@@ -475,7 +516,9 @@ int64_t part_one(const std::vector<std::string>& input) {
   Direction direction;
   char cell;
   bool found_oxygen_system{false};
-  for (size_t index{0}; index < 100000; ++index) {
+
+  // TODO: replace this with a sane exploration algorithm
+  for (size_t index{0}; index < 1000000; ++index) {
     switch (std::rand() % 4) {
       case 0:
         direction = Direction::north;
@@ -505,12 +548,44 @@ int64_t part_one(const std::vector<std::string>& input) {
   return map.distance_to_oxygen_system();
 }
 
-// int64_t part_two(const std::vector<std::string>& input) {
-//   auto intcodes = prepare_input(input);
-//   CPU cpu(intcodes);
-//   std::cout << step(&cpu, Direction::south) << std::endl;
-//   return cpu.get_output();
-// }
+int64_t part_two(const std::vector<std::string>& input) {
+  auto intcodes = prepare_input(input);
+  CPU cpu(intcodes, false, false);
+  Map map;
+  Direction direction;
+  char cell;
+  bool found_oxygen_system{false};
+
+  // TODO: replace this with a sane exploration algorithm
+  for (size_t index{0}; index < 1000000; ++index) {
+    switch (std::rand() % 4) {
+      case 0:
+        direction = Direction::north;
+        break;
+      case 1:
+        direction = Direction::south;
+        break;
+      case 2:
+        direction = Direction::west;
+        break;
+      case 3:
+        direction = Direction::east;
+        break;
+      default:
+        throw std::runtime_error("This should never happen!");
+        break;
+    }
+    cell = decode(step(&cpu, direction));
+    map.step(direction, cell);
+    if (!found_oxygen_system && cell != 'X') {
+      index = 0;
+    } else {
+      found_oxygen_system = true;
+    }
+  }
+  std::cout << map << std::endl;
+  return map.flood_fill();
+}
 
 int main() {
   std::filesystem::path input_path{"../2019/data/input_15.txt"};
@@ -520,8 +595,8 @@ int main() {
 
   auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  // auto answer_two =  part_two(input);
-  // std::cout << "The answer to part two is: " << answer_two << std::endl;
+  auto answer_two = part_two(input);
+  std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
 
