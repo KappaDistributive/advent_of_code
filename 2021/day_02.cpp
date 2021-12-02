@@ -30,9 +30,26 @@ auto part_one(const std::vector<std::string>& input) {
   return horizontal * depth;
 }
 
-// auto part_two(const std::vector<std::string>& input) {
-//   return 1;
-// }
+auto part_two(const std::vector<std::string>& input) {
+  auto instructions = prepare_input(input);
+  int horizontal{0}, depth{0}, aim{0};
+
+  for (auto instruction : instructions) {
+    auto [command, value] = instruction;
+    if (command == "up") {
+      aim -= value;
+    } else if (command == "down") {
+      aim += value;
+    } else if (command == "forward") {
+      horizontal += value;
+      depth += aim * value;
+    } else {
+      throw std::runtime_error("Unknown command: " + command);
+    }
+  }
+
+  return horizontal * depth;
+}
 
 int main() {
   // std::filesystem::path input_path{"../2021/data/input_02_mock.txt"};
@@ -41,7 +58,7 @@ int main() {
   auto input = reader.get_lines();
 
   std::cout << "The answer to part one is: " << part_one(input) << std::endl;
-  // std::cout << "The answer to part two is: " << part_two(input) << std::endl;
+  std::cout << "The answer to part two is: " << part_two(input) << std::endl;
 
   return 0;
 }
