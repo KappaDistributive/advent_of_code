@@ -83,6 +83,17 @@ TEST(Point, AdditionInPlace) {
   EXPECT_EQ(want, got);
 }
 
+TEST(Point, AdditionInPlaceCoordinates) {
+  Point<int, 3> lhs(std::vector<int>{1, 2, 3});
+  Point<int, 3> rhs(std::vector<int>{4, 5, 6});
+
+  auto got = lhs;
+  got += rhs.coordinates();
+  Point<int, 3> want(std::vector<int>{5, 7, 9});
+
+  EXPECT_EQ(want, got);
+}
+
 TEST(Point, Order) {
   Point<int, 3> a(std::vector<int>{-3, 1, -2});
   Point<int, 3> b(std::vector<int>{0, -1, -4});

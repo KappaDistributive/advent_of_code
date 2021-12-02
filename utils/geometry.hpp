@@ -44,6 +44,8 @@ class Point {
 
   void operator+=(const Point<T, d>& other);
 
+  void operator+=(const std::array<T, d>& coordinates);
+
   template <typename T_, size_t d_>
   friend Point<T_, d_> operator+(const Point<T_, d_>& lhs,
                                  const Point<T_, d_>& rhs);
