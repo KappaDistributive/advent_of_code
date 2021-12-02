@@ -54,7 +54,7 @@ class Point {
   friend Point<T_, d_> operator-(const Point<T_, d_>& lhs,
                                  const Point<T_, d_>& rhs);
 
-  Point<T, d> operator-();
+  Point<T, d> operator-() const;
 
   Point<T, d>& operator-=(const Point<T, d>& other);
 
