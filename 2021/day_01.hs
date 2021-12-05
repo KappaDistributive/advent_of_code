@@ -13,14 +13,13 @@ buildTriples [x,y] = []
 buildTriples (x:y:z:zs) = (x,y,z) : buildTriples (y:z:zs)
 
 isIncreased :: [(Int,Int)] -> [Int]
-isIncreased [] = []
-isIncreased (x:xs) = map (\ x -> if uncurry (<) x then 1 else 0) xs
+isIncreased = map (\ x -> if uncurry (<) x then 1 else 0)
 
 sumTriples (x,y,z) = x + y + z
 
 partOne x = sum $ (isIncreased . buildPairs) x
 
-partTwo x = map (sumTriples) (buildTriples x)
+partTwo x = map sumTriples (buildTriples x)
 
 readInt :: String -> Int
 readInt = read
