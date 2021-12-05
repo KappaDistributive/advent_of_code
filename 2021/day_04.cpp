@@ -151,7 +151,6 @@ void print(const std::vector<int>& moves, const std::vector<Board>& boards) {
 auto part_one(const std::vector<std::string>& input) {
   auto [moves, boards] = prepare_input(input);
   int score{0};
-  print(moves, boards);
 
   for (auto move : moves) {
     for (auto& board : boards) {
@@ -166,7 +165,26 @@ auto part_one(const std::vector<std::string>& input) {
   return -1;
 }
 
-auto part_two(const std::vector<std::string>& input) { return 0; }
+auto part_two(const std::vector<std::string>& input) {
+  auto [moves, boards] = prepare_input(input);
+  std::vector<bool> stale;
+  for (size_t index{0}; index < boards.size(); ++index) {
+    stale.push_back(false);
+  }
+  int score{0};
+
+  for (auto move : moves) {
+    for (size_t index{0}; index < boards.size(); ++index) {
+      boards[index].mark(move);
+      if (!stale[index] && boards[index].has_won()) {
+        score = boards[index].sub_score() * move;
+        stale[index] = true;
+      }
+    }
+  }
+
+  return score;
+}
 
 int main() {
   // std::filesystem::path input_path{"../2021/data/input_04_mock.txt"};
