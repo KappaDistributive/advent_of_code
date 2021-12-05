@@ -1,7 +1,16 @@
+import Data.Maybe (mapMaybe)
+
 readInt :: String -> Int
 readInt = read
 
-parse [x,y] = (x,(readInt y))
+parse' :: [String] -> Maybe(String, Int)
+parse' [x,y] = Just (x,readInt y)
+parse' _ = Nothing
+
+skipNothing = filter
+
+parse :: String -> [(String, Int)]
+parse x = mapMaybe (parse' . words) (lines x)
 
 horizontal (x,y) = if x == "forward" then y else 0
 
@@ -10,19 +19,20 @@ depth (x,y) = case x of
     "up" -> -y
     _ -> 0
 
-aim x = scanl1 (+) (map (depth) x)
+aim x = scanl1 (+) (map depth x)
 
 multiply (x,y) = x * y
 
-depthTwo x = map (multiply) $ zip (map (horizontal) x) (aim x)
+depthTwo x = zipWith (curry multiply) (map horizontal x) (aim x)
 
-partOne x = (*) (sum $ map (horizontal) x) (sum $ map (depth) x)
+partOne x = (*) (sum $ map horizontal x) (sum $ map depth x)
 
-partTwo x = (*) (sum $ map (horizontal) x) ((sum . depthTwo) x)
+partTwo x = (*) (sum $ map horizontal x) ((sum . depthTwo) x)
 
 main = do
     contents <- readFile "../2021/data/input_02.txt"
-    let input = map (parse) $ map (words) $ lines contents
+    let input = parse contents
+    print input
     print $ partOne input
 
     print $ partTwo input
