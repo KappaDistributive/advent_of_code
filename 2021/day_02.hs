@@ -32,8 +32,6 @@ partTwo x = (*) (sum $ map horizontal x) ((sum . depthTwo) x)
 main = do
     contents <- readFile "../2021/data/input_02.txt"
     let input = parse contents
-    print input
     print $ partOne input
-
     print $ partTwo input
 
