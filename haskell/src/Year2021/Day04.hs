@@ -33,6 +33,14 @@ score :: Board -> Int
 score (Board numbers state (-1)) = -1
 score (Board numbers state winning_number) = winning_number * sum (map fst (filter (not . snd) (zip numbers state)))
 
+winningMove :: [Int] -> Board -> Int
+winningMove _ (Board _ _ (-1)) = -1
+winningMove moves (Board _ _ winning_number) = case index of
+  Just i -> i
+  Nothing -> -1
+  where
+    index = L.elemIndex winning_number moves
+
 slices :: [Int] -> [a] -> [a]
 slices indices xs =map (xs !!) indices
 
@@ -69,8 +77,16 @@ partOne x = score . head $ filter hasWon $ head $ filter (any hasWon) results
     (moves, boards) = x
     results = step moves boards
 
+partTwo:: ([Int], [Board]) -> Int
+partTwo x = fst $ last sorted_winners
+  where
+    (moves, boards) = x
+    results = step moves boards
+    winners = filter hasWon $ last results
+    sorted_winners = L.sortBy (\ (_,a) (_,b) -> compare a b) $ zip (map score winners) (map (winningMove moves) winners)
+
 
 run contents = do
   let input = parse contents
   print $ partOne input
-  -- print $ partTwo input
+  print $ partTwo input
