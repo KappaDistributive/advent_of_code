@@ -7,14 +7,18 @@ decode x = case x of
   ')' -> -1
   _ -> 0
 
--- partOne :: String -> Int
+enumerate :: [a] -> [(Int, a)]
+enumerate xs = zip [0,1..length xs -1] xs
+
+partOne :: String -> Int
 partOne = sum . map decode
 
--- partTwo  = 
+-- partTwo :: String -> Int
+partTwo  x = fst . head $ filter (\x -> snd x == -1) (enumerate (scanl (+) 0 (map decode x)))
 
 readInt :: String -> Int
 readInt = read
 
 run contents = do
   print $ partOne contents
-  -- print $ partTwo x
+  print $ partTwo contents
