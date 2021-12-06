@@ -18,12 +18,19 @@ parse' (x:xs) = case x of
 parse :: String -> [(Char, Position)]
 parse = reverse . parse' . reverse
 
+split :: [Char] -> [(Char, Char)]
+split [] = []
+split [x] = [(x, 'x')]
+split (x:y:ys) = (x,y) : split ys
+
 partOne :: String -> Int
 partOne = length . L.nub . map snd . parse
 
--- partTwo :: String -> Int
--- partTwo = print ""
+partTwo :: String -> Int
+partTwo x = length . L.nub . map snd $ parse santa ++ parse robo
+  where santa = map fst $ split x
+        robo = map snd $ split x
 
 run contents = do
   print $ partOne contents
-  -- print $ partTwo contents
+  print $ partTwo contents
