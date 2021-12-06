@@ -20,13 +20,24 @@ slack (Box l w h) = a*b
   where sorted = L.sort [l,w,h]
         [a,b,_] = sorted
 
+ribbon :: Box -> Int
+ribbon (Box l w h) = minimum [2*(l+w), 2*(l+h), 2*(w+h)]
+
+bow:: Box -> Int
+bow (Box l w h) = l*w*h
+
+ribbonAndBow :: Box -> Int
+ribbonAndBow x = ribbon x + bow x
+
 paper :: Box -> Int
 paper x = surface x + slack x
 
+partOne :: String -> Int
 partOne = sum . map paper . parse
 
-partTwo = read::String -> String
+partTwo :: String -> Int
+partTwo = sum . map ribbonAndBow . parse
 
 run contents = do
   print $ partOne contents
-  -- print $ partTwo contents
+  print $ partTwo contents
