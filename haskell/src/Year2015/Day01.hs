@@ -13,7 +13,7 @@ enumerate xs = zip [0,1..length xs -1] xs
 partOne :: String -> Int
 partOne = sum . map decode
 
--- partTwo :: String -> Int
+partTwo :: String -> Int
 partTwo  x = fst . head $ filter (\x -> snd x == -1) (enumerate (scanl (+) 0 (map decode x)))
 
 readInt :: String -> Int
