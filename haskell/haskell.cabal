@@ -27,6 +27,7 @@ library
   exposed-modules:
       Year2015.Day01
       Year2015.Day02
+      Year2015.Day03
       Year2021.Day01
       Year2021.Day02
       Year2021.Day03
