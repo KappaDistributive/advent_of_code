@@ -1,3 +1,4 @@
+module Year2021.Day02 where
 import Data.Maybe (mapMaybe)
 
 readInt :: String -> Int
@@ -29,8 +30,7 @@ partOne x = (*) (sum $ map horizontal x) (sum $ map depth x)
 
 partTwo x = (*) (sum $ map horizontal x) ((sum . depthTwo) x)
 
-main = do
-    contents <- readFile "../2021/data/input_02.txt"
+run contents = do
     let input = parse contents
     print $ partOne input
     print $ partTwo input

@@ -1,6 +1,4 @@
--- import System.IO
--- import qualified Data.Text as T
--- import qualified Data.Text.Read
+module Year2021.Day01 (run) where
 import Data.Char
 
 buildPairs [] = []
@@ -17,17 +15,16 @@ isIncreased = map (\ x -> if uncurry (<) x then 1 else 0)
 
 sumTriples (x,y,z) = x + y + z
 
-partOne x = sum $ (isIncreased . buildPairs) x
+input = map readInt . words
 
-partTwo x = map sumTriples (buildTriples x)
+partOne = sum . isIncreased . buildPairs
+
+partTwo x = partOne $ map sumTriples (buildTriples x)
 
 readInt :: String -> Int
 readInt = read
 
-main = do
-    contents <- readFile "../2021/data/input_01.txt"
-    let input = map readInt . words $ contents
-    print $ partOne input
-
-    print $ (partOne . partTwo) input
-
+run contents = do
+  let x = input contents
+  print $ partOne x
+  print $ partTwo x

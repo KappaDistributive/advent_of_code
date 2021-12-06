@@ -1,3 +1,4 @@
+module Year2021.Day03 where
 import Data.Array
 
 parse :: String -> [[Bool]]
@@ -70,8 +71,7 @@ partTwo:: [[Bool]] -> Int
 partTwo x = (* ) (decodeBinary $ map fromEnum (oxygenGeneratorRating 0 x)) (decodeBinary $ map fromEnum (scrubberRating 0 x))
 
 
-main = do
-  contents <- readFile "../2021/data/input_03.txt"
+run contents = do
   let input = parse contents
   print $ partOne input
   print $ partTwo input
