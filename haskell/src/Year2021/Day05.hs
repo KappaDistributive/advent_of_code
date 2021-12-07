@@ -28,12 +28,24 @@ unpack False (Line a b c d)
   | b == d = map (,b) [(min a c)..(max a c)]  -- horizontal line
   | otherwise = []
 
-unpack True _ = [] -- with diagonals isn't implemented
+unpack True (Line a b c d)
+  | a == c = map (a,) [(min b d)..(max b d)]  -- vertical line
+  | b == d = map (,b) [(min a c)..(max a c)]  -- horizontal line
+  | a < c && b < d = [(a+x, b+x) | x <- [0..(c-a)]]  -- diagonal line `/`
+  | a < c && b > d = [(a+x, b-x) | x <- [0..(c-a)]]  -- diagonal line `\`
+  | a > c && b < d = [(a-x, b+x) | x <- [0..(a-c)]]  -- diagonal line `\`
+  | a > c && b > d = [(a-x, b-x) | x <- [0..(a-c)]]  -- diagonal line `/`
+  | otherwise = []
+
 
 partOne :: [Line] -> Int
 partOne x = length $ filter ((>1) . snd) $ frequency $ concatMap (unpack False) x
 
+partTwo :: [Line] -> Int
+partTwo x = length $ filter ((>1) . snd) $ frequency $ concatMap (unpack True) x
+
 run contents = do
   let input = parse contents
   print $ partOne input
+  print $ partTwo input
 
