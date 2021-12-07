@@ -3,7 +3,18 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    name: regex-base
+    version: 0.94.0.2
+    git: https://github.com/haskell-hvr/regex-base.git
+    pantry-tree:
+      size: 1317
+      sha256: 28e1c923a375818b22d6c4014632859d4555a52cd583e1ca9fce24d0c12c968e
+    commit: 70f1dac7ab9d04b11e1f4ae9911b0de59b68fa1d
+  original:
+    git: https://github.com/haskell-hvr/regex-base.git
+    commit: 70f1dac7ab9d04b11e1f4ae9911b0de59b68fa1d
 snapshots:
 - completed:
     size: 586296

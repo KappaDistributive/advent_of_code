@@ -24,6 +24,7 @@ dependencies:
 - array
 - containers
 - text
+- regex-tdfa
 
 library:
   source-dirs: src
