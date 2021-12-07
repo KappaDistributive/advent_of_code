@@ -28,6 +28,7 @@ library
       Year2015.Day01
       Year2015.Day02
       Year2015.Day03
+      Year2015.Day04
       Year2021.Day01
       Year2021.Day02
       Year2021.Day03
@@ -41,7 +42,10 @@ library
   build-depends:
       array
     , base >=4.7 && <5
+    , bytestring
     , containers
+    , cryptonite
+    , memory
     , regex-tdfa
     , text
   default-language: Haskell2010
@@ -56,8 +60,11 @@ executable haskell-exe
   build-depends:
       array
     , base >=4.7 && <5
+    , bytestring
     , containers
+    , cryptonite
     , haskell
+    , memory
     , regex-tdfa
     , text
   default-language: Haskell2010
@@ -73,8 +80,11 @@ test-suite haskell-test
   build-depends:
       array
     , base >=4.7 && <5
+    , bytestring
     , containers
+    , cryptonite
     , haskell
+    , memory
     , regex-tdfa
     , text
   default-language: Haskell2010
