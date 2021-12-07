@@ -18,7 +18,13 @@ partOne x = fst . head $ filter (\a -> ((>= 5) . numLeadingZeros . snd) a) y
   where
     y = [step (b, x) | b <- [0 ..]]
 
+partTwo :: String -> Int
+partTwo x = fst . head $ filter (\a -> ((>= 6) . numLeadingZeros . snd) a) y
+  where
+    y = [step (b, x) | b <- [0 ..]]
+
 run :: String -> IO ()
 run contents = do
   let input = contents
   print $ partOne input
+  print $ partTwo input
