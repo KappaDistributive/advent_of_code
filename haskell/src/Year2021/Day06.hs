@@ -27,8 +27,13 @@ step :: Int -> M.Map Int Int -> M.Map Int Int
 step 0 m = m
 step k m = step (k - 1) $ M.fromListWith (+) $ (transform . M.toList) m
 
+partOne :: M.Map Int Int -> Int
 partOne m = sum $ map snd $ M.toList (step 80 m)
+
+partTwo :: M.Map Int Int -> Int
+partTwo m = sum $ map snd $ M.toList (step 256 m)
 
 run contents = do
   let input = parse contents
   print $ partOne input
+  print $ partTwo input
