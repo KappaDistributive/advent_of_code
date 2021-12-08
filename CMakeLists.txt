@@ -459,3 +459,6 @@ target_link_libraries(2021_06 input)
 
 add_executable(2021_07 2021/day_07.cpp)
 target_link_libraries(2021_07 input)
+
+add_executable(2021_08 2021/day_08.cpp)
+target_link_libraries(2021_08 input)
