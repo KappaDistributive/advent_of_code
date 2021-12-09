@@ -35,6 +35,7 @@ library
       Year2021.Day04
       Year2021.Day05
       Year2021.Day06
+      Year2021.Day07
   other-modules:
       Paths_haskell
   hs-source-dirs:
