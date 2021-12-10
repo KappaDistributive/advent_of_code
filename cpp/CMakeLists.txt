@@ -1,15 +1,20 @@
 cmake_minimum_required(VERSION 3.17)
 
 project(advent_of_code)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+add_subdirectory(vendors/fmt EXCLUDE_FROM_ALL)
+
 add_library(input src/utils/input.cpp)
+target_link_libraries(input fmt)
+
 add_library(hexgrid src/utils/hexgrid.cpp)
+
 add_library(md5 includes/md5.cpp)
 
 find_package(GTest)
@@ -33,7 +38,6 @@ if (GTEST_FOUND)
   target_link_libraries(TreeUnitTests ${GTEST_BOTH_LIBRARIES} pthread input)
   GTEST_DISCOVER_TESTS(TreeUnitTests)
 endif()
-
 
 find_package(Boost REQUIRED)
 

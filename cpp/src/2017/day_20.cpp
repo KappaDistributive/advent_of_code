@@ -119,7 +119,7 @@ auto part_two(const std::vector<std::string>& input) {
     std::set<size_t> collissions;
     for (size_t lhs{0}; lhs < particles.size(); ++lhs) {
       for (size_t rhs{lhs + 1}; rhs < particles.size(); ++rhs) {
-        if (particles[lhs].position == particles[rhs].position) {
+        if (particles[lhs].position.operator==(particles[rhs].position)) {
           collissions.insert(lhs);
           collissions.insert(rhs);
         }

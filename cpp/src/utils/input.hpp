@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fmt/core.h>
+
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -19,6 +21,7 @@
 #include <sstream>
 #include <unordered_set>
 #include <vector>
+
 
 namespace utils {
 class Reader {

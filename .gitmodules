@@ -1,0 +1,3 @@
+[submodule "cpp/vendors/fmt"]
+	path = cpp/vendors/fmt
+	url = https://github.com/fmtlib/fmt
