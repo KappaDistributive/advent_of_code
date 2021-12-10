@@ -99,6 +99,5 @@ partTwo x = scores !! fst (length scores `divMod` 2)
 
 run contents = do
   let input = parse contents
-  print $ map check input
   print $ partOne input
   print $ partTwo input

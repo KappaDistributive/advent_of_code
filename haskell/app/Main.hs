@@ -38,7 +38,7 @@ path :: [String] -> String
 path x
   | length x > 2 && x !! 2 == "mock" =
     "../" ++ year ++ "/data/input_" ++ day ++ "_mock.txt"
-  | otherwise = "../" ++ year ++ "/data/input_" ++ day ++ ".txt"
+  | otherwise = "../data/" ++ year ++ "/input_" ++ day ++ ".txt"
   where
     year = head x
     day = x !! 1
