@@ -1,5 +1,6 @@
 module Year2021.Day10 where
 
+import qualified Data.List as L
 import qualified Data.Text as T
 
 parse :: String -> [String]
@@ -26,6 +27,19 @@ partner x =
     '}' -> '{'
     '>' -> '<'
     _ -> x
+
+score' :: Char -> Int
+score' x =
+  case x of
+    ')' -> 1
+    ']' -> 2
+    '}' -> 3
+    '>' -> 4
+    _ -> 0
+
+score :: [Char] -> Int
+score [] = 0
+score (x:xs) = score' x + 5 * score xs
 
 check' :: [Char] -> String -> (Maybe Char, [Char])
 check' stack@(s:ss) (x:xs) =
@@ -74,6 +88,17 @@ partOne' p [] = p
 
 partOne = partOne' 0 . map check
 
+partTwo' :: [Int] -> [(Maybe Char, [Char])] -> [Int]
+partTwo' p ((Just c, _):ss) = partTwo' p ss
+partTwo' p ((Nothing, s):ss) = partTwo' (score (map partner $ reverse s) : p) ss
+partTwo' p [] = p
+
+partTwo x = scores !! fst (length scores `divMod` 2)
+  where
+    scores = L.sort $ filter (/= 0) (partTwo' [] $ map check x)
+
 run contents = do
   let input = parse contents
+  print $ map check input
   print $ partOne input
+  print $ partTwo input
