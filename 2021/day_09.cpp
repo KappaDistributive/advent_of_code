@@ -18,9 +18,9 @@ class Cave {
         if ((offset_x == 0 && offset_y == 0) ||
             (!include_diagonals && offset_x != 0 && offset_y != 0) ||
             (offset_x + coordinates[0] < 0) ||
-            (offset_x + coordinates[0] >= this->m_width) ||
+            (offset_x + coordinates[0] >= static_cast<int>(this->m_width)) ||
             (offset_y + coordinates[1] < 0) ||
-            (offset_y + coordinates[1] >= this->m_height)) {
+            (offset_y + coordinates[1] >= static_cast<int>(this->m_height))) {
           continue;
         }
         Point offset{std::array<int, 2>{offset_x, offset_y}};
@@ -49,7 +49,6 @@ class Cave {
 
   bool is_low_point(Point point) const {
     bool result{true};
-    auto coordinates = point.coordinates();
     for (auto neighbor : this->neighbors(point)) {
       if (this->heights(neighbor) <= this->heights(point)) {
         result = false;
@@ -60,8 +59,8 @@ class Cave {
 
   int risk_levels() {
     int risk_level{0};
-    for (int y{0}; y < this->m_height; ++y) {
-      for (int x{0}; x < this->m_width; ++x) {
+    for (int y{0}; y < static_cast<int>(this->m_height); ++y) {
+      for (int x{0}; x < static_cast<int>(this->m_width); ++x) {
         Point point{std::array<int, 2>{x, y}};
         if (this->is_low_point(point)) {
           risk_level += this->heights(point) + 1;
@@ -101,8 +100,8 @@ class Cave {
 
   auto basins() {
     std::set<std::set<Point>> result;
-    for (int y{0}; y < this->m_height; ++y) {
-      for (int x{0}; x < this->m_width; ++x) {
+    for (int y{0}; y < static_cast<int>(this->m_height); ++y) {
+      for (int x{0}; x < static_cast<int>(this->m_width); ++x) {
         result.insert(this->basin_at(Point{std::array<int, 2>{x, y}}));
       }
     }
@@ -110,8 +109,8 @@ class Cave {
   }
 
   friend std::ostream& operator<<(std::ostream& os, const Cave& cave) {
-    for (int y{0}; y < cave.m_height; ++y) {
-      for (int x{0}; x < cave.m_width; ++x) {
+    for (int y{0}; y < static_cast<int>(cave.m_height); ++y) {
+      for (int x{0}; x < static_cast<int>(cave.m_width); ++x) {
         Point point{std::array<int, 2>{x, y}};
         if (cave.is_low_point(point)) {
           os << "\033[1m";
