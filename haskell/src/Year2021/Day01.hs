@@ -4,10 +4,12 @@ module Year2021.Day01
 
 import Data.Char
 
+buildPairs :: [a] -> [(a, a)]
 buildPairs [] = []
 buildPairs [x] = []
 buildPairs (x:y:ys) = (x, y) : buildPairs (y : ys)
 
+buildTriples :: [a] -> [(a, a, a)]
 buildTriples [] = []
 buildTriples [x] = []
 buildTriples [x, y] = []
@@ -23,11 +25,14 @@ isIncreased =
 
 sumTriples (x, y, z) = x + y + z
 
+input :: String -> [Int]
 input = map readInt . words
 
+partOne :: [Int] -> Int
 partOne = sum . isIncreased . buildPairs
 
-partTwo x = partOne $ map sumTriples (buildTriples x)
+partTwo :: [Int] -> Int
+partTwo x = partOne $ sumTriples <$> buildTriples x
 
 readInt :: String -> Int
 readInt = read
@@ -36,3 +41,4 @@ run contents = do
   let x = input contents
   print $ partOne x
   print $ partTwo x
+  map :: (a -> b) -> [a] -> [b]
