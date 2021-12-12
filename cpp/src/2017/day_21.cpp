@@ -2,8 +2,6 @@
 
 #include "../utils/input.hpp"
 
-#define assertm(exp, msg) assert(((void)msg, exp))
-
 static const std::regex rule_regex{"^(.*)\\s=>\\s(.*)$"};
 
 auto apply_permutation(const std::string& image,

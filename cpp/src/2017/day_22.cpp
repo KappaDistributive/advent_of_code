@@ -2,8 +2,6 @@
 
 #include "../utils/input.hpp"
 
-#define assertm(exp, msg) assert(((void)msg, exp))
-
 typedef std::pair<int64_t, int64_t> coordinate;
 
 enum class Direction : int { up, right, down, left };

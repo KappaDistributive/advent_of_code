@@ -2,8 +2,6 @@
 
 #include "../utils/input.hpp"
 
-#define assertm(exp, msg) assert(((void)msg, exp))
-
 enum class Shuffle : size_t { new_stack, cut, increment };
 
 std::ostream& operator<<(std::ostream& os, const Shuffle shuffle) {

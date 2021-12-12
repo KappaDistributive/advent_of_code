@@ -2,8 +2,6 @@
 
 #include "../utils/input.hpp"
 
-#define assertm(exp, msg) assert(((void)msg, exp))
-
 typedef std::pair<size_t, size_t> coordinate;
 
 std::ostream& operator<<(std::ostream& os, const coordinate coord) {

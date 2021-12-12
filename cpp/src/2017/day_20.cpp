@@ -2,8 +2,6 @@
 
 #include "../utils/input.hpp"
 
-#define assertm(exp, msg) assert(((void)msg, exp))
-
 static const std::regex particle_regex{
     "p=<(-?\\d+),(-?\\d+),(-?\\d+)>, v=<(-?\\d+),(-?\\d+),(-?\\d+)>, "
     "a=<(-?\\d+),(-?\\d+),(-?\\d+)>"};

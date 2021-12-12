@@ -1,7 +1,5 @@
 #include "../utils/input.hpp"
 
-#define assertm(exp, msg) assert(((void)msg, exp))
-
 typedef std::pair<size_t, size_t> Point;
 
 std::vector<int64_t> prepare_input(const std::vector<std::string>& input) {
