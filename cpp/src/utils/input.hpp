@@ -22,16 +22,22 @@
 #include <unordered_set>
 #include <vector>
 
+inline int _assert_message(const char* condition, const char* function,
+                           const char* file, int line, const char* message) {
+  std::cerr << fmt::format(
+                   "Assertion failed ({}),\nfunction {}, location {}:{}\n{}",
+                   condition, function, file, line, message)
+            << std::endl;
+  std::abort();
+  return 0;
+}
+
 #ifdef NDEBUG
 #define assertm(condition, message) 0
 #else
-#define assertm(condition, message)                                        \
-  (!(condition))                                                           \
-      ? (std::cerr << "Assertion failed: (" << #condition << "), "         \
-                   << "function " << __FUNCTION__ << ", file " << __FILE__ \
-                   << ", line " << __LINE__ << "." << std::endl            \
-                   << message << std::endl,                                \
-         abort(), 0)                                                       \
+#define assertm(condition, message)                                            \
+  (!(static_cast<bool>(condition)))                                            \
+      ? _assert_message(#condition, __FUNCTION__, __FILE__, __LINE__, message) \
       : 1
 #endif
 
