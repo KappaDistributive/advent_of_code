@@ -90,7 +90,7 @@ size_t part_one(const std::string& input) {
 size_t part_two(const std::string& input) {
   bool verbose{false};
   size_t offset = std::stoul(input);
-  assert(input == std::to_string(offset));
+  assertm(input == std::to_string(offset), "Encountered an unexpected input length.");
 
   auto [jolly, frosty, scores, last_twenty] = init();
   if (verbose)
