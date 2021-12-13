@@ -4,9 +4,10 @@ project(advent_of_code)
 set(CMAKE_CXX_STANDARD 20)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -DDEBUG")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=stdlibc++")
 
 add_subdirectory(vendors/fmt EXCLUDE_FROM_ALL)
 
@@ -475,3 +476,6 @@ target_link_libraries(2021_10 input)
 
 add_executable(2021_11 src/2021/day_11.cpp)
 target_link_libraries(2021_11 input)
+
+add_executable(2021_13 src/2021/day_13.cpp)
+target_link_libraries(2021_13 input)
