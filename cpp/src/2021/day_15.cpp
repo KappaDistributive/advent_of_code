@@ -113,7 +113,7 @@ class Cave {
         static_cast<int>(this->m_width * this->m_num_tiles - 1),
         static_cast<int>(this->m_height * this->m_num_tiles - 1)}};
 
-    while (!candidates.empty()) {
+    while (current_node != destination_node) {
       current_node = candidates.top().point();
       candidates.pop();
       for (auto neighbor : this->neighbors(current_node)) {
