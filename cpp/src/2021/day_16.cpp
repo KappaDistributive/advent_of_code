@@ -53,7 +53,6 @@ struct Packet {
   size_t type_id;
   std::variant<size_t, SubPackets> payload;
 
- public:
   static Packet fromBits(std::deque<bool>& bits) {
     size_t version = decode(bits, 3);
     size_t type_id = decode(bits, 3);
