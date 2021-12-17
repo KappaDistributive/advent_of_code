@@ -8,6 +8,7 @@ import Year2015.Day02 (run)
 import Year2015.Day03 (run)
 import Year2015.Day04 (run)
 import Year2015.Day05 (run)
+import Year2015.Day06 (run)
 
 -- Year 2021
 import Year2021.Day01 (run)
@@ -26,6 +27,7 @@ runDay 2015 02 = Year2015.Day02.run
 runDay 2015 03 = Year2015.Day03.run
 runDay 2015 04 = Year2015.Day04.run
 runDay 2015 05 = Year2015.Day05.run
+runDay 2015 06 = Year2015.Day06.run
 -- Year 2021
 runDay 2021 01 = Year2021.Day01.run
 runDay 2021 02 = Year2021.Day02.run
@@ -39,7 +41,7 @@ runDay 2021 10 = Year2021.Day10.run
 path :: [String] -> String
 path x
   | length x > 2 && x !! 2 == "mock" =
-    "../" ++ year ++ "/data/input_" ++ day ++ "_mock.txt"
+    "../data/" ++ year ++ "/input_" ++ day ++ "_mock.txt"
   | otherwise = "../data/" ++ year ++ "/input_" ++ day ++ ".txt"
   where
     year = head x
