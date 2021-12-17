@@ -41,4 +41,3 @@ run contents = do
   let x = input contents
   print $ partOne x
   print $ partTwo x
-  map :: (a -> b) -> [a] -> [b]
