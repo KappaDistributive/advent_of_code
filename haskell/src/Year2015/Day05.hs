@@ -32,13 +32,25 @@ hasIllegalPattern (x:y:xs) =
     _ -> hasIllegalPattern (y : xs)
 hasIllegalPattern _ = False
 
+hasPair :: String -> Bool
+hasPair (a:b:xs) = elem (a, b) (zip xs (tail xs)) || hasPair (b : xs)
+hasPair _ = False
+
+hasPincer :: String -> Bool
+hasPincer (a:b:c:xs) = (a == c) || hasPincer (b : c : xs)
+hasPincer _ = False
+
 partOne :: [String] -> Int
 partOne =
   length .
   filter hasTwin .
   filter ((>= 3) . numVowels) . filter (not . hasIllegalPattern)
 
+partTwo :: [String] -> Int
+partTwo = length . filter hasPincer . filter hasPair
+
 run :: String -> IO ()
 run contents = do
   let input = parse contents
   print $ partOne input
+  print $ partTwo input
