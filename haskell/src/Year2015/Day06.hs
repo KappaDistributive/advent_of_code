@@ -1,6 +1,5 @@
 module Year2015.Day06 where
 
-import qualified Data.Map as M
 import qualified Data.Text as T
 import Text.Regex.TDFA
 import Text.Regex.TDFA.Text ()
