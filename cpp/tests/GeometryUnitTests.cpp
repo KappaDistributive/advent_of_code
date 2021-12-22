@@ -338,4 +338,30 @@ TEST(RasterCuboid, IntersectionEmpty_3d) {
   EXPECT_FALSE(got.has_value());
 }
 
+
+TEST(RasterCuboid, Order_2d) {
+  using Point = Point<int, 2>;
+  Point a_base{{1, 1}};
+  std::array<int, 2> a_lengths{{3, 3}};
+  RasterCuboid<int, 2> a{a_base, a_lengths};
+
+  Point b_base{{0, 0}};
+  std::array<int, 2> b_lengths{{2, 2}};
+  RasterCuboid<int, 2> b{b_base, b_lengths};
+
+  Point c_base{{1, 1}};
+  std::array<int, 2> c_lengths{{1, 1}};
+  RasterCuboid<int, 2> c{c_base, c_lengths};
+
+  ASSERT_FALSE(a < a);
+  ASSERT_FALSE(a < b);
+  ASSERT_FALSE(a < c);
+  ASSERT_TRUE(b < a);
+  ASSERT_FALSE(b < b);
+  ASSERT_FALSE(b < c);
+  ASSERT_FALSE(c < a);
+  ASSERT_FALSE(c < b);
+  ASSERT_FALSE(c < c);
+}
+
 }  // namespace geometry

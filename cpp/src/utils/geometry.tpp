@@ -293,6 +293,22 @@ std::array<std::pair<T, T>, d> RasterCuboid<T, d>::intervals() const {
 }
 
 template <typename T, size_t d>
+bool RasterCuboid<T, d>::operator<(
+    const RasterCuboid<T, d>& other) const noexcept {
+  if (d == 0) {
+    return false;
+  }
+  if (!(this->m_base < other.m_base)) {
+    return false;
+  }
+
+  Point<T, d> offset{{this->m_lengths}};
+  Point<T, d> other_offset{{other.m_lengths}};
+
+  return (this->m_base + offset) < (other.m_base + other_offset);
+}
+
+template <typename T, size_t d>
 bool RasterCuboid<T, d>::operator==(
     const RasterCuboid<T, d>& other) const noexcept {
   return this->m_base == other.m_base && this->m_lengths == other.m_lengths;
@@ -303,6 +319,10 @@ bool RasterCuboid<T, d>::operator!=(
     const RasterCuboid<T, d>& other) const noexcept {
   return !(*this == other);
 }
+
+// template <typename T, size_t d>
+// std::set<RasterCuboid<T, d>>
+//
 
 template <typename T_, size_t d_>
 std::ostream& operator<<(std::ostream& os, const RasterCuboid<T_, d_>& cuboid) {
