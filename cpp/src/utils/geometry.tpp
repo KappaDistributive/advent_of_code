@@ -5,15 +5,6 @@ template <typename T, size_t d>
 Point<T, d>::Point() : m_coordinates(std::array<T, d>()){};
 
 template <typename T, size_t d>
-Point<T, d>::Point(const std::vector<T>& coordinates) {
-  assert(coordinates.size() == d);
-  this->m_coordinates = std::array<T, d>();
-  for (size_t index{0}; index < coordinates.size(); ++index) {
-    this->m_coordinates[index] = coordinates[index];
-  }
-}
-
-template <typename T, size_t d>
 Point<T, d>::Point(const std::array<T, d>& coordinates)
     : m_coordinates(coordinates) {}
 

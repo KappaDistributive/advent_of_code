@@ -22,8 +22,7 @@ class Point {
 
  public:
   Point<T, d>();
-  Point<T, d>(const std::vector<T>& coordinates);
-  Point<T, d>(const std::array<T, d>& coordinates);
+  explicit Point<T, d>(const std::array<T, d>& coordinates);
 
   Point<T, d>(const Point<T, d>& point);
 

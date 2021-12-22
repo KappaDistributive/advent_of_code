@@ -37,21 +37,10 @@ TEST(Point, Print) {
   EXPECT_EQ(want, got);
 }
 
-TEST(Point, PrintVector) {
-  Point<int, 3> point(std::vector<int>{1, 2, 3});
-  std::stringstream ss;
-  ss << point;
-
-  std::string want{"(1, 2, 3)"};
-  std::string got{ss.str()};
-
-  EXPECT_EQ(want, got);
-}
-
 TEST(Point, CopyConstructor) {
-  Point<int, 3> copy(std::vector<int>{3, 4, 5});
+  Point<int, 3> copy(std::array<int, 3>{3, 4, 5});
   {
-    Point<int, 3> point(std::vector<int>{1, 2, 3});
+    Point<int, 3> point(std::array<int, 3>{1, 2, 3});
     copy = point;
     EXPECT_EQ(point, copy);
   }
@@ -63,95 +52,95 @@ TEST(Point, CopyConstructor) {
 }
 
 TEST(Point, Addition) {
-  Point<int, 3> lhs(std::vector<int>{1, 2, 3});
-  Point<int, 3> rhs(std::vector<int>{4, 5, 6});
+  Point<int, 3> lhs(std::array<int, 3>{1, 2, 3});
+  Point<int, 3> rhs(std::array<int, 3>{4, 5, 6});
 
   auto got = lhs + rhs;
-  Point<int, 3> want(std::vector<int>{5, 7, 9});
+  Point<int, 3> want(std::array<int, 3>{5, 7, 9});
 
   EXPECT_EQ(want, got);
 }
 
 TEST(Point, AdditionInPlace) {
-  Point<int, 3> lhs(std::vector<int>{1, 2, 3});
-  Point<int, 3> rhs(std::vector<int>{4, 5, 6});
+  Point<int, 3> lhs(std::array<int, 3>{1, 2, 3});
+  Point<int, 3> rhs(std::array<int, 3>{4, 5, 6});
 
   auto got = lhs;
   got += rhs;
-  Point<int, 3> want(std::vector<int>{5, 7, 9});
+  Point<int, 3> want(std::array<int, 3>{5, 7, 9});
 
   EXPECT_EQ(want, got);
 }
 
 TEST(Point, AdditionInPlaceCoordinates) {
-  Point<int, 3> lhs(std::vector<int>{1, 2, 3});
-  Point<int, 3> rhs(std::vector<int>{4, 5, 6});
+  Point<int, 3> lhs(std::array<int, 3>{1, 2, 3});
+  Point<int, 3> rhs(std::array<int, 3>{4, 5, 6});
 
   auto got = lhs;
   got += rhs.coordinates();
-  Point<int, 3> want(std::vector<int>{5, 7, 9});
+  Point<int, 3> want(std::array<int, 3>{5, 7, 9});
 
   EXPECT_EQ(want, got);
 }
 
 TEST(Point, Negation) {
-  Point<int, 3> lhs(std::vector<int>{1, 2, 3});
+  Point<int, 3> lhs(std::array<int, 3>{1, 2, 3});
 
   auto got = -lhs;
-  Point<int, 3> want(std::vector<int>{-1, -2, -3});
+  Point<int, 3> want(std::array<int, 3>{-1, -2, -3});
 
   EXPECT_EQ(want, got);
 }
 
 
 TEST(Point, Subtraction) {
-  Point<int, 3> lhs(std::vector<int>{1, 2, 3});
-  Point<int, 3> rhs(std::vector<int>{4, 5, 6});
+  Point<int, 3> lhs(std::array<int, 3>{1, 2, 3});
+  Point<int, 3> rhs(std::array<int, 3>{4, 5, 6});
 
   auto got = lhs - rhs;
-  Point<int, 3> want(std::vector<int>{-3, -3, -3});
+  Point<int, 3> want(std::array<int, 3>{-3, -3, -3});
 
   EXPECT_EQ(want, got);
 }
 
 TEST(Point, SubtractionInPlace) {
-  Point<int, 3> lhs(std::vector<int>{1, 2, 3});
-  Point<int, 3> rhs(std::vector<int>{4, 5, 6});
+  Point<int, 3> lhs(std::array<int, 3>{1, 2, 3});
+  Point<int, 3> rhs(std::array<int, 3>{4, 5, 6});
 
   auto got = lhs;
   got -= rhs;
-  Point<int, 3> want(std::vector<int>{-3, -3, -3});
+  Point<int, 3> want(std::array<int, 3>{-3, -3, -3});
 
   EXPECT_EQ(want, got);
 }
 
 TEST(Point, SubtractionInPlaceCoordinates) {
-  Point<int, 3> lhs(std::vector<int>{1, 2, 3});
-  Point<int, 3> rhs(std::vector<int>{4, 5, 6});
+  Point<int, 3> lhs(std::array<int, 3>{1, 2, 3});
+  Point<int, 3> rhs(std::array<int, 3>{4, 5, 6});
 
   auto got = lhs;
   got -= rhs.coordinates();
-  Point<int, 3> want(std::vector<int>{-3, -3, -3});
+  Point<int, 3> want(std::array<int, 3>{-3, -3, -3});
 
   EXPECT_EQ(want, got);
 }
 
 
 TEST(Point, Scaling) {
-  Point<int, 3> lhs(std::vector<int>{1, 2, 3});
+  Point<int, 3> lhs(std::array<int, 3>{1, 2, 3});
   auto got = lhs;
   got *= 2;
-  Point<int, 3> want(std::vector<int>{2, 4, 6});
+  Point<int, 3> want(std::array<int, 3>{2, 4, 6});
 
   EXPECT_EQ(want, got);
 }
 
 TEST(Point, Order) {
-  Point<int, 3> a(std::vector<int>{-3, 1, -2});
-  Point<int, 3> b(std::vector<int>{0, -1, -4});
-  Point<int, 3> c(std::vector<int>{0, 0, 0});
-  Point<int, 3> d(std::vector<int>{1, 2, 3});
-  Point<int, 3> e(std::vector<int>{1, 2, 4});
+  Point<int, 3> a(std::array<int, 3>{-3, 1, -2});
+  Point<int, 3> b(std::array<int, 3>{0, -1, -4});
+  Point<int, 3> c(std::array<int, 3>{0, 0, 0});
+  Point<int, 3> d(std::array<int, 3>{1, 2, 3});
+  Point<int, 3> e(std::array<int, 3>{1, 2, 4});
 
   EXPECT_TRUE(a < b);
   EXPECT_TRUE(a < c);
