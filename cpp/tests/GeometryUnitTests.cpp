@@ -286,7 +286,7 @@ TEST(RasterCuboid, Corners) {
   EXPECT_EQ(want, got);
 }
 
-TEST(RasterCuboid, Volume) {
+TEST(RasterCuboid, Volume_3d) {
   Point<int, 3> base{std::array<int, 3>{1, 2, 3}};
   std::array<int, 3> lengths{4, 5, 6};
   RasterCuboid<int, 3> cuboid(base, lengths);
@@ -371,62 +371,4 @@ TEST(RasterCuboid, Order_2d) {
   ASSERT_FALSE(c < b);
   ASSERT_FALSE(c < c);
 }
-
-TEST(RasterCuboid, Remove_2d_Noop) {
-  using Point = Point<int, 2>;
-  Point a_base{{0, 0}};
-  std::array<int, 2> a_lengths{{3, 3}};
-  RasterCuboid<int, 2> a{a_base, a_lengths};
-
-  Point b_base{{3, 3}};
-  std::array<int, 2> b_lengths{{1, 1}};
-  RasterCuboid<int, 2> b{b_base, b_lengths};
-
-  std::set<RasterCuboid<int, 2>> want{{a}};
-  auto got = a.remove(b);
-
-  ASSERT_EQ(want, got);
-}
-
-TEST(RasterCuboid, Remove_2d) {
-  using Point = Point<int, 2>;
-  Point a_base{{0, 0}};
-  std::array<int, 2> a_lengths{{3, 3}};
-  RasterCuboid<int, 2> a{a_base, a_lengths};
-
-  Point b_base{{1, 1}};
-  std::array<int, 2> b_lengths{{1, 1}};
-  RasterCuboid<int, 2> b{b_base, b_lengths};
-
-  std::set<RasterCuboid<int, 2>> want{{
-      RasterCuboid{std::array<Point, 4>{Point{{0, 0}}, Point{{1, 0}},
-                                        Point{{1, 1}},
-                                        Point{{0, 1}}}},  // lower-left
-      RasterCuboid{std::array<Point, 4>{Point{{1, 0}}, Point{{2, 0}},
-                                        Point{{2, 1}},
-                                        Point{{1, 1}}}},  // lower
-      RasterCuboid{std::array<Point, 4>{Point{{2, 0}}, Point{{3, 0}},
-                                        Point{{3, 1}},
-                                        Point{{2, 1}}}},  // lower-right
-      RasterCuboid{std::array<Point, 4>{Point{{2, 1}}, Point{{3, 1}},
-                                        Point{{3, 2}},
-                                        Point{{2, 2}}}},  // right
-      RasterCuboid{std::array<Point, 4>{Point{{2, 2}}, Point{{3, 2}},
-                                        Point{{3, 3}},
-                                        Point{{2, 3}}}},  // upper-right
-      RasterCuboid{std::array<Point, 4>{Point{{1, 2}}, Point{{2, 2}},
-                                        Point{{2, 3}},
-                                        Point{{1, 3}}}},  // upper
-      RasterCuboid{std::array<Point, 4>{Point{{0, 2}}, Point{{1, 2}},
-                                        Point{{1, 3}},
-                                        Point{{0, 3}}}},  // upper-left
-      RasterCuboid{std::array<Point, 4>{Point{{0, 1}}, Point{{1, 1}},
-                                        Point{{1, 2}}, Point{{0, 2}}}},  // left
-  }};
-
-  auto got = a.remove(b);
-
-  ASSERT_EQ(want, got);
-}
-
 }  // namespace geometry

@@ -124,58 +124,29 @@ class RasterCuboid {
   //  │/                                 │/
   //  └──────────────────────────────────┘
   //   000                                100
-  Point<T, d> corner(std::bitset<d> corner) const;
+  Point<T, d> corner(std::bitset<d> corner) const noexcept;
 
   // Return all corners in the order of increasing bitset
   // values (from 0 to 2^d - 1).
-  std::array<Point<T, d>, num_corners<d>> corners() const;
+  std::array<Point<T, d>, num_corners<d>> corners() const noexcept;
 
-  std::array<std::pair<T, T>, d> intervals() const;
+  std::array<std::pair<T, T>, d> intervals() const noexcept;
 
   T volume() const noexcept;
 
   // Returns the result of intersecting this RasterCuboid with another
   // RasterCuboid. Returns std::nullopt if the intersection is empty.
-  std::optional<RasterCuboid<T, d>> intersect(const RasterCuboid<T, d>& other) const;
+  std::optional<RasterCuboid<T, d>> intersect(
+      const RasterCuboid<T, d>& other) const;
 
-  // Returns the result of subtracting the `subtrahend` from this RasterCuboid.
-  // If the `subtrahend` doesn't intersect this RasterCuboid, return {this}.
-  // Otherwise return a set of RasterCuboids `difference` such that
-  // - `this` \setminus `subtrahend` = union `difference`,
-  // - each element of has volume > 0,
-  // - the elements of `difference` have an intersection of volume 0 (they only intersect at the border) and
-  // - each element of `difference` shares exactly one maximal corner/edge/face/... with `subtrahend`.
-  // Example ::
-  //   ┌─────────────────────────────┐    ┌────────┬───────────┬────────┐
-  //   │                             │    │        │           │        │
-  //   │                             │    │        │           │        │
-  //   │                             │    │        │           │        │
-  //   │                             │    │        │           │        │
-  //   │        ┌───────────┐        │    ├────────┼───────────┼────────┤
-  //   │        │┼┼┼┼┼┼┼┼┼┼┼│        │    │        │xxxxxxxxxxx│        │
-  //   │        │┼┼┼┼┼┼┼┼┼┼┼│        │    │        │xxxxxxxxxxx│        │
-  //   │        │┼┼┼┼┼┼┼┼┼┼┼│        │ -> │        │xxxxxxxxxxx│        │
-  //   │        │┼┼┼┼┼┼┼┼┼┼┼│        │    │        │xxxxxxxxxxx│        │
-  //   │        └───────────┘        │    ├────────┼───────────┼────────┤
-  //   │                             │    │        │           │        │
-  //   │                             │    │        │           │        │
-  //   │                             │    │        │           │        │
-  //   │                             │    │        │           │        │
-  //   │                             │    │        │           │        │
-  //   └─────────────────────────────┘    └────────┴───────────┴────────┘
-  //   Here the larger cuboid on the left-hand side shows `this`, the smaller cuboid filled with lines shows `subtrahend`.
-  //   The result of the subtraction is the collection of 8 unfilled cuboids on the right-hand side. The smaller
-  //   cuboid filled with `x` symbolizes the removed part.
-  std::set<RasterCuboid<T, d>> remove(const RasterCuboid<T, d>& subtrahend) const noexcept;
-
-  // Returns true if both the lexicographically minimal and lexicographically maximal corner of `this` are
-  // lexicographically strictly below those of `other`.
+  // Returns true if both the lexicographically minimal and lexicographically
+  // maximal corner of `this` are lexicographically strictly below those of
+  // `other`.
   bool operator<(const RasterCuboid<T, d>& other) const noexcept;
 
   bool operator==(const RasterCuboid<T, d>& other) const noexcept;
 
   bool operator!=(const RasterCuboid<T, d>& other) const noexcept;
-
 
   template <typename T_, size_t d_>
   friend std::ostream& operator<<(std::ostream& os,
