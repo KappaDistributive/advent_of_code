@@ -32,7 +32,7 @@ struct NanoBot {
     std::regex_match(description, matches, bot_regex);
     assert(matches.size() == 5);
 
-    this->position = Position{std::vector<int>{
+    this->position = Position{std::array<int, 3>{
         std::stoi(matches[1].str()),
         std::stoi(matches[2].str()),
         std::stoi(matches[3].str()),
