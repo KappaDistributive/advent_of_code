@@ -503,3 +503,6 @@ target_link_libraries(2021_21 input)
 
 add_executable(2021_22 src/2021/day_22.cpp)
 target_link_libraries(2021_22 input)
+
+add_executable(2021_25 src/2021/day_25.cpp)
+target_link_libraries(2021_25 input)
