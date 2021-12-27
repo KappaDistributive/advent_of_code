@@ -8,19 +8,22 @@ parse :: String -> [Int]
 parse text = [ord character - ord '0' | character <- filter (/= '\n') text]
 
 pairUp :: Bool -> [Int] -> [(Int, Int)]
-pairUp False xs = zip xs (tail xs ++ [head xs])
-pairUp True _ = []
-
-partOne :: [Int] -> Int
-partOne (x:xs) =
-  if uncurry (==) p
-    then x + partOne xs
-    else partOne xs
+pairUp part_two xs = zip xs (drop offset xss)
   where
-    (p:ps) = pairUp False (x : xs)
-partOne _ = 0
+    xss = cycle xs
+    offset =
+      if part_two
+        then length xs `div` 2
+        else 1
 
--- partTwo :: [Int] -> Int
+sumUp :: [(Int, Int)] -> Int
+sumUp (x:xs) =
+  if uncurry (==) x
+    then fst x + sumUp xs
+    else sumUp xs
+sumUp [] = 0
+
 run contents = do
   let input = parse contents
-  print $ partOne input
+  print $ sumUp $ pairUp False input
+  print $ sumUp $ pairUp True input
