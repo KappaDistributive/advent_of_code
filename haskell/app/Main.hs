@@ -36,15 +36,12 @@ runDay 2015 03 = Year2015.Day03.run
 runDay 2015 04 = Year2015.Day04.run
 runDay 2015 05 = Year2015.Day05.run
 runDay 2015 06 = Year2015.Day06.run
-
 -- Year 2016
 runDay 2016 01 = Year2016.Day01.run
 runDay 2016 03 = Year2016.Day03.run
 runDay 2016 04 = Year2016.Day04.run
-
 -- Year 2017
 runDay 2017 01 = Year2017.Day01.run
-
 -- Year 2021
 runDay 2021 01 = Year2021.Day01.run
 runDay 2021 02 = Year2021.Day02.run
