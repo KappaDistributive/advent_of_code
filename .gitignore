@@ -2,6 +2,7 @@
 tags
 tags.lock
 tags.temp
+cpp/compile_commands.json
 cpp/debug/
 cpp/release/
 .ccls
