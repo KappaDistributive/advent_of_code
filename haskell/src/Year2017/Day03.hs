@@ -22,6 +22,10 @@ parse = read
 manhattenDistance :: Cell -> Cell -> Int
 manhattenDistance (Cell a b _ _ _) (Cell c d _ _ _) = abs (a - c) + abs (b - d)
 
+isNeighbor :: Cell -> Cell -> Bool
+isNeighbor (Cell x y _ _ _) (Cell x' y' _ _ _) =
+  (x /= x' || y /= y') && (abs (x - x') <= 1 && abs (y - y') <= 1)
+
 rotate :: Direction -> Direction
 rotate direction =
   case direction of
@@ -75,6 +79,15 @@ step cell@(Cell x y direction layer number) =
         then rotate direction
         else direction
 
+stepTwo :: [(Cell, Int)] -> [(Cell, Int)]
+stepTwo [] = [(startCell, 1)]
+stepTwo cells@((cell@(Cell _ _ direction _ _), value):xs) =
+  (new_cell, new_value) : cells
+  where
+    new_cell = step cell
+    neighbors = filter (\(c, _) -> isNeighbor new_cell c) cells
+    new_value = sum $ map snd neighbors
+
 partOne' :: Int -> Cell -> Int
 partOne' target cell@(Cell x y direction layer number) =
   if target == number
@@ -84,6 +97,17 @@ partOne' target cell@(Cell x y direction layer number) =
 partOne :: Int -> Int
 partOne target = partOne' target startCell
 
+partTwo' :: Int -> [(Cell, Int)] -> Int
+partTwo' target [] = partTwo' target [(startCell, 1)]
+partTwo' target ((cell, value):xs) =
+  if value > target
+    then value
+    else partTwo' target (stepTwo ((cell, value) : xs))
+
+partTwo :: Int -> Int
+partTwo target = partTwo' target []
+
 run contents = do
   let input = parse contents
   print $ partOne input
+  print $ partTwo input
