@@ -9,15 +9,18 @@ data Direction
   | West
   deriving (Show)
 
-data Position =
-  Position Int Int
+-- Cell x y direction layer number
+data Cell =
+  Cell Int Int Direction Int Int
   deriving (Show)
+
+startCell = Cell 0 0 East 0 1
 
 parse :: String -> Int
 parse = read
 
-manhattenDistance :: Position -> Position -> Int
-manhattenDistance (Position a b) (Position c d) = abs (a - c) + abs (b - d)
+manhattenDistance :: Cell -> Cell -> Int
+manhattenDistance (Cell a b _ _ _) (Cell c d _ _ _) = abs (a - c) + abs (b - d)
 
 rotate :: Direction -> Direction
 rotate direction =
@@ -27,26 +30,26 @@ rotate direction =
     South -> East
     East -> North
 
-move :: Direction -> Position -> Position
-move direction (Position x y) =
+move :: Direction -> Cell -> Cell
+move direction (Cell x y d l n) =
   case direction of
-    North -> Position x (y + 1)
-    East -> Position (x + 1) y
-    South -> Position x (y - 1)
-    West -> Position (x - 1) y
+    North -> Cell x (y + 1) d l n
+    East -> Cell (x + 1) y d l n
+    South -> Cell x (y - 1) d l n
+    West -> Cell (x - 1) y d l n
 
-shouldTurn :: (Position, Direction, Int) -> Bool
-shouldTurn (Position x y, direction, spiral) =
+shouldTurn :: Cell -> Bool
+shouldTurn (Cell x y direction layer number) =
   case direction of
-    North -> y == spiral
-    East -> x == spiral + 1
-    South -> y == -spiral
-    West -> x == -spiral
+    North -> y == layer
+    East -> x == layer + 1
+    South -> y == -layer
+    West -> x == -layer
 
-endOfSpiral :: (Position, Direction, Int) -> Bool
-endOfSpiral (position, direction, spiral) =
+endOfSpiral :: Cell -> Bool
+endOfSpiral cell@(Cell _ _ direction _ _) =
   case direction of
-    East -> shouldTurn (position, direction, spiral)
+    East -> shouldTurn cell
     _ -> False
 
 -- 17< 16< 15< 14< 13
@@ -58,29 +61,28 @@ endOfSpiral (position, direction, spiral) =
 -- 20   7 > 8 > 9 >10
 -- v
 -- 21 >22 >23---> ...
-step :: (Position, Direction, Int, Int) -> (Position, Direction, Int, Int)
-step (Position 0 0, _, _, _) = (Position 1 0, North, 1, 2)
-step (position, direction, spiral, number) =
-  (new_position, new_direction, new_spiral, number + 1)
+step :: Cell -> Cell
+step cell@(Cell x y direction layer number) =
+  Cell new_x new_y new_direction new_layer (number + 1)
   where
-    new_position = move direction position
-    new_spiral =
-      if endOfSpiral (new_position, direction, spiral)
-        then spiral + 1
-        else spiral
+    (Cell new_x new_y _ _ _) = move direction cell
+    new_layer =
+      if endOfSpiral (Cell new_x new_y direction layer number)
+        then layer + 1
+        else layer
     new_direction =
-      if shouldTurn (new_position, direction, spiral)
+      if shouldTurn (Cell new_x new_y direction layer number)
         then rotate direction
         else direction
 
-partOne' :: Int -> (Position, Direction, Int, Int) -> Int
-partOne' target (position, direction, spiral, number) =
+partOne' :: Int -> Cell -> Int
+partOne' target cell@(Cell x y direction layer number) =
   if target == number
-    then manhattenDistance (Position 0 0) position
-    else partOne' target (step (position, direction, spiral, number))
+    then manhattenDistance startCell cell
+    else partOne' target (step cell)
 
 partOne :: Int -> Int
-partOne target = partOne' target (Position 0 0, North, 0, 1)
+partOne target = partOne' target startCell
 
 run contents = do
   let input = parse contents
