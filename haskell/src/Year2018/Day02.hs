@@ -2,6 +2,7 @@ module Year2018.Day02
   ( run
   ) where
 
+import qualified Data.List as L
 import qualified Data.Map as M
 
 check :: Int -> String -> Bool
@@ -18,6 +19,22 @@ partOne' target result (word:words) =
 partOne :: [String] -> Int
 partOne words = (partOne' 2 0 words) * (partOne' 3 0 words)
 
+common :: (String, String) -> String
+common ([], []) = ""
+common ((x:xs), (y:ys)) =
+  if x == y
+    then x : common (xs, ys)
+    else common (xs, ys)
+
+pairs :: (Eq a) => [a] -> [(a, a)]
+pairs l = [(x, y) | (x:ys) <- L.tails l, y <- ys]
+
+partTwo :: [String] -> String
+partTwo input = head $ filter ((== l) . length) $ map common $ pairs input
+  where
+    l = (length $ head input) - 1
+
 run contents = do
   let input = lines contents
   print $ partOne input
+  print $ partTwo input
