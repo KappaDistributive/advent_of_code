@@ -13,9 +13,9 @@ step (index, instructions) =
     new_index =
       index + fst (instructions !! index) + snd (instructions !! index)
     new_instructions =
-      ((L.take index instructions) ++
+      (L.take index instructions ++
        [(fst (instructions !! index), snd (instructions !! index) + 1)]) ++
-      (L.drop (index + 1) instructions)
+      L.drop (index + 1) instructions
 
 stepTwo :: (Int, [(Int, Int)]) -> Maybe (Int, [(Int, Int)])
 stepTwo (index, instructions) =
@@ -25,15 +25,15 @@ stepTwo (index, instructions) =
   where
     new_index =
       index + fst (instructions !! index) + snd (instructions !! index)
-    offset = fst (instructions !! index) + snd (instructions !! index)
+    offset = uncurry (+) (instructions !! index)
     new_instructions =
-      ((L.take index instructions) ++
+      (L.take index instructions ++
        [ ( fst (instructions !! index)
          , if offset < 3
              then snd (instructions !! index) + 1
              else snd (instructions !! index) - 1)
        ]) ++
-      (L.drop (index + 1) instructions)
+      L.drop (index + 1) instructions
 
 partOne' :: Int -> Maybe (Int, [(Int, Int)]) -> Int
 partOne' count state =
@@ -54,6 +54,6 @@ partTwo :: [(Int, Int)] -> Int
 partTwo instructions = partTwo' 0 (Just (0, instructions))
 
 run contents = do
-  let input = zip (map (read :: String -> Int) $ lines contents) (L.cycle [0])
+  let input = zip (map (read :: String -> Int) $ lines contents) (repeat 0)
   print $ partOne input
   print $ partTwo input
