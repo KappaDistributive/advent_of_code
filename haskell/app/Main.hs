@@ -25,6 +25,7 @@ import Year2017.Day06 (run)
 
 -- Year 2018
 import Year2018.Day01 (run)
+import Year2018.Day02 (run)
 
 -- Year 2021
 import Year2021.Day01 (run)
@@ -57,6 +58,7 @@ runDay 2017 05 = Year2017.Day05.run
 runDay 2017 06 = Year2017.Day06.run
 -- Year 2018
 runDay 2018 01 = Year2018.Day01.run
+runDay 2018 02 = Year2018.Day02.run
 -- Year 2021
 runDay 2021 01 = Year2021.Day01.run
 runDay 2021 02 = Year2021.Day02.run
