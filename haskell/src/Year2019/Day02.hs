@@ -39,13 +39,16 @@ execute opcodes =
     Just (index, result) -> Just result
     Nothing -> Nothing
 
-partOne :: [Int] -> Int
-partOne instructions =
+simulate :: Int -> Int -> [Int] -> Int
+simulate noun verb opcodes =
   case result of
     Just opcodes -> head opcodes
     Nothing -> -1
   where
-    result = execute ([head instructions] ++ [12, 2] ++ drop 3 instructions)
+    result = execute ([head opcodes] ++ [noun, verb] ++ drop 3 opcodes)
+
+partOne :: [Int] -> Int
+partOne = simulate 12 2
 
 run contents = do
   let input =
