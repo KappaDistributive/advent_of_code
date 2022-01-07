@@ -2,6 +2,7 @@ module Year2019.Day02
   ( run
   ) where
 
+import Data.List (tails)
 import qualified Data.Text as T
 
 step :: (Int, [Int]) -> Maybe (Int, [Int])
@@ -13,12 +14,12 @@ step (index, opcodes) =
              Just
                ( index + 4
                , take addr_store opcodes ++
-                 [param_0 + param_1] ++ drop (addr_store + 1) opcodes)
+                 param_0 + param_1 : drop (addr_store + 1) opcodes)
            2 ->
              Just
                ( index + 4
                , take addr_store opcodes ++
-                 [param_0 * param_1] ++ drop (addr_store + 1) opcodes)
+                 param_0 * param_1 : drop (addr_store + 1) opcodes)
            99 -> Just (-1, opcodes)
            _ -> Nothing
   where
@@ -45,13 +46,30 @@ simulate noun verb opcodes =
     Just opcodes -> head opcodes
     Nothing -> -1
   where
-    result = execute ([head opcodes] ++ [noun, verb] ++ drop 3 opcodes)
+    result = execute (head opcodes : noun : verb : drop 3 opcodes)
 
 partOne :: [Int] -> Int
 partOne = simulate 12 2
+
+target = 19690720
+
+pairs :: (Ord a) => [a] -> [(a, a)]
+pairs l = [(x, y) | (x:ys) <- tails l, y <- ys]
+
+partTwo :: [Int] -> Int
+partTwo opcodes = x * 100 + y
+  where
+    (x, y) =
+      head
+        [ (noun, verb)
+        | noun <- [0 .. 99]
+        , verb <- [0 .. 99]
+        , target == simulate noun verb opcodes
+        ]
 
 run contents = do
   let input =
         map ((read :: String -> Int) . T.unpack) $
         (T.splitOn (T.pack ",") . T.pack) contents
   print $ partOne input
+  print $ partTwo input
