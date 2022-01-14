@@ -81,17 +81,45 @@ intersections x y = L.nub $ concat [intersection l r | l <- x, r <- y]
 manhattenDistance :: Point -> Point -> Int
 manhattenDistance (Point x y) (Point x' y') = abs (x - x') + abs (y - y')
 
+wireDistance' :: Int -> [Point] -> Point -> Int
+wireDistance' distance (p:ps) target =
+  if p == target
+    then distance + 1
+    else wireDistance' (distance + 1) ps target
+wireDistance' _ [] _ = -1
+
+wireDistance :: [Point] -> Point -> Int
+wireDistance = wireDistance' 0
+
+findCommonPoints :: ([Move], [Move]) -> [Point]
+findCommonPoints (lhs, rhs) = intersections lhs_path rhs_path
+  where
+    lhs_path = trace lhs
+    rhs_path = trace rhs
+
 partOne :: Maybe ([Move], [Move]) -> Maybe Int
 partOne input =
   case input of
     Just (lhs, rhs) ->
-      Just
-        (minimum $
-         map
-           (manhattenDistance (Point 0 0))
-           (intersections (trace lhs) (trace rhs)))
+      Just (minimum $ map (manhattenDistance (Point 0 0)) common_points)
+      where common_points = findCommonPoints (lhs, rhs)
+    Nothing -> Nothing
+
+partTwo :: Maybe ([Move], [Move]) -> Maybe Int
+partTwo input =
+  case input of
+    Just (lhs, rhs) ->
+      Just $
+      minimum $
+      filter
+        (> 0)
+        [wireDistance lhs_path p + wireDistance rhs_path p | p <- common_points]
+      where lhs_path = concatMap unroll $ trace lhs
+            rhs_path = concatMap unroll $ trace rhs
+            common_points = findCommonPoints (lhs, rhs)
     Nothing -> Nothing
 
 run contents = do
   let input = parse contents
   print $ partOne input
+  print $ partTwo input
