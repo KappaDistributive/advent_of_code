@@ -10,6 +10,7 @@ data Move
   | MoveDown Int
   | MoveLeft Int
   | MoveRight Int
+  | MoveEnd
   deriving (Show)
 
 data Point =
@@ -44,36 +45,52 @@ parse contents =
     lhs_moves = mapM pack lhs
     rhs_moves = mapM pack rhs
 
-move' :: [Move] -> [Point] -> [Point]
-move' [] p = p
-move' m [] = move' m [Point 0 0]
-move' (m:ms) (p:ps) = move' ms (move'' m p ++ (p : ps))
+trace' :: [Move] -> [(Point, Move)] -> [(Point, Move)]
+trace' [] p = p
+trace' _ [] = []
+trace' ms (s@(Point x y, m):xs) = trace' (tail ms) (step : s : xs)
+  where
+    step =
+      case m of
+        MoveUp d -> (Point x (y + d), head ms)
+        MoveDown d -> (Point x (y - d), head ms)
+        MoveLeft d -> (Point (x - d) y, head ms)
+        MoveRight d -> (Point (x + d) y, head ms)
+        MoveEnd -> (Point x y, MoveEnd)
 
-move'' :: Move -> Point -> [Point]
-move'' m (Point x y) =
+trace :: [Move] -> [(Point, Move)]
+trace [] = []
+trace m = reverse $ trace' (tail m ++ [MoveEnd]) [(Point 0 0, head m)]
+
+unroll :: (Point, Move) -> [Point]
+unroll (Point x y, m) =
   case m of
-    MoveUp d -> reverse [Point x (y + e) | e <- [1 .. d]]
-    MoveDown d -> reverse [Point x (y - e) | e <- [1 .. d]]
-    MoveLeft d -> reverse [Point (x - e) y | e <- [1 .. d]]
-    MoveRight d -> reverse [Point (x + e) y | e <- [1 .. d]]
+    MoveUp d -> [Point x (y + s) | s <- [1 .. d]]
+    MoveDown d -> [Point x (y - s) | s <- [1 .. d]]
+    MoveLeft d -> [Point (x - s) y | s <- [1 .. d]]
+    MoveRight d -> [Point (x + s) y | s <- [1 .. d]]
+    MoveEnd -> []
 
-move :: [Move] -> [Point]
-move m = move' m []
+intersection :: (Point, Move) -> (Point, Move) -> [Point]
+intersection (p, m) (p', m') =
+  L.nub $ unroll (p, m) `L.intersect` unroll (p', m')
+
+intersections :: [(Point, Move)] -> [(Point, Move)] -> [Point]
+intersections x y = L.nub $ concat [intersection l r | l <- x, r <- y]
 
 manhattenDistance :: Point -> Point -> Int
 manhattenDistance (Point x y) (Point x' y') = abs (x - x') + abs (y - y')
 
-partOne' :: [Point] -> [Point] -> Int
-partOne' l r =
-  minimum $
-  map (manhattenDistance (Point 0 0)) $
-  filter (/= Point 0 0) (l `L.intersect` r)
-
 partOne :: Maybe ([Move], [Move]) -> Maybe Int
 partOne input =
   case input of
+    Just (lhs, rhs) ->
+      Just
+        (minimum $
+         map
+           (manhattenDistance (Point 0 0))
+           (intersections (trace lhs) (trace rhs)))
     Nothing -> Nothing
-    Just (lhs, rhs) -> Just $ partOne' (move lhs) (move rhs)
 
 run contents = do
   let input = parse contents
