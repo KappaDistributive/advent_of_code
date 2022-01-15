@@ -25,6 +25,10 @@ check (Policy symbol lower upper) password = lower <= l && l <= upper
   where
     l = length $ filter (== symbol) password
 
+check' :: Policy -> String -> Bool
+check' (Policy symbol lower upper) password =
+  (password !! (lower - 1) == symbol) /= (password !! (upper - 1) == symbol)
+
 partOne :: [(Policy, String)] -> Int
 partOne [] = 0
 partOne (x@(policy, password):xs) = score + partOne xs
@@ -34,6 +38,16 @@ partOne (x@(policy, password):xs) = score + partOne xs
         then 1
         else 0
 
+partTwo :: [(Policy, String)] -> Int
+partTwo [] = 0
+partTwo (x@(policy, password):xs) = score + partTwo xs
+  where
+    score =
+      if check' policy password
+        then 1
+        else 0
+
 run contents = do
   let input = parse contents
   print $ partOne input
+  print $ partTwo input
