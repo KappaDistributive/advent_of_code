@@ -37,6 +37,7 @@ import Year2019.Day04 (run)
 import Year2020.Day01 (run)
 import Year2020.Day02 (run)
 import Year2020.Day03 (run)
+import Year2020.Day04 (run)
 
 -- Year 2021
 import Year2021.Day01 (run)
@@ -79,6 +80,7 @@ runDay 2019 04 = Year2019.Day04.run
 runDay 2020 01 = Year2020.Day01.run
 runDay 2020 02 = Year2020.Day02.run
 runDay 2020 03 = Year2020.Day03.run
+runDay 2020 04 = Year2020.Day04.run
 -- Year 2021
 runDay 2021 01 = Year2021.Day01.run
 runDay 2021 02 = Year2021.Day02.run
