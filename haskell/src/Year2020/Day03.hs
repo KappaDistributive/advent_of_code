@@ -24,11 +24,7 @@ partOne :: [String] -> Int
 partOne m = numTrees m 3 1
 
 partTwo :: [String] -> Int
-partTwo m =
-  foldl
-    (*)
-    1
-    [numTrees m (fst x) (snd x) | x <- [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]]
+partTwo m = product [uncurry (numTrees m) x | x <- [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]]
 
 run contents = do
   let input = parse contents
