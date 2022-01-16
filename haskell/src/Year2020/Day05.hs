@@ -1,5 +1,7 @@
 module Year2020.Day05 where
 
+import qualified Data.List as L
+
 data Move
   = F
   | B
@@ -49,6 +51,17 @@ parse contents = map parse' $ lines contents
 partOne :: [[Move]] -> Int
 partOne moves = maximum $ map seat moves
 
+skip :: [Int] -> Int
+skip (m:n:ns) =
+  if m + 1 /= n
+    then m + 1
+    else skip (n : ns)
+skip _ = -1
+
+partTwo :: [[Move]] -> Int
+partTwo moves = skip $ L.sort $ map seat moves
+
 run contents = do
   let input = parse contents
   print $ partOne input
+  print $ partTwo input
