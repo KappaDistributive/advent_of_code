@@ -1,5 +1,6 @@
 module Year2018.Day03 where
 
+import qualified Data.List as L
 import qualified Data.Map as M
 import Text.Regex.TDFA
 import Text.Regex.TDFA.Text ()
@@ -50,6 +51,21 @@ partOne claims =
       filter (\((x, y), l) -> length l > 1) $ M.toList $ foldl claim M.empty c
     Nothing -> Nothing
 
+partTwo :: Maybe [Claim] -> Maybe [Int]
+partTwo claims =
+  case claims of
+    Just c ->
+      Just [x | x <- unique_claim_ids, not (x `L.elem` multiple_claim_ids)]
+      where all_claims = M.toList $ foldl claim M.empty c
+            multiple_claim_ids =
+              L.nub $
+              concat $ map snd $ filter (\(_, l) -> length l > 1) all_claims
+            unique_claim_ids =
+              L.nub $
+              concat $ map snd $ (filter (\(_, l) -> length l == 1) all_claims)
+    Nothing -> Nothing
+
 run contents = do
   let input = parse contents
   print $ partOne input
+  print $ partTwo input
