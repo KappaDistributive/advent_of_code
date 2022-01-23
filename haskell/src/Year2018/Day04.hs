@@ -36,8 +36,16 @@ instance Ord Instruction where
 timeRegex = "\\[([0-9]+)-([0-9]+)-([0-9]+) ([0-9]+):([0-9]+)\\]"
 
 extractTimeStamp :: String -> TimeStamp
-extractTimeStamp instruction = TimeStamp (read $ head matches) (read $ matches !! 1) (read $ matches !! 2) (read $ matches !! 3) (read $ matches !! 4)
-  where (_, _, _, matches) = (instruction =~ timeRegex) :: (String, String, String, [String])
+extractTimeStamp instruction =
+  TimeStamp
+    (read $ head matches)
+    (read $ matches !! 1)
+    (read $ matches !! 2)
+    (read $ matches !! 3)
+    (read $ matches !! 4)
+  where
+    (_, _, _, matches) =
+      (instruction =~ timeRegex) :: (String, String, String, [String])
 
 opRegex = "#([0-9]+)"
 
@@ -46,15 +54,19 @@ extractOp instruction
   | "falls asleep" `isInfixOf` instruction = -2
   | "wakes up" `isInfixOf` instruction = -1
   | otherwise = read $ head matches
-    where (_, _, _, matches) = (instruction =~ opRegex) :: (String, String, String, [String])
+  where
+    (_, _, _, matches) =
+      (instruction =~ opRegex) :: (String, String, String, [String])
 
 parse' :: String -> Instruction
-parse' instruction = case op of
-  -2 -> FallAsleep timestamp
-  -1 -> WakeUp timestamp
-  _ -> BeginShift timestamp op
-  where timestamp = extractTimeStamp instruction
-        op = extractOp instruction
+parse' instruction =
+  case op of
+    -2 -> FallAsleep timestamp
+    -1 -> WakeUp timestamp
+    _ -> BeginShift timestamp op
+  where
+    timestamp = extractTimeStamp instruction
+    op = extractOp instruction
 
 parse contents = sort $ map parse' instructions
   where
