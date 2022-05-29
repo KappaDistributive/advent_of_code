@@ -2,6 +2,9 @@
 tags
 tags.lock
 tags.temp
+build/
+c/debug/
+c/release/
 cpp/compile_commands.json
 cpp/debug/
 cpp/release/
