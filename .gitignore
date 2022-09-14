@@ -14,3 +14,4 @@ cpp/release/
 .venv
 
 **/.DS_Store
+embedded/esp-01/data
