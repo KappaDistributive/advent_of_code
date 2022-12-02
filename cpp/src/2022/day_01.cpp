@@ -2,7 +2,7 @@
 
 #include "../utils/input.hpp"
 
-auto prepare_input(const std::vector<std::string>& input) {
+auto prepare_input(const std::vector<std::string> &input) {
   std::vector<std::vector<int>> result;
   std::vector<int> inventory;
 
@@ -24,9 +24,9 @@ auto prepare_input(const std::vector<std::string>& input) {
   return result;
 }
 
-auto part_one(const std::vector<std::vector<int>>& input) {
+auto part_one(const std::vector<std::vector<int>> &input) {
   int answer{0};
-  for (const auto& inventory: input) {
+  for (const auto &inventory : input) {
     int sum = std::accumulate(inventory.begin(), inventory.end(), 0);
     if (sum > answer) {
       answer = sum;
@@ -36,13 +36,14 @@ auto part_one(const std::vector<std::vector<int>>& input) {
   return answer;
 }
 
-auto part_two(const std::vector<std::vector<int>>& input) {
+auto part_two(const std::vector<std::vector<int>> &input) {
   std::vector<int> calories;
-  for (const auto& inventory: input) {
+  for (const auto &inventory : input) {
     calories.push_back(std::accumulate(inventory.begin(), inventory.end(), 0));
   }
 
-  std::sort(calories.begin(), calories.end(), [](int a, int b) { return a > b; });
+  std::sort(calories.begin(), calories.end(),
+            [](int a, int b) { return a > b; });
 
   return std::accumulate(calories.begin(), calories.begin() + 3, 0);
 }
