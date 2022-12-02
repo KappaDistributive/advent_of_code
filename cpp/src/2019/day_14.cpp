@@ -145,8 +145,7 @@ auto part_two(const std::vector<std::string>& input) {
 
   while (createFuel(reactions, fuel_amount) <= ore_stock) {
     if (verbose) {
-      std::cout << "Answer in [" << fuel_amount
-                << u8", ∞)" << std::endl;
+      fmt::print("Answer in [{}, ∞)\n", fuel_amount);
     }
     fuel_amount *= 2;
   }

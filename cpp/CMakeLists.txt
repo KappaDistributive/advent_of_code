@@ -186,9 +186,6 @@ target_link_libraries(2016_22 input )
 add_executable(2016_23 src/2016/day_23.cpp)
 target_link_libraries(2016_23 input )
 
-add_executable(2016_24 src/2016/day_24.cpp)
-target_link_libraries(2016_24 input )
-
 add_executable(2017_01 src/2017/day_01.cpp)
 target_link_libraries(2017_01 input)
 
@@ -318,9 +315,6 @@ target_link_libraries(2018_17 input)
 add_executable(2018_18 src/2018/day_18.cpp)
 target_link_libraries(2018_18 input)
 
-add_executable(2018_23 src/2018/day_23.cpp)
-target_link_libraries(2018_23 input)
-
 add_executable(2019_01 src/2019/day_01.cpp)
 target_link_libraries(2019_01 input)
 
@@ -362,9 +356,6 @@ target_link_libraries(2019_13 input)
 
 add_executable(2019_14 src/2019/day_14.cpp)
 target_link_libraries(2019_14 input)
-
-add_executable(2019_15 src/2019/day_15.cpp)
-target_link_libraries(2019_15 input)
 
 add_executable(2019_17 src/2019/day_17.cpp)
 target_link_libraries(2019_17 input)
