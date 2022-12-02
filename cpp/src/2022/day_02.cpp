@@ -18,6 +18,19 @@ static const std::map<std::pair<Move, Move>, int> SCORES{{
     {{Move::Scissors, Move::Scissors}, 3},
 }};
 
+// (opponent, player) -> move
+static const std::map<std::pair<Move, Move>, Move> REVERT{{
+    {{Move::Rock, Move::Rock}, Move::Scissors},
+    {{Move::Rock, Move::Paper}, Move::Rock},
+    {{Move::Rock, Move::Scissors}, Move::Paper},
+    {{Move::Paper, Move::Rock}, Move::Rock},
+    {{Move::Paper, Move::Paper}, Move::Paper},
+    {{Move::Paper, Move::Scissors}, Move::Scissors},
+    {{Move::Scissors, Move::Rock}, Move::Paper},
+    {{Move::Scissors, Move::Paper}, Move::Scissors},
+    {{Move::Scissors, Move::Scissors}, Move::Rock},
+}};
+
 static const std::map<Move, int> VALUES{{
     {Move::Rock, 1},
     {Move::Paper, 2},
@@ -70,18 +83,15 @@ auto part_one(const std::vector<std::pair<Move, Move>> &strategy) {
   return answer;
 }
 
-// auto part_two(const std::vector<std::vector<int>>& input) {
-//   std::vector<int> calories;
-//   for (const auto& inventory: input) {
-//     calories.push_back(std::accumulate(inventory.begin(), inventory.end(),
-//     0));
-//   }
-//
-//   std::sort(calories.begin(), calories.end(), [](int a, int b) { return a >
-//   b; });
-//
-//   return std::accumulate(calories.begin(), calories.begin() + 3, 0);
-// }
+auto part_two(const std::vector<std::pair<Move, Move>> &strategy) {
+  int answer{0};
+  for (const auto &moves : strategy) {
+    Move player = REVERT.at(moves);
+    answer += VALUES.at(player) + SCORES.at({std::get<0>(moves), player});
+  }
+
+  return answer;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2022/input_02_mock.txt"};
@@ -90,7 +100,7 @@ int main() {
   auto input = prepare_input(reader.get_lines());
 
   fmt::print("The answer to part one is: {}\n", part_one(input));
-  // fmt::print("The answer to part two is: {}\n", part_two(input));
+  fmt::print("The answer to part two is: {}\n", part_two(input));
 
   return 0;
 }
