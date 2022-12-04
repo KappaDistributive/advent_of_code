@@ -16,6 +16,10 @@ struct Section {
   bool contains(const Section &other) const {
     return other.start >= this->start && other.end <= this->end;
   }
+
+  bool overlaps(const Section &other) const {
+    return !(other.end < this->start || other.start > this->end);
+  }
 };
 
 auto prepare_input(const std::vector<std::string> &input) {
@@ -40,7 +44,13 @@ auto part_one(const std::vector<std::pair<Section, Section>> &input) {
 }
 
 auto part_two(const std::vector<std::pair<Section, Section>> &input) {
-  return 2;
+  size_t answer{0};
+  for (const auto &[lhs, rhs] : input) {
+    if (lhs.overlaps(rhs)) {
+      ++answer;
+    }
+  }
+  return answer;
 }
 
 int main() {
