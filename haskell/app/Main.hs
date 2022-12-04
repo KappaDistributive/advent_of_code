@@ -53,6 +53,9 @@ import Year2021.Day07 (run)
 
 import Year2021.Day10 (run)
 
+-- Year 2022
+import Year2022.Day01 (run)
+
 -- Year 2015
 runDay 2015 01 = Year2015.Day01.run
 runDay 2015 02 = Year2015.Day02.run
@@ -96,6 +99,9 @@ runDay 2021 05 = Year2021.Day05.run
 runDay 2021 06 = Year2021.Day06.run
 runDay 2021 07 = Year2021.Day07.run
 runDay 2021 10 = Year2021.Day10.run
+
+-- Year 2022
+runDay 2022 01 = Year2022.Day01.run
 
 path :: [String] -> String
 path x
