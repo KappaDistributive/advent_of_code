@@ -33,7 +33,7 @@ private:
         continue;
       }
       auto splits = utils::split_string(line, ' ');
-      for (const auto &_ : splits) {
+      for (auto _ : splits) {
         stacks.push_back(std::stack<char>{});
       }
       break;
@@ -74,15 +74,32 @@ public:
     this->m_moves = this->decode_moves(input);
   }
 
-  bool move() {
+  bool move(bool part_two = false) {
     for (auto &move : this->m_moves) {
-      if (move.num_moves_completed < move.num_moves) {
-        assert(!this->m_stacks[move.source - 1].empty());
-        this->m_stacks[move.destination - 1].push(
-            this->m_stacks[move.source - 1].top());
-        this->m_stacks[move.source - 1].pop();
-        ++move.num_moves_completed;
-        return true;
+      if (part_two) {
+        if (move.num_moves_completed < move.num_moves) {
+          std::stack<char> buffer;
+          while (move.num_moves_completed < move.num_moves) {
+            assert(!this->m_stacks[move.source - 1].empty());
+            buffer.push(this->m_stacks[move.source - 1].top());
+            this->m_stacks[move.source - 1].pop();
+            ++move.num_moves_completed;
+          }
+          while (!buffer.empty()) {
+            this->m_stacks[move.destination - 1].push(buffer.top());
+            buffer.pop();
+          }
+          return true;
+        }
+      } else {
+        if (move.num_moves_completed < move.num_moves) {
+          assert(!this->m_stacks[move.source - 1].empty());
+          this->m_stacks[move.destination - 1].push(
+              this->m_stacks[move.source - 1].top());
+          this->m_stacks[move.source - 1].pop();
+          ++move.num_moves_completed;
+          return true;
+        }
       }
     }
     return false;
@@ -148,7 +165,13 @@ auto part_one(const std::vector<std::string> &input) {
   return dock.top();
 }
 
-auto part_two(const std::vector<std::string> &input) { return 2; }
+auto part_two(const std::vector<std::string> &input) {
+  Dock dock(input);
+  do {
+    // std::cout << dock << std::endl;
+  } while (dock.move(true));
+  return dock.top();
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2022/input_05_mock.txt"};
