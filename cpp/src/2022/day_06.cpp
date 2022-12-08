@@ -1,6 +1,5 @@
 #include "../utils/input.hpp"
 
-
 auto part_one(const std::string &input) {
   std::string seen;
   for (size_t index{0}; index < input.size(); ++index) {
@@ -14,11 +13,23 @@ auto part_one(const std::string &input) {
       seen += input[index];
     }
   }
-    throw std::runtime_error("");
+  throw std::runtime_error("");
 }
 
 auto part_two(const std::string &input) {
-  return 2;
+  std::string seen;
+  for (size_t index{0}; index < input.size(); ++index) {
+    if (seen.size() == 14) {
+      return index;
+    } else if (seen.find(input[index]) == std::string::npos) {
+      seen += input[index];
+    } else {
+      auto offset = seen.find(input[index]);
+      seen = seen.substr(offset + 1, std::string::npos);
+      seen += input[index];
+    }
+  }
+  throw std::runtime_error("");
 }
 
 int main() {
