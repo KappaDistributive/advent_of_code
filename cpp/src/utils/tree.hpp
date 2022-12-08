@@ -17,12 +17,14 @@ class Node {
   std::list<Node<T>> m_children;
 
   template <typename NodeType>
-  class Iterator : public std::iterator<std::forward_iterator_tag, NodeType> {
+  class Iterator {
    private:
     NodeType* m_node;
     std::stack<NodeType*> m_memory;
 
    public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = NodeType;
     explicit Iterator(NodeType* node);
 
     Iterator<NodeType>& operator++();
