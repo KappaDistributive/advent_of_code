@@ -41,6 +41,9 @@ if (GTEST_FOUND)
 endif()
 
 find_package(Boost REQUIRED)
+if (BOOST_FOUND)
+  include_directories(${Boost_INCLUDE_DIR})
+endif()
 
 add_executable(2015_01 src/2015/day_01.cpp)
 target_link_libraries(2015_01 input)
@@ -219,8 +222,8 @@ target_link_libraries(2017_10 input)
 add_executable(2017_11 src/2017/day_11.cpp)
 target_link_libraries(2017_11 input hexgrid)
 
-add_executable(2017_12 src/2017/day_12.cpp)
-target_link_libraries(2017_12 input)
+# add_executable(2017_12 src/2017/day_12.cpp)
+# target_link_libraries(2017_12 input)
 
 add_executable(2017_13 src/2017/day_13.cpp)
 target_link_libraries(2017_13 input)
@@ -518,3 +521,6 @@ target_link_libraries(2022_05 input)
 
 add_executable(2022_06 src/2022/day_06.cpp)
 target_link_libraries(2022_06 input)
+
+add_executable(2022_07 src/2022/day_07.cpp)
+target_link_libraries(2022_07 input)
