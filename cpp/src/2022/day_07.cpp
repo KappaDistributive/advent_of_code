@@ -32,7 +32,7 @@ struct File : public INode {
   }
 
   void visit_dirs(
-      const std::function<void(const Directory &)> &visitor) const override {}
+      const std::function<void(const Directory &)> &) const override {}
 };
 
 struct Directory : public INode {
