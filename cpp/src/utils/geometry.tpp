@@ -5,15 +5,23 @@ template <typename T, size_t d>
 Point<T, d>::Point() : m_coordinates(std::array<T, d>()){};
 
 template <typename T, size_t d>
-Point<T, d>::Point(const std::array<T, d>& coordinates)
+Point<T, d>::Point(const std::array<T, d> &coordinates)
     : m_coordinates(coordinates) {}
 
 template <typename T, size_t d>
-Point<T, d>::Point(const Point<T, d>& point)
+Point<T, d>::Point(const Point<T, d> &point)
     : m_coordinates(point.m_coordinates) {}
 
+template <typename T, size_t d> T &Point<T, d>::operator[](size_t index) {
+  return this->m_coordinates[index];
+}
+
+template <typename T, size_t d> T Point<T, d>::operator[](size_t index) const {
+  return this->m_coordinates[index];
+}
+
 template <typename T, size_t d>
-Point<T, d>& Point<T, d>::operator=(const Point<T, d>& other) {
+Point<T, d> &Point<T, d>::operator=(const Point<T, d> &other) {
   assert(this->m_coordinates.size() == d);
   assert(other.m_coordinates.size() == d);
   this->m_coordinates = other.m_coordinates;
@@ -21,17 +29,17 @@ Point<T, d>& Point<T, d>::operator=(const Point<T, d>& other) {
 }
 
 template <typename T, size_t d>
-bool Point<T, d>::operator==(const Point<T, d>& other) const {
+bool Point<T, d>::operator==(const Point<T, d> &other) const {
   return this->m_coordinates == other.m_coordinates;
 }
 
 template <typename T, size_t d>
-bool Point<T, d>::operator!=(const Point<T, d>& other) const {
+bool Point<T, d>::operator!=(const Point<T, d> &other) const {
   return !(*this == other);
 }
 
 template <typename T, size_t d>
-bool Point<T, d>::operator<(const Point<T, d>& other) const {
+bool Point<T, d>::operator<(const Point<T, d> &other) const {
   auto coordinates_lhs = this->coordinates();
   auto coordinates_rhs = other.coordinates();
 
@@ -51,7 +59,7 @@ std::array<T, d> Point<T, d>::coordinates() const {
 }
 
 template <typename T, size_t d>
-Point<T, d> operator+(const Point<T, d>& lhs, const Point<T, d>& rhs) {
+Point<T, d> operator+(const Point<T, d> &lhs, const Point<T, d> &rhs) {
   assert(lhs.m_coordinates.size() == d);
   assert(rhs.m_coordinates.size() == d);
 
@@ -64,12 +72,12 @@ Point<T, d> operator+(const Point<T, d>& lhs, const Point<T, d>& rhs) {
 }
 
 template <typename T, size_t d>
-Point<T, d>& Point<T, d>::operator+=(const Point<T, d>& other) {
+Point<T, d> &Point<T, d>::operator+=(const Point<T, d> &other) {
   return this->operator+=(other.coordinates());
 }
 
 template <typename T, size_t d>
-Point<T, d>& Point<T, d>::operator+=(const std::array<T, d>& coordinates) {
+Point<T, d> &Point<T, d>::operator+=(const std::array<T, d> &coordinates) {
   for (size_t index{0}; index < d; ++index) {
     this->m_coordinates[index] += coordinates[index];
   }
@@ -77,7 +85,7 @@ Point<T, d>& Point<T, d>::operator+=(const std::array<T, d>& coordinates) {
 }
 
 template <typename T, size_t d>
-Point<T, d> operator-(const Point<T, d>& lhs, const Point<T, d>& rhs) {
+Point<T, d> operator-(const Point<T, d> &lhs, const Point<T, d> &rhs) {
   assert(lhs.m_coordinates.size() == d);
   assert(rhs.m_coordinates.size() == d);
 
@@ -89,8 +97,7 @@ Point<T, d> operator-(const Point<T, d>& lhs, const Point<T, d>& rhs) {
   return result;
 }
 
-template <typename T, size_t d>
-Point<T, d> Point<T, d>::operator-() const {
+template <typename T, size_t d> Point<T, d> Point<T, d>::operator-() const {
   std::array<T, d> coordinates;
   for (size_t index{0}; index < d; ++index) {
     coordinates[index] = -this->m_coordinates[index];
@@ -100,12 +107,12 @@ Point<T, d> Point<T, d>::operator-() const {
 }
 
 template <typename T, size_t d>
-Point<T, d>& Point<T, d>::operator-=(const Point<T, d>& other) {
+Point<T, d> &Point<T, d>::operator-=(const Point<T, d> &other) {
   return this->operator-=(other.coordinates());
 }
 
 template <typename T, size_t d>
-Point<T, d>& Point<T, d>::operator-=(const std::array<T, d>& coordinates) {
+Point<T, d> &Point<T, d>::operator-=(const std::array<T, d> &coordinates) {
   for (size_t index{0}; index < d; ++index) {
     this->m_coordinates[index] -= coordinates[index];
   }
@@ -113,7 +120,7 @@ Point<T, d>& Point<T, d>::operator-=(const std::array<T, d>& coordinates) {
 }
 
 template <typename T, size_t d>
-Point<T, d>& Point<T, d>::operator*=(const T& factor) {
+Point<T, d> &Point<T, d>::operator*=(const T &factor) {
   for (size_t index{0}; index < d; ++index) {
     this->m_coordinates[index] *= factor;
   }
@@ -121,7 +128,7 @@ Point<T, d>& Point<T, d>::operator*=(const T& factor) {
 }
 
 template <typename T, size_t d>
-std::ostream& operator<<(std::ostream& os, const Point<T, d>& point) {
+std::ostream &operator<<(std::ostream &os, const Point<T, d> &point) {
   os << '(';
   for (auto it{point.m_coordinates.begin()}; it != point.m_coordinates.end();
        ++it) {
@@ -136,7 +143,7 @@ std::ostream& operator<<(std::ostream& os, const Point<T, d>& point) {
 }
 
 template <typename T, size_t d>
-T Point<T, d>::manhatten_distance(const Point<T, d>& other) const {
+T Point<T, d>::manhatten_distance(const Point<T, d> &other) const {
   T distance{0};
   auto lhs = this->coordinates();
   auto rhs = other.coordinates();
@@ -153,13 +160,13 @@ RasterCuboid<T, d>::RasterCuboid() : m_base(Point<T, d>()) {
 };
 
 template <typename T, size_t d>
-RasterCuboid<T, d>::RasterCuboid(const Point<T, d>& base,
-                                 const std::array<T, d>& lengths)
+RasterCuboid<T, d>::RasterCuboid(const Point<T, d> &base,
+                                 const std::array<T, d> &lengths)
     : m_base(base), m_lengths(lengths) {}
 
 template <typename T, size_t d>
 RasterCuboid<T, d>::RasterCuboid(
-    const std::array<Point<T, d>, num_corners<d>>& corners) {
+    const std::array<Point<T, d>, num_corners<d>> &corners) {
   std::array<std::set<T>, d> borders;
   for (auto corner : corners) {
     auto coordinates = corner.coordinates();
@@ -223,7 +230,7 @@ RasterCuboid<T, d>::RasterCuboid(
 
 template <typename T, size_t d>
 RasterCuboid<T, d>::RasterCuboid(
-    const std::array<std::pair<T, T>, d>& intervals) {
+    const std::array<std::pair<T, T>, d> &intervals) {
   std::array<T, d> base_coordinates;
   for (size_t dimension{0}; dimension < d; ++dimension) {
     base_coordinates[dimension] =
@@ -236,8 +243,8 @@ RasterCuboid<T, d>::RasterCuboid(
 }
 
 template <typename T, size_t d>
-std::optional<RasterCuboid<T, d>> RasterCuboid<T, d>::intersect(
-    const RasterCuboid<T, d>& other) const {
+std::optional<RasterCuboid<T, d>>
+RasterCuboid<T, d>::intersect(const RasterCuboid<T, d> &other) const {
   auto intervals_lhs = this->intervals();
   auto intervals_rhs = other.intervals();
   std::array<std::pair<T, T>, d> intervals;
@@ -267,7 +274,8 @@ Point<T, d> RasterCuboid<T, d>::corner(std::bitset<d> corner) const noexcept {
 }
 
 template <typename T, size_t d>
-std::array<Point<T, d>, num_corners<d>> RasterCuboid<T, d>::corners() const noexcept {
+std::array<Point<T, d>, num_corners<d>>
+RasterCuboid<T, d>::corners() const noexcept {
   std::array<Point<T, d>, num_corners<d>> result;
 
   for (size_t index{0}; index < num_corners<d>; ++index) {
@@ -292,13 +300,12 @@ std::array<std::pair<T, T>, d> RasterCuboid<T, d>::intervals() const noexcept {
   return result;
 }
 
-template <typename T, size_t d>
-T RasterCuboid<T, d>::volume() const noexcept {
+template <typename T, size_t d> T RasterCuboid<T, d>::volume() const noexcept {
   if (d == 0) {
     return 0;
   }
   T volume{1};
-  for (const auto& length : this->m_lengths) {
+  for (const auto &length : this->m_lengths) {
     volume *= length;
   }
 
@@ -307,7 +314,7 @@ T RasterCuboid<T, d>::volume() const noexcept {
 
 template <typename T, size_t d>
 bool RasterCuboid<T, d>::operator<(
-    const RasterCuboid<T, d>& other) const noexcept {
+    const RasterCuboid<T, d> &other) const noexcept {
   if (d == 0) {
     return false;
   }
@@ -323,18 +330,18 @@ bool RasterCuboid<T, d>::operator<(
 
 template <typename T, size_t d>
 bool RasterCuboid<T, d>::operator==(
-    const RasterCuboid<T, d>& other) const noexcept {
+    const RasterCuboid<T, d> &other) const noexcept {
   return this->m_base == other.m_base && this->m_lengths == other.m_lengths;
 }
 
 template <typename T, size_t d>
 bool RasterCuboid<T, d>::operator!=(
-    const RasterCuboid<T, d>& other) const noexcept {
+    const RasterCuboid<T, d> &other) const noexcept {
   return !(*this == other);
 }
 
 template <typename T_, size_t d_>
-std::ostream& operator<<(std::ostream& os, const RasterCuboid<T_, d_>& cuboid) {
+std::ostream &operator<<(std::ostream &os, const RasterCuboid<T_, d_> &cuboid) {
   os << "Base: " << cuboid.m_base << " Lengths: (";
   for (size_t dimension{0}; dimension < d_; ++dimension) {
     os << cuboid.m_lengths[dimension];
@@ -344,5 +351,5 @@ std::ostream& operator<<(std::ostream& os, const RasterCuboid<T_, d_>& cuboid) {
   return os;
 }
 
-}  // namespace geometry
-}  // namespace utils
+} // namespace geometry
+} // namespace utils

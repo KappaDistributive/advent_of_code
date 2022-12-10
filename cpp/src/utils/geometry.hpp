@@ -16,59 +16,62 @@ namespace geometry {
 
 using std::size_t;
 
-template <typename T, size_t d>
-class Point {
- private:
+template <typename T, size_t d> class Point {
+private:
   std::array<T, d> m_coordinates;
 
- public:
+public:
   Point<T, d>();
-  explicit Point<T, d>(const std::array<T, d>& coordinates);
+  explicit Point<T, d>(const std::array<T, d> &coordinates);
 
-  Point<T, d>(const Point<T, d>& point);
+  Point<T, d>(const Point<T, d> &point);
 
   ~Point<T, d>() = default;
 
-  Point<T, d>& operator=(const Point<T, d>& other);
+  T &operator[](size_t index);
 
-  bool operator==(const Point<T, d>& other) const;
+  T operator[](size_t index) const;
 
-  bool operator!=(const Point<T, d>& other) const;
+  Point<T, d> &operator=(const Point<T, d> &other);
+
+  bool operator==(const Point<T, d> &other) const;
+
+  bool operator!=(const Point<T, d> &other) const;
 
   // Strict lexicographical order.
-  bool operator<(const Point<T, d>& other) const;
+  bool operator<(const Point<T, d> &other) const;
 
   std::array<T, d> coordinates() const;
 
-  T manhatten_distance(const Point<T, d>& other) const;
+  T manhatten_distance(const Point<T, d> &other) const;
 
   template <typename T_, size_t d_>
-  friend Point<T_, d_> operator+(const Point<T_, d_>& lhs,
-                                 const Point<T_, d_>& rhs);
+  friend Point<T_, d_> operator+(const Point<T_, d_> &lhs,
+                                 const Point<T_, d_> &rhs);
 
-  Point<T, d>& operator+=(const Point<T, d>& other);
+  Point<T, d> &operator+=(const Point<T, d> &other);
 
-  Point<T, d>& operator+=(const std::array<T, d>& coordinates);
+  Point<T, d> &operator+=(const std::array<T, d> &coordinates);
 
   template <typename T_, size_t d_>
-  friend Point<T_, d_> operator-(const Point<T_, d_>& lhs,
-                                 const Point<T_, d_>& rhs);
+  friend Point<T_, d_> operator-(const Point<T_, d_> &lhs,
+                                 const Point<T_, d_> &rhs);
 
   Point<T, d> operator-() const;
 
-  Point<T, d>& operator-=(const Point<T, d>& other);
+  Point<T, d> &operator-=(const Point<T, d> &other);
 
-  Point<T, d>& operator-=(const std::array<T, d>& coordinates);
+  Point<T, d> &operator-=(const std::array<T, d> &coordinates);
 
-  Point<T, d>& operator*=(const T& factor);
+  Point<T, d> &operator*=(const T &factor);
 
   template <typename T_, size_t d_>
-  friend std::ostream& operator<<(std::ostream&, const Point<T_, d_>& point);
+  friend std::ostream &operator<<(std::ostream &, const Point<T_, d_> &point);
 };
 
 template <typename T, size_t d>
-size_t manhatten_distance(const Point<T, d>& origin,
-                          const Point<T, d>& destination);
+size_t manhatten_distance(const Point<T, d> &origin,
+                          const Point<T, d> &destination);
 
 template <typename T>
 constexpr auto constexpr_pow(T base, unsigned int exponent)
@@ -76,29 +79,27 @@ constexpr auto constexpr_pow(T base, unsigned int exponent)
   return exponent ? base * constexpr_pow(base, exponent - 1) : 1;
 }
 
-template <size_t d>
-constexpr size_t num_corners = constexpr_pow(2, d);
+template <size_t d> constexpr size_t num_corners = constexpr_pow(2, d);
 
 // A RasterCuboid is a Cuboid whose faces are parallel with those of the
 // Cartesian coordinate system. In other words: Any RasterCuboid can be obtained
 // by scaling and shifting the UnitCuboid, without rotation.
-template <typename T, size_t d>
-class RasterCuboid {
- private:
-  Point<T, d> m_base;          // lexicographically-minimal corner
-  std::array<T, d> m_lengths;  // lengths along Cartesian coordinate axes
+template <typename T, size_t d> class RasterCuboid {
+private:
+  Point<T, d> m_base;         // lexicographically-minimal corner
+  std::array<T, d> m_lengths; // lengths along Cartesian coordinate axes
 
- public:
+public:
   // creates the `unit RasterCuboid`
   RasterCuboid<T, d>();
 
-  explicit RasterCuboid<T, d>(const Point<T, d>& base,
-                              const std::array<T, d>& lengths);
+  explicit RasterCuboid<T, d>(const Point<T, d> &base,
+                              const std::array<T, d> &lengths);
 
   explicit RasterCuboid<T, d>(
-      const std::array<Point<T, d>, num_corners<d>>& corners);
+      const std::array<Point<T, d>, num_corners<d>> &corners);
 
-  explicit RasterCuboid<T, d>(const std::array<std::pair<T, T>, d>& intervals);
+  explicit RasterCuboid<T, d>(const std::array<std::pair<T, T>, d> &intervals);
 
   // The i-th entry in the bitset of a corner (from left to right) specifies the
   // i-th dimension in a Cartesian coordinate system. In the example below,
@@ -137,24 +138,24 @@ class RasterCuboid {
 
   // Returns the result of intersecting this RasterCuboid with another
   // RasterCuboid. Returns std::nullopt if the intersection is empty.
-  std::optional<RasterCuboid<T, d>> intersect(
-      const RasterCuboid<T, d>& other) const;
+  std::optional<RasterCuboid<T, d>>
+  intersect(const RasterCuboid<T, d> &other) const;
 
   // Returns true if both the lexicographically minimal and lexicographically
   // maximal corner of `this` are lexicographically strictly below those of
   // `other`.
-  bool operator<(const RasterCuboid<T, d>& other) const noexcept;
+  bool operator<(const RasterCuboid<T, d> &other) const noexcept;
 
-  bool operator==(const RasterCuboid<T, d>& other) const noexcept;
+  bool operator==(const RasterCuboid<T, d> &other) const noexcept;
 
-  bool operator!=(const RasterCuboid<T, d>& other) const noexcept;
+  bool operator!=(const RasterCuboid<T, d> &other) const noexcept;
 
   template <typename T_, size_t d_>
-  friend std::ostream& operator<<(std::ostream& os,
-                                  const RasterCuboid<T_, d_>& RasterCuboid);
+  friend std::ostream &operator<<(std::ostream &os,
+                                  const RasterCuboid<T_, d_> &RasterCuboid);
 };
 
-}  // namespace geometry
-}  // namespace utils
+} // namespace geometry
+} // namespace utils
 
 #include "geometry.tpp"
