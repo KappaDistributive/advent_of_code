@@ -16,12 +16,19 @@ halve xs = splitAt s xs
   where
     s = (length xs) `div` 2
 
+group :: Int -> [a] -> [[a]]
+group _ [] = []
+group n xs = take n xs : group n (drop n xs)
+
 partOne :: String -> Int
 partOne x = sum $ map (priority . head . uncurry intersect) y
   where
     y = map halve $ lines x
 
-partTwo _ = 2
+partTwo x = sum $ map (priority . head) z
+  where
+    y = group 3 $ lines x
+    z = map (\a -> (head a `intersect` (a !! 1)) `intersect` (a !! 2)) y
 
 run contents = do
   let input = contents
