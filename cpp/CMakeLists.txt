@@ -539,3 +539,6 @@ target_link_libraries(2022_11 input)
 
 add_executable(2022_12 src/2022/day_12.cpp)
 target_link_libraries(2022_12 input)
+
+add_executable(2022_13 src/2022/day_13.cpp)
+target_link_libraries(2022_13 input)
