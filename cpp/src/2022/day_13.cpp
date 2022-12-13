@@ -8,9 +8,9 @@ struct Packet {
   std::optional<int> value;
   std::vector<Packet> elements;
 
-  Packet (const std::string& input) {
+  Packet(const std::string &input) {
     if (input[0] == '[') {
-      assert (input[input.size() - 1] == ']');
+      assert(input[input.size() - 1] == ']');
       if (input.size() == 2) {
         return;
       }
@@ -28,23 +28,26 @@ struct Packet {
           ++level;
         } else if (input[index] == ']') {
           --level;
-        } 
+        }
       }
     } else {
-      auto delim = std::find(input.cbegin(), input.cend(), ',') - input.cbegin();
+      auto delim =
+          std::find(input.cbegin(), input.cend(), ',') - input.cbegin();
       this->value = std::stoi(input.substr(0, delim));
     }
   }
 
-  std::weak_ordering operator<=>(const Packet& other) const {
+  std::weak_ordering operator<=>(const Packet &other) const {
     // std::cout << "Compare " << *this << " vs. " << other << std::endl;
     if (this->value.has_value() && other.value.has_value()) {
-      // std::cout << "Compare " << this->value.value() << " vs. " << other.value.value() << std::endl;
+      // std::cout << "Compare " << this->value.value() << " vs. " <<
+      // other.value.value() << std::endl;
       return this->value.value() <=> other.value.value();
     } else if (this->value.has_value() && !other.value.has_value()) {
       return Packet{fmt::format("[{}]", this->value.value())} <=> other;
     } else if (!this->value.has_value() && other.value.has_value()) {
-      return this->operator<=>(Packet{fmt::format("[{}]", other.value.value())});
+      return this->operator<=>(
+          Packet{fmt::format("[{}]", other.value.value())});
     }
     auto lhs_it{this->elements.cbegin()};
     auto rhs_it{other.elements.cbegin()};
@@ -67,12 +70,13 @@ struct Packet {
     return std::weak_ordering::greater;
   }
 
-  friend std::ostream& operator<<(std::ostream& os, const Packet& packet) {
+  friend std::ostream &operator<<(std::ostream &os, const Packet &packet) {
     if (packet.value.has_value()) {
       os << packet.value.value();
     } else {
       os << '[';
-      for (auto it{packet.elements.cbegin()}; it != packet.elements.cend(); ++it) {
+      for (auto it{packet.elements.cbegin()}; it != packet.elements.cend();
+           ++it) {
         os << *it;
         if (std::next(it) != packet.elements.cend()) {
           os << ',';
@@ -84,13 +88,14 @@ struct Packet {
   }
 };
 
-std::vector<std::pair<Packet, Packet>> parse_input(const std::vector<std::string> &input) {
+std::vector<std::pair<Packet, Packet>>
+parse_input(const std::vector<std::string> &input) {
   std::vector<std::pair<Packet, Packet>> result;
   Packet packet{"[]"};
   bool first{true};
-  for (const auto &line: input) {
+  for (const auto &line : input) {
     if (line.size() > 0) {
-      if(first) {
+      if (first) {
         first = false;
         packet = Packet{line};
       } else {
@@ -103,7 +108,6 @@ std::vector<std::pair<Packet, Packet>> parse_input(const std::vector<std::string
   }
   return result;
 }
-
 
 auto part_one(const std::vector<std::string> &input) {
   auto packets = parse_input(input);
@@ -127,7 +131,24 @@ auto part_one(const std::vector<std::string> &input) {
 }
 
 auto part_two(const std::vector<std::string> &input) {
-  return 2;
+  auto temp = parse_input(input);
+  std::vector<Packet> packets{{Packet{"[[2]]"}, Packet{"[[6]]"}}};
+  for (auto [lhs, rhs] : temp) {
+    packets.push_back(lhs);
+    packets.push_back(rhs);
+  }
+  std::sort(packets.begin(), packets.end());
+  size_t result{1};
+  size_t index{0};
+  for (auto p : packets) {
+    ++index;
+    std::cout << p << std::endl;
+    if ((p <=> Packet{"[[2]]"}) == std::weak_ordering::equivalent ||
+        (p <=> Packet{"[[6]]"} == std::weak_ordering::equivalent)) {
+      result *= index;
+    }
+  }
+  return result;
 }
 
 int main() {
