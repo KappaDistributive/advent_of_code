@@ -6,10 +6,21 @@ using Point = utils::geometry::Point<int, 2>;
 struct Cave {
   std::set<Point> rocks;
   std::set<Point> sand;
+  Point upper_left;
+  Point lower_right;
 
   Cave(const std::vector<std::string> &input) {
     for (const auto &line : input) {
       this->add_rock(line);
+    }
+    this->upper_left = Point{{500, 0}};
+    this->lower_right = Point{{500, 0}};
+    for (const auto &pos : this->rocks) {
+      this->upper_left[0] = std::min(this->upper_left[0], pos[0]);
+      this->upper_left[1] = std::min(this->upper_left[1], pos[1]);
+
+      this->lower_right[0] = std::max(this->lower_right[0], pos[0]);
+      this->lower_right[1] = std::max(this->lower_right[1], pos[1]);
     }
   }
 
@@ -78,22 +89,7 @@ struct Cave {
   }
 
   std::pair<Point, Point> border() const {
-    Point upper_left{{500, 0}};
-    Point lower_right{{500, 0}};
-
-    for (const auto &pos : this->rocks) {
-      upper_left[0] = std::min(upper_left[0], pos[0]);
-      upper_left[1] = std::min(upper_left[1], pos[1]);
-
-      lower_right[0] = std::max(lower_right[0], pos[0]);
-      lower_right[1] = std::max(lower_right[1], pos[1]);
-    }
-    for (const auto &pos : this->sand) {
-      upper_left[0] = std::min(upper_left[0], pos[0]);
-      lower_right[0] = std::max(lower_right[0], pos[0]);
-    }
-
-    return {upper_left, lower_right};
+    return {this->upper_left, this->lower_right};
   }
 
   friend std::ostream &operator<<(std::ostream &os, const Cave &cave) {
@@ -157,8 +153,8 @@ auto part_two(const std::vector<std::string> &input) {
   size_t result{0};
   while (cave.add_sand()) {
     ++result;
-    // std::cout << "#Sand: " << result << std::endl;
-    // std::cout << cave << std::endl;
+    std::cout << "#Sand: " << result << std::endl;
+    std::cout << cave << std::endl;
   }
   return result;
 }
