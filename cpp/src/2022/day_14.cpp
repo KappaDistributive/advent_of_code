@@ -8,6 +8,7 @@ struct Cave {
   std::set<Point> sand;
   Point upper_left;
   Point lower_right;
+  int max_y;
 
   Cave(const std::vector<std::string> &input) {
     for (const auto &line : input) {
@@ -22,6 +23,7 @@ struct Cave {
       this->lower_right[0] = std::max(this->lower_right[0], pos[0]);
       this->lower_right[1] = std::max(this->lower_right[1], pos[1]);
     }
+    this->max_y = this->lower_right[1];
   }
 
   void add_rock(const std::string &description) {
@@ -54,10 +56,13 @@ struct Cave {
 
       do {
         this->rocks.insert(source);
+        this->max_y = std::max(this->max_y, source[1]);
         source += step;
       } while (source != destination);
       this->rocks.insert(destination);
+      this->max_y = std::max(this->max_y, destination[1]);
     }
+
   }
 
   bool is_air(const Point &position) const {
@@ -67,8 +72,7 @@ struct Cave {
   bool add_sand() {
     Point position{{500, 0}};
     bool added_sand{false};
-    auto max_y = std::get<1>(this->border())[1];
-    while (position[1] <= max_y) {
+    while (position[1] <= this->max_y) {
       if (this->is_air(position + Point{{0, 1}})) {
         position += Point{{0, 1}};
       } else if (this->is_air(position + Point{{-1, 1}})) {
