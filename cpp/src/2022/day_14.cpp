@@ -148,7 +148,20 @@ auto part_one(const std::vector<std::string> &input) {
   return result;
 }
 
-auto part_two(const std::vector<std::string> &input) { return 2; }
+auto part_two(const std::vector<std::string> &input) {
+  Cave cave(input);
+  auto [upper_left, lower_right] = cave.border();
+  cave.add_rock(fmt::format("{},{} -> {},{}", upper_left[0] - 10000,
+                            lower_right[1] + 2, lower_right[0] + 10000,
+                            lower_right[1] + 2));
+  size_t result{0};
+  while (cave.add_sand()) {
+    ++result;
+    // std::cout << "#Sand: " << result << std::endl;
+    // std::cout << cave << std::endl;
+  }
+  return result;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2022/input_14_mock.txt"};
