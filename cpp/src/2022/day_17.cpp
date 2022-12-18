@@ -72,22 +72,20 @@ struct Rock {
 
 struct Chamber {
   std::vector<Rock> settled_rocks;
+  std::set<Point> occupied;
   Rock current_rock;
   const std::string movements;
+  int max_y;
   size_t tick;
 
   explicit Chamber(std::string movements)
-      : current_rock(Rock(0, Point{{2, 3}})), movements(movements), tick(0) {}
+      : current_rock(Rock(0, Point{{2, 3}})), movements(movements), max_y(0),
+        tick(0) {}
 
   bool is_valid(const Rock &rock) const {
-    std::set<Point> units;
-    for (const auto &rock : this->settled_rocks) {
-      for (auto unit : rock.units()) {
-        units.insert(unit);
-      }
-    }
     for (const auto &unit : rock.units()) {
-      if (unit[1] < 0 || unit[0] < 0 || unit[0] > 6 || units.count(unit) > 0) {
+      if (unit[1] < 0 || unit[0] < 0 || unit[0] > 6 ||
+          this->occupied.count(unit) > 0) {
         return false;
       }
     }
@@ -112,11 +110,9 @@ struct Chamber {
       if (!this->is_valid(this->current_rock)) {
         this->current_rock.lower_left -= push;
         this->settled_rocks.push_back(this->current_rock);
-        int max_y{0};
-        for (const auto &rock : this->settled_rocks) {
-          for (const auto &unit : rock.units()) {
-            max_y = std::max(max_y, unit[1]);
-          }
+        for (const auto &unit : this->current_rock.units()) {
+          this->occupied.insert(unit);
+          this->max_y = std::max(this->max_y, unit[1]);
         }
         this->current_rock =
             Rock(this->settled_rocks.size() % 5, Point{{2, max_y + 4}});
