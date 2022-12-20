@@ -92,6 +92,9 @@ size_t find_max_geodes(const std::array<Pack, 4> &costs, int max_minutes) {
     buffer.pop();
     best = std::max(best,
                     state.resources.geode + state.minutes * state.bots.geode);
+    if (state.minutes <= state.resources.obsidian - costs[3].obsidian) {
+      continue;
+    }
     for (int resource_type{3}; resource_type >= 0; --resource_type) {
       if (resource_type == 0 && state.bots.ore >= ore_max) {
         continue;
@@ -148,7 +151,15 @@ auto part_one(const std::vector<std::string> &input) {
   return result;
 }
 
-auto part_two(const std::vector<std::string> &input) { return 2; }
+auto part_two(const std::vector<std::string> &input) {
+  int result{1};
+  for (int index{0}; index < 3; ++index) {
+    result *= find_max_geodes(get_costs(input[index]), 32);
+    std::cout << result << std::endl;
+  }
+
+  return result;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2022/input_19_mock.txt"};
