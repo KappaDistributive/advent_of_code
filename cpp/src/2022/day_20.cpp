@@ -1,7 +1,7 @@
 #include "../utils/input.hpp"
 
 struct Numbers {
-  std::list<std::pair<int, size_t>> data;
+  std::list<std::pair<int64_t, size_t>> data;
 
   Numbers(const std::vector<std::string> &input) {
     for (const auto &line : input) {
@@ -19,34 +19,45 @@ struct Numbers {
     return os;
   }
 
-  void step(size_t index) {
-    for (auto it{this->data.begin()}; it != this->data.end(); ++it) {
+  auto find_index(size_t index) {
+    auto it{this->data.begin()};
+    for (; it != this->data.end(); ++it) {
       if (std::get<1>(*it) == index) {
-        int value = std::get<0>(*it);
-        int steps_taken{0};
-        if (value >= 0) {
-          it = this->data.erase(it);
-          while (steps_taken++ < value) {
-            it = std::next(it);
-            if (it == this->data.end()) {
-              it = this->data.begin();
-            }
-          }
-          this->data.insert(it, std::make_pair(value, index));
-          break;
-        } else {
-          it = this->data.erase(it);
-          while (steps_taken++ < -value) {
-            it = std::prev(it);
-            if (it == this->data.begin()) {
-              it = this->data.end();
-            }
-          }
-          this->data.insert(it, std::make_pair(value, index));
-          break;
+        return it;
+      }
+    }
+    throw std::out_of_range("");
+  }
+
+  auto move(std::__list_iterator<std::pair<int64_t, size_t>, void *> it,
+            const int64_t steps) {
+    int64_t steps_taken{0};
+    if (steps >= 0) {
+      it = this->data.erase(it);
+      while (steps_taken++ < steps) {
+        it = std::next(it);
+        if (it == this->data.end()) {
+          it = this->data.begin();
+        }
+      }
+    } else {
+      it = this->data.erase(it);
+      while (steps_taken++ < -steps) {
+        it = std::prev(it);
+        if (it == this->data.begin()) {
+          it = this->data.end();
         }
       }
     }
+
+    return it;
+  }
+
+  void step(size_t index) {
+    auto it = this->find_index(index);
+    auto value = std::get<0>(*it);
+    it = this->move(it, value);
+    this->data.insert(it, std::make_pair(value, index));
   }
 
   auto result() const {
@@ -57,7 +68,7 @@ struct Numbers {
         it = this->data.cbegin();
       }
     }
-    int result{0};
+    int64_t result{0};
     size_t offset{0};
     while (offset++ < 1000) {
       it = std::next(it);
