@@ -29,35 +29,30 @@ struct Numbers {
     throw std::out_of_range("");
   }
 
-  auto move(std::__list_iterator<std::pair<int64_t, size_t>, void *> it,
-            const int64_t steps) {
-    int64_t steps_taken{0};
-    if (steps >= 0) {
-      it = this->data.erase(it);
-      while (steps_taken++ < steps) {
-        it = std::next(it);
-        if (it == this->data.end()) {
-          it = this->data.begin();
-        }
-      }
-    } else {
-      it = this->data.erase(it);
-      while (steps_taken++ < -steps) {
-        it = std::prev(it);
-        if (it == this->data.begin()) {
-          it = this->data.end();
-        }
+  void move(std::__list_iterator<std::pair<int64_t, size_t>, void *> it,
+            int64_t steps) {
+    auto steps_to_take = steps % static_cast<int64_t>(this->data.size() - 1);
+    if (steps_to_take < 0) {
+      steps_to_take += static_cast<int64_t>(this->data.size() - 1);
+    }
+    if (steps_to_take == 0) {
+      return;
+    }
+    auto target_it = it;
+    for (int64_t step{0}; step < steps_to_take; ++step) {
+      if (++target_it == this->data.end()) {
+        target_it = this->data.begin();
       }
     }
-
-    return it;
+    auto [value, index] = *it;
+    this->data.erase(it);
+    this->data.insert(std::next(target_it), std::make_pair(value, index));
   }
 
   void step(size_t index) {
     auto it = this->find_index(index);
     auto value = std::get<0>(*it);
-    it = this->move(it, value);
-    this->data.insert(it, std::make_pair(value, index));
+    this->move(it, value);
   }
 
   auto result() const {
@@ -76,6 +71,7 @@ struct Numbers {
         it = this->data.cbegin();
       }
     }
+
     result += std::get<0>(*it);
     while (offset++ < 2001) {
       it = std::next(it);
@@ -83,6 +79,7 @@ struct Numbers {
         it = this->data.cbegin();
       }
     }
+
     result += std::get<0>(*it);
     while (offset++ < 3002) {
       it = std::next(it);
@@ -103,7 +100,18 @@ auto part_one(const std::vector<std::string> &input) {
   return numbers.result();
 }
 
-auto part_two(const std::vector<std::string> &input) { return 2; }
+auto part_two(const std::vector<std::string> &input) {
+  Numbers numbers{input};
+  for (auto it{numbers.data.begin()}; it != numbers.data.end(); ++it) {
+    std::get<0>(*it) *= 811589153;
+  }
+  for (size_t round{0}; round < 10; ++round) {
+    for (size_t step{0}; step < input.size(); ++step) {
+      numbers.step(step);
+    }
+  }
+  return numbers.result();
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2022/input_20_mock.txt"};
