@@ -48,6 +48,40 @@ struct Numbers {
       }
     }
   }
+
+  auto result() const {
+    auto it{this->data.cbegin()};
+    while (std::get<0>(*it) != 0) {
+      it = std::next(it);
+      if (it == this->data.cend()) {
+        it = this->data.cbegin();
+      }
+    }
+    int result{0};
+    size_t offset{0};
+    while (offset++ < 1000) {
+      it = std::next(it);
+      if (it == this->data.cend()) {
+        it = this->data.cbegin();
+      }
+    }
+    result += std::get<0>(*it);
+    while (offset++ < 2001) {
+      it = std::next(it);
+      if (it == this->data.cend()) {
+        it = this->data.cbegin();
+      }
+    }
+    result += std::get<0>(*it);
+    while (offset++ < 3002) {
+      it = std::next(it);
+      if (it == this->data.cend()) {
+        it = this->data.cbegin();
+      }
+    }
+    result += std::get<0>(*it);
+    return result;
+  }
 };
 
 auto part_one(const std::vector<std::string> &input) {
@@ -55,41 +89,7 @@ auto part_one(const std::vector<std::string> &input) {
   for (size_t step{0}; step < numbers.data.size(); ++step) {
     numbers.step(step);
   }
-
-  auto it{numbers.data.begin()};
-  while (std::get<0>(*it) != 0) {
-    it = std::next(it);
-    if (it == numbers.data.end()) {
-      it = numbers.data.begin();
-    }
-  }
-  int result{0};
-  size_t offset{0};
-  while (offset++ < 1000) {
-    it = std::next(it);
-    if (it == numbers.data.end()) {
-      it = numbers.data.begin();
-    }
-  }
-  result += std::get<0>(*it);
-  while (offset++ < 2001) {
-    it = std::next(it);
-    if (it == numbers.data.end()) {
-      it = numbers.data.begin();
-    }
-  }
-
-  result += std::get<0>(*it);
-  while (offset++ < 3002) {
-    it = std::next(it);
-    if (it == numbers.data.end()) {
-      it = numbers.data.begin();
-    }
-  }
-
-  result += std::get<0>(*it);
-
-  return result;
+  return numbers.result();
 }
 
 auto part_two(const std::vector<std::string> &input) { return 2; }
