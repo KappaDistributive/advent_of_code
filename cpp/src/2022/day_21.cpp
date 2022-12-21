@@ -5,7 +5,7 @@ auto eval(const std::map<std::string, std::string> &input,
   auto value = input.at(name);
   int64_t result{0};
   try {
-    return static_cast<int64_t>(std::stoi(value));
+    return static_cast<int64_t>(std::stoll(value));
   } catch (...) {
     auto splits = utils::split_string(value, ' ');
     assert(splits.size() == 3);
@@ -44,7 +44,36 @@ auto part_one(const std::vector<std::string> &input) {
   return eval(parse_input(input));
 }
 
-auto part_two(const std::vector<std::string> &input) { return 0; }
+auto part_two(const std::vector<std::string> &input) {
+  auto instructions = parse_input(input);
+  auto splits = utils::split_string(instructions.at("root"), ' ');
+  assert(splits.size() == 3);
+  instructions.at("root") = splits[0] + " - " + splits[2];
+  int64_t guess{1};
+  int64_t guess_max{10000000000000};
+  int64_t guess_min{1};
+
+  while (guess_max - guess_min > 100) {
+    guess = (guess_max + guess_min) / 2;
+    instructions.at("humn") = std::to_string(guess);
+    auto result = eval(instructions);
+    if (result == 0) {
+      break;
+    } else if (result < 0) {
+      guess_max = guess;
+    } else {
+      guess_min = guess;
+    }
+  }
+  for (guess = guess_min; guess <= guess_max; ++guess) {
+    instructions.at("humn") = std::to_string(guess);
+    auto result = eval(instructions);
+    if (result == 0) {
+      return guess;
+    }
+  }
+  return int64_t{0};
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2022/input_21_mock.txt"};
