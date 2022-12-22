@@ -19,17 +19,19 @@ static const std::map<std::pair<Direction, char>, Direction> ROTATION{
 struct Jungle {
   std::array<int, 300 * 300> map; // 0 -> void, 1 -> path, 2-> force field
   std::vector<std::variant<int, char>> instructions;
-  std::vector<std::tuple<size_t, size_t, Direction>> path;
-  size_t max_x, max_y;
+  std::vector<std::tuple<int, int, Direction>> path;
+  int max_x, max_y;
+  bool part_two{false};
 
   Jungle(const std::vector<std::string> &input) : max_x(0), max_y(0) {
     this->map.fill(0);
-    for (size_t y{0}; y < 300; ++y) {
+    for (int y{0}; y < 300; ++y) {
       if (input[y].size() == 0) {
         break;
       }
-      for (size_t x{0}; x < 300; ++x) {
-        if (y >= input.size() || x >= input[y].size()) {
+      for (int x{0}; x < 300; ++x) {
+        if (y >= static_cast<int>(input.size()) ||
+            x >= static_cast<int>(input[y].size())) {
           this->map[y * 300 + x] = 0;
         } else if (input[y][x] == '.') {
           this->map[y * 300 + x] = 1;
@@ -38,8 +40,8 @@ struct Jungle {
         }
       }
     }
-    for (size_t y{0}; y < 300; ++y) {
-      for (size_t x{0}; x < 300; ++x) {
+    for (int y{0}; y < 300; ++y) {
+      for (int x{0}; x < 300; ++x) {
         if (this->map[y * 300 + x] == 1 && this->path.size() == 0) {
           this->path.push_back(std::make_tuple(x, y, Direction::Right));
         }
@@ -67,43 +69,211 @@ struct Jungle {
     }
   }
 
-  std::tuple<size_t, size_t, Direction> next() const {
-    auto [x, y, direction] = this->path.back();
-    if (direction == Direction::Up) {
-      auto potential_y = y == 0 ? 299 : y - 1;
-      while (this->map[potential_y * 300 + x] == 0) {
-        potential_y = potential_y == 0 ? 299 : potential_y - 1;
-      }
-      if (this->map[potential_y * 300 + x] == 1) {
-        y = potential_y;
-      }
-    } else if (direction == Direction::Right) {
-      auto potential_x = (x + 1) % 300;
-      while (this->map[y * 300 + potential_x] == 0) {
-        potential_x = (potential_x + 1) % 300;
-      }
-      if (this->map[y * 300 + potential_x] == 1) {
-        x = potential_x;
-      }
-    } else if (direction == Direction::Down) {
-      auto potential_y = (y + 1) % 300;
-      while (this->map[potential_y * 300 + x] == 0) {
-        potential_y = (potential_y + 1) % 300;
-      }
-      if (this->map[potential_y * 300 + x] == 1) {
-        y = potential_y;
-      }
-    } else if (direction == Direction::Left) {
-      auto potential_x = x == 0 ? 299 : x - 1;
-      while (this->map[y * 300 + potential_x] == 0) {
-        potential_x = potential_x == 0 ? 299 : potential_x - 1;
-      }
-      if (this->map[y * 300 + potential_x] == 1) {
-        x = potential_x;
-      }
+  size_t border(size_t x, size_t y) const {
+    size_t result{0};
+    if (((x == 50 || x == 99) && y >= 50 && y <= 99) ||
+        ((y == 50 || y == 99) && x >= 50 && x <= 99)) {
+      result = 1;
+    } else if (((x == 50 || x == 99) && y >= 0 && y <= 49) ||
+               ((y == 0 || y == 49) && x >= 50 && x <= 99)) {
+      result = 2;
+    } else if (((x == 0 || x == 49) && y >= 100 && y <= 149) ||
+               ((y == 100 || y == 149) && x >= 0 && x <= 49)) {
+      result = 3;
+    } else if (((x == 100 || x == 149) && y >= 0 && y <= 49) ||
+               ((y == 0 || y == 49) && x >= 100 && x <= 149)) {
+      result = 4;
+    } else if (((x == 50 || x == 99) && y >= 100 && y <= 149) ||
+               ((y == 100 || y == 149) && x >= 50 && x <= 99)) {
+      result = 5;
+    } else if (((x == 0 || x == 49) && y >= 150 && y <= 199) ||
+               ((y == 150 || y == 199) && x >= 0 && x <= 49)) {
+      result = 6;
     }
 
-    return {x, y, direction};
+    return result;
+  }
+
+  std::tuple<int, int, Direction> next() const {
+    if (!this->part_two) {
+      auto [x, y, direction] = this->path.back();
+      if (direction == Direction::Up) {
+        auto potential_y = y == 0 ? 299 : y - 1;
+        while (this->map[potential_y * 300 + x] == 0) {
+          potential_y = potential_y == 0 ? 299 : potential_y - 1;
+        }
+        if (this->map[potential_y * 300 + x] == 1) {
+          y = potential_y;
+        }
+      } else if (direction == Direction::Right) {
+        auto potential_x = (x + 1) % 300;
+        while (this->map[y * 300 + potential_x] == 0) {
+          potential_x = (potential_x + 1) % 300;
+        }
+        if (this->map[y * 300 + potential_x] == 1) {
+          x = potential_x;
+        }
+      } else if (direction == Direction::Down) {
+        auto potential_y = (y + 1) % 300;
+        while (this->map[potential_y * 300 + x] == 0) {
+          potential_y = (potential_y + 1) % 300;
+        }
+        if (this->map[potential_y * 300 + x] == 1) {
+          y = potential_y;
+        }
+      } else if (direction == Direction::Left) {
+        auto potential_x = x == 0 ? 299 : x - 1;
+        while (this->map[y * 300 + potential_x] == 0) {
+          potential_x = potential_x == 0 ? 299 : potential_x - 1;
+        }
+        if (this->map[y * 300 + potential_x] == 1) {
+          x = potential_x;
+        }
+      }
+      return {x, y, direction};
+    } else {
+      auto [x, y, direction] = this->path.back();
+      /*       +----+----+
+       *       | 2  | 4  |
+       *       |    |    |
+       *       +----+----+
+       *       | 1  |
+       *       |    |
+       *  +----+----+
+       *  | 3  | 5  |
+       *  |    |    |
+       *  +----+----+
+       *  | 6  |
+       *  |    |
+       *  +----+
+       */
+      int potential_x{x}, potential_y{y};
+      Direction potential_direction{direction};
+      auto num_border = this->border(x, y);
+      bool did_move{false};
+      if (num_border == 1) {
+        if (direction == Direction::Right && x == 99) {
+          // 1 [>] 4
+          did_move = true;
+          potential_direction = Direction::Up;
+          potential_x = 100 + y - 50;
+          potential_y = 49;
+        } else if (direction == Direction::Left && x == 50) {
+          // 1 [<] 3
+          did_move = true;
+          potential_direction = Direction::Down;
+          potential_x = y - 50;
+          potential_y = 100;
+        }
+      } else if (num_border == 2) {
+        if (direction == Direction::Left && x == 50) {
+          // 2 [<] 3
+          did_move = true;
+          potential_direction = Direction::Right;
+          potential_x = 0;
+          potential_y = 149 - y;
+        } else if (direction == Direction::Up && y == 0) {
+          // 2 [^] 6
+          did_move = true;
+          potential_direction = Direction::Right;
+          potential_x = 0;
+          potential_y = 150 + (x - 50);
+        }
+      } else if (num_border == 3) {
+        if (direction == Direction::Up && y == 100) {
+          // 3 [^] 1
+          did_move = true;
+          potential_direction = Direction::Right;
+          potential_x = 50;
+          potential_y = 50 + x;
+        } else if (direction == Direction::Left && x == 0) {
+          // 3 [<] 2
+          did_move = true;
+          potential_direction = Direction::Right;
+          potential_x = 50;
+          potential_y = 49 - (y - 100);
+        }
+      } else if (num_border == 4) {
+        if (direction == Direction::Up && y == 0) {
+          // 4 [^] 6
+          did_move = true;
+          potential_direction = Direction::Up;
+          potential_x = x - 100;
+          potential_y = 199;
+        } else if (direction == Direction::Right && x == 149) {
+          // 4 [>] 5
+          did_move = true;
+          potential_direction = Direction::Left;
+          potential_x = 99;
+          potential_y = 149 - y;
+        } else if (direction == Direction::Down && y == 49) {
+          // 4 [v] 1
+          did_move = true;
+          potential_direction = Direction::Left;
+          potential_x = 99;
+          potential_y = 50 + x - 100;
+        }
+      } else if (num_border == 5) {
+        if (direction == Direction::Right && x == 99) {
+          // 5 [>] 4
+          did_move = true;
+          potential_direction = Direction::Left;
+          potential_x = 149;
+          potential_y = 49 - (y - 100);
+        } else if (direction == Direction::Down && y == 149) {
+          // 5 [v] 6
+          did_move = true;
+          potential_direction = Direction::Left;
+          potential_x = 49;
+          potential_y = 150 + x - 50;
+        }
+      } else if (num_border == 6) {
+        if (direction == Direction::Right && x == 49) {
+          // 6 [>] 5
+          did_move = true;
+          potential_direction = Direction::Up;
+          potential_x = 50 + y - 150;
+          potential_y = 149;
+        } else if (direction == Direction::Down && y == 199) {
+          // 6 [v] 4
+          did_move = true;
+          potential_direction = Direction::Down;
+          potential_x = 100 + x;
+          potential_y = 0;
+        } else if (direction == Direction::Left && x == 0) {
+          // 6 [<] 2
+          did_move = true;
+          potential_direction = Direction::Down;
+          potential_x = 50 + y - 150;
+          potential_y = 0;
+        }
+      }
+      if (!did_move) {
+        assert(num_border == 0);
+        switch (direction) {
+        case Direction::Up:
+          --potential_y;
+          break;
+        case Direction::Right:
+          ++potential_x;
+          break;
+        case Direction::Down:
+          ++potential_y;
+          break;
+        case Direction::Left:
+          --potential_x;
+          break;
+        }
+      }
+      assert(this->map[potential_y * 300 + potential_x] == 1 ||
+             this->map[potential_y * 300 + potential_x] == 2);
+      if (this->map[potential_y * 300 + potential_x] == 1) {
+        x = potential_x;
+        y = potential_y;
+        direction = potential_direction;
+      }
+      return {x, y, direction};
+    }
   }
 
   void step(std::variant<int, char> move) {
@@ -123,8 +293,8 @@ struct Jungle {
   }
 
   friend std::ostream &operator<<(std::ostream &os, const Jungle &jungle) {
-    for (size_t y{0}; y < jungle.max_y; ++y) {
-      for (size_t x{0}; x < jungle.max_x; ++x) {
+    for (int y{0}; y <= jungle.max_y; ++y) {
+      for (int x{0}; x <= jungle.max_x; ++x) {
         auto it{jungle.path.crend()};
         for (auto direction : ALL_DIRECTIONS) {
           it =
@@ -174,24 +344,7 @@ struct Jungle {
   }
 };
 
-auto part_one(const std::vector<std::string> &input) {
-  Jungle jungle(input);
-  // std::cout << jungle << std::endl;
-  for (auto i : jungle.instructions) {
-    jungle.step(i);
-    // if (std::holds_alternative<char>(i)) {
-    //   jungle.step(i);
-    //   std::cout << std::get<char>(i) << std::endl;
-    //   std::cout << jungle << std::endl;
-    // } else {
-    //   std::cout << std::get<int>(i) << std::endl;
-    //   for (int sub_step{0}; sub_step < std::get<int>(i); ++sub_step) {
-    //     jungle.step(1);
-    //     std::cout << jungle << std::endl;
-    //   }
-    // }
-  }
-  auto [x, y, direction] = jungle.path.back();
+size_t get_result(size_t x, size_t y, Direction direction) {
   size_t result{0};
   result += 1000 * (y + 1);
   result += 4 * (x + 1);
@@ -212,11 +365,109 @@ auto part_one(const std::vector<std::string> &input) {
   return result;
 }
 
-auto part_two(const std::vector<std::string> &input) { return 2; }
+auto part_one(const std::vector<std::string> &input) {
+  Jungle jungle(input);
+  // std::cout << jungle << std::endl;
+  for (auto i : jungle.instructions) {
+    jungle.step(i);
+    // if (std::holds_alternative<char>(i)) {
+    //   jungle.step(i);
+    //   std::cout << std::get<char>(i) << std::endl;
+    //   std::cout << jungle << std::endl;
+    // } else {
+    //   std::cout << std::get<int>(i) << std::endl;
+    //   for (int sub_step{0}; sub_step < std::get<int>(i); ++sub_step) {
+    //     jungle.step(1);
+    //     std::cout << jungle << std::endl;
+    //   }
+    // }
+  }
+  auto [x, y, direction] = jungle.path.back();
+  return get_result(x, y, direction);
+}
+
+auto part_two(const std::vector<std::string> &input) {
+  Jungle jungle(input);
+  jungle.part_two = true;
+  // // 1 [>] 4
+  // jungle.path = {{99, 50, Direction::Right}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+  // // 1 [<] 3
+  // jungle.path = {{50, 50, Direction::Left}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+
+  // // 2 [<] 3
+  // jungle.path = {{50, 0, Direction::Left}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+  // jungle.path = {{50, 45, Direction::Left}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+  // // 2 [^] 6
+  // jungle.path = {{50, 0, Direction::Up}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+
+  // // 3 [^] 1
+  // jungle.path = {{0, 100, Direction::Up}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+  // // 3 [<] 2
+  // jungle.path = {{0, 100, Direction::Left}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+
+  // // 4 [^] 6
+  // jungle.path = {{100, 0, Direction::Up}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+  // // 4 [>] 5
+  // jungle.path = {{149, 0, Direction::Right}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+  // // 4 [v] 1
+  // jungle.path = {{149, 49, Direction::Right}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+
+  // // 5 [>] 4
+  // jungle.path = {{99, 100, Direction::Right}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+  // // 5 [v] 6
+  // jungle.path = {{50, 149, Direction::Down}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+
+  // // 6 [>] 5
+  // jungle.path = {{49, 150, Direction::Right}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+  // // 6 [v] 4
+  // jungle.path = {{0, 199, Direction::Down}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+  // // 6 [<] 2
+  // jungle.path = {{0, 150, Direction::Left}};
+  // jungle.step(1);
+  // std::cout << jungle << std::endl;
+
+  for (auto i : jungle.instructions) {
+    jungle.step(i);
+    // std::cout << jungle << std::endl;
+  }
+
+  auto [x, y, direction] = jungle.path.back();
+
+  return get_result(x, y, direction);
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2022/input_22_mock.txt"};
   std::filesystem::path input_path{"../../data/2022/input_22.txt"};
+  // std::filesystem::path input_path{"../../data/2022/input_22_blank.txt"};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
