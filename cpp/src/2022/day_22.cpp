@@ -367,20 +367,8 @@ size_t get_result(size_t x, size_t y, Direction direction) {
 
 auto part_one(const std::vector<std::string> &input) {
   Jungle jungle(input);
-  // std::cout << jungle << std::endl;
   for (auto i : jungle.instructions) {
     jungle.step(i);
-    // if (std::holds_alternative<char>(i)) {
-    //   jungle.step(i);
-    //   std::cout << std::get<char>(i) << std::endl;
-    //   std::cout << jungle << std::endl;
-    // } else {
-    //   std::cout << std::get<int>(i) << std::endl;
-    //   for (int sub_step{0}; sub_step < std::get<int>(i); ++sub_step) {
-    //     jungle.step(1);
-    //     std::cout << jungle << std::endl;
-    //   }
-    // }
   }
   auto [x, y, direction] = jungle.path.back();
   return get_result(x, y, direction);
@@ -389,71 +377,6 @@ auto part_one(const std::vector<std::string> &input) {
 auto part_two(const std::vector<std::string> &input) {
   Jungle jungle(input);
   jungle.part_two = true;
-  // // 1 [>] 4
-  // jungle.path = {{99, 50, Direction::Right}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-  // // 1 [<] 3
-  // jungle.path = {{50, 50, Direction::Left}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-
-  // // 2 [<] 3
-  // jungle.path = {{50, 0, Direction::Left}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-  // jungle.path = {{50, 45, Direction::Left}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-  // // 2 [^] 6
-  // jungle.path = {{50, 0, Direction::Up}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-
-  // // 3 [^] 1
-  // jungle.path = {{0, 100, Direction::Up}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-  // // 3 [<] 2
-  // jungle.path = {{0, 100, Direction::Left}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-
-  // // 4 [^] 6
-  // jungle.path = {{100, 0, Direction::Up}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-  // // 4 [>] 5
-  // jungle.path = {{149, 0, Direction::Right}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-  // // 4 [v] 1
-  // jungle.path = {{149, 49, Direction::Right}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-
-  // // 5 [>] 4
-  // jungle.path = {{99, 100, Direction::Right}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-  // // 5 [v] 6
-  // jungle.path = {{50, 149, Direction::Down}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-
-  // // 6 [>] 5
-  // jungle.path = {{49, 150, Direction::Right}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-  // // 6 [v] 4
-  // jungle.path = {{0, 199, Direction::Down}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-  // // 6 [<] 2
-  // jungle.path = {{0, 150, Direction::Left}};
-  // jungle.step(1);
-  // std::cout << jungle << std::endl;
-
   for (auto i : jungle.instructions) {
     jungle.step(i);
     // std::cout << jungle << std::endl;
@@ -467,7 +390,6 @@ auto part_two(const std::vector<std::string> &input) {
 int main() {
   // std::filesystem::path input_path{"../../data/2022/input_22_mock.txt"};
   std::filesystem::path input_path{"../../data/2022/input_22.txt"};
-  // std::filesystem::path input_path{"../../data/2022/input_22_blank.txt"};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
