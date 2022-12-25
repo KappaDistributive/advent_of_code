@@ -63,7 +63,7 @@ Point decode_step(Direction direction) {
 struct Basin {
   std::vector<char> map;
   size_t width, height;
-  std::vector<Point> positions;
+  Point start_position;
   std::vector<std::pair<Direction, Point>> blizzards;
 
   Basin(const std::vector<std::string> &input) {
@@ -74,8 +74,7 @@ struct Basin {
       current_pos[0] = 0;
       for (const auto &symbol : line) {
         if (current_pos[1] == 0 && symbol == '.') {
-          assert(this->positions.size() == 0);
-          this->positions.push_back(current_pos);
+          this->start_position = current_pos;
         }
         if (symbol == '.' || symbol == '#') {
           this->map.push_back(symbol);
@@ -87,7 +86,6 @@ struct Basin {
       }
       ++current_pos[1];
     }
-    assert(this->positions.size() == 1);
   }
 
   void move_blizzards() {
@@ -133,13 +131,6 @@ struct Basin {
       pos[1] = static_cast<int>(y);
       for (size_t x{0}; x < basin.width; ++x) {
         pos[0] = static_cast<int>(x);
-        bool on_path{false};
-        if (std::find(basin.positions.cbegin(), basin.positions.cend(), pos) !=
-            basin.positions.cend()) {
-          on_path = true;
-        }
-        if (on_path)
-          os << "\033[33m";
         std::vector<std::pair<Direction, Point>> blizzards;
         for (auto blizzard : basin.blizzards) {
           if (std::get<1>(blizzard) == pos) {
@@ -157,8 +148,6 @@ struct Basin {
             os << '*';
           }
         }
-        if (on_path)
-          os << "\033[39m";
       }
       os << '\n';
     }
@@ -169,7 +158,7 @@ struct Basin {
 
 auto part_one(const std::vector<std::string> &input) {
   Basin basin(input);
-  std::set<Point> positions{{basin.positions[0]}};
+  std::set<Point> positions{{basin.start_position}};
   size_t result{0};
   while (true) {
     std::set<Point> new_positions;
@@ -193,7 +182,36 @@ auto part_one(const std::vector<std::string> &input) {
   return size_t{0};
 }
 
-auto part_two(const std::vector<std::string> &input) { return 2; }
+auto part_two(const std::vector<std::string> &input) {
+  Basin basin(input);
+  std::set<std::pair<Point, int>> positions{{{basin.start_position, 0}}};
+  size_t result{0};
+  while (true) {
+    std::set<std::pair<Point, int>> new_positions;
+    basin.move_blizzards();
+    for (auto [pos, phase] : positions) {
+      auto new_phase = phase;
+      if (phase == 0 && pos[1] == static_cast<int>(basin.height) - 1) {
+        new_phase = 1;
+      } else if (phase == 1 && pos[1] == 0) {
+        new_phase = 2;
+      } else if (phase == 2 && pos[1] == static_cast<int>(basin.height) - 1) {
+        return result;
+      }
+      if (basin.can_move(pos, std::nullopt)) {
+        new_positions.insert({pos, new_phase});
+      }
+      for (auto direction : ALL_DIRECTIONS) {
+        if (basin.can_move(pos, direction)) {
+          new_positions.insert({pos + decode_step(direction), new_phase});
+        }
+      }
+    }
+    ++result;
+    positions = new_positions;
+  }
+  return size_t{0};
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2022/input_24_mock2.txt"};
