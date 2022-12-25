@@ -85,6 +85,16 @@ Point<T, d> &Point<T, d>::operator+=(const std::array<T, d> &coordinates) {
 }
 
 template <typename T, size_t d>
+bool Point<T, d>::operator<(const Point<T, d> &other) {
+  for (size_t index{0}; index < d; ++index) {
+    if (!this->operator[](index) < other[index]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+template <typename T, size_t d>
 Point<T, d> operator-(const Point<T, d> &lhs, const Point<T, d> &rhs) {
   assert(lhs.m_coordinates.size() == d);
   assert(rhs.m_coordinates.size() == d);

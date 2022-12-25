@@ -65,6 +65,8 @@ public:
 
   Point<T, d> &operator*=(const T &factor);
 
+  bool operator<(const Point<T, d> &other);
+
   template <typename T_, size_t d_>
   friend std::ostream &operator<<(std::ostream &, const Point<T_, d_> &point);
 };
