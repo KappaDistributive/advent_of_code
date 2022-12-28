@@ -38,28 +38,44 @@ auto part_one(const std::vector<std::string> &input) {
 
 auto part_two(const std::vector<std::string> &input) {
   size_t result{0};
-  auto points = parse(input);
-  std::vector<Point> steps = {{Point{{1, 0, 0}}, Point{{-1, 0, 0}},
-                               Point{{0, 1, 0}}, Point{{0, -1, 0}},
-                               Point{{0, 0, 1}}, Point{{0, 0, -1}}}};
+  const auto points = parse(input);
+  const std::vector<Point> steps = {{Point{{1, 0, 0}}, Point{{-1, 0, 0}},
+                                     Point{{0, 1, 0}}, Point{{0, -1, 0}},
+                                     Point{{0, 0, 1}}, Point{{0, 0, -1}}}};
   std::set<Point> outside;
   outside.insert(Point{{-1, -1, -1}});
-  for (size_t index{0}; index < 100; ++index) {
+  assert(!points.count(*outside.begin()));
+  std::set<Point> expanding = outside;
+  Point temp{{0, 0, 0}};
+  Point lower{*points.begin()}, upper{*points.begin()};
+  for (const auto &point : points) {
+    lower[0] = std::min(lower[0], point[0] - 2);
+    lower[1] = std::min(lower[1], point[1] - 2);
+    lower[2] = std::min(lower[2], point[2] - 2);
+    upper[0] = std::max(upper[0], point[0] + 2);
+    upper[1] = std::max(upper[1], point[1] + 2);
+    upper[2] = std::max(upper[2], point[2] + 2);
+  }
+  while (expanding.size()) {
     std::set<Point> new_points;
-    for (const auto &point : outside) {
+    for (const auto &point : expanding) {
       for (const auto &step : steps) {
-        if (!points.count(point + step))
-          new_points.insert(point + step);
+        temp = point + step;
+        if (lower < temp && temp < upper && !points.count(temp) &&
+            !outside.count(temp)) {
+          new_points.insert(std::move(temp));
+        }
       }
     }
-    for (auto &point : new_points) {
-      outside.insert(point);
+    for (auto point : new_points) {
+      outside.insert(std::move(point));
     }
+    expanding = new_points;
   }
 
   for (const auto &p : points) {
     for (const auto &step : steps) {
-      if (outside.count(p + step) && !points.count(p + step)) {
+      if (!points.count(p + step) && outside.count(p + step)) {
         ++result;
       }
     }

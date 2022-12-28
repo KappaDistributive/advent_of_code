@@ -87,7 +87,7 @@ Point<T, d> &Point<T, d>::operator+=(const std::array<T, d> &coordinates) {
 template <typename T, size_t d>
 bool Point<T, d>::operator<(const Point<T, d> &other) {
   for (size_t index{0}; index < d; ++index) {
-    if (!this->operator[](index) < other[index]) {
+    if (!(this->operator[](index) < other[index])) {
       return false;
     }
   }
