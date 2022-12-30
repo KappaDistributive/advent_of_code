@@ -1,169 +1,150 @@
-#include <algorithm>
-#include <cassert>
-#include <map>
-#include <limits>
-#include <regex>  // NOLINT
-
+#include "../utils/geometry.hpp"
 #include "../utils/input.hpp"
+#include <regex>
 
-#ifdef DEBUG
-#define DBGVAR(os, var) \
-  (os) << "DBG: " << __FILE__ << "(" << __LINE__ << ") "\
-       << #var << " = [" << (var) << "]" << std::endl
-#else
-#define DBGVAR(os, var) do {}while(0)
-#endif
+using Point = utils::geometry::Point<int, 2>;
 
+struct Ground {
+  std::set<Point> clay;
+  Point upper_left, lower_right;
+  std::set<Point> flowing;
+  std::set<Point> settled;
 
-typedef std::pair<size_t, size_t> Point;
-
-
-std::ostream&
-operator<<(std::ostream& os, const Point& point) {
-  os << "(" << point.first << ", " << point.second << ")";
-
-  return os;
-}
-
-enum class Tile: size_t {
-  clay,
-  sand,
-  source,
-  still_water,
-  running_water,
-};
-
-std::ostream&
-operator<<(std::ostream& os, const Tile& tile) {
-  switch (tile) {
-    case Tile::clay:           os << '#'; break;
-    case Tile::sand:           os << '.'; break;
-    case Tile::source:         os << '+'; break;
-    case Tile::still_water:    os << '~'; break;
-    case Tile::running_water:  os << '|'; break;
-    default:
-      throw std::runtime_error("This should never happen.");
-      break;
-  }
-
-  return os;
-}
-
-
-Tile from_char(char character) {
-  switch (character) {
-    case '#': return Tile::clay;           break;
-    case '.': return Tile::sand;           break;
-    case '+': return Tile::source;         break;
-    case '~': return Tile::still_water;    break;
-    case '|': return Tile::running_water;  break;
-    default:
-      throw std::invalid_argument("Unknown tile: " + std::string{character});
-      break;
-  }
-}
-
-
-class Slice {
- private:
-  std::map<Point, Tile> m_tiles;
-
-  std::pair<Point, Point> border(bool include_source = true) const noexcept {
-    Point min{std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max()};
-    Point max{0, 0};
-
-    for (auto [point, tile] : m_tiles) {
-      if (tile == Tile::clay || (include_source && tile == Tile::source)) {
-        min.first = std::min(min.first, point.first);
-        min.second = std::min(min.second, point.second);
-        max.first = std::max(max.first, point.first);
-        max.second = std::max(max.second, point.second);
-      }
-    }
-
-    return {min, max};
-  }
-
- public:
-  explicit Slice(const std::vector<std::string>& input) {
-    m_tiles.insert({{500, 0}, Tile::source});
-
-    std::regex vertical_regex{"x=(\\d+), y=(\\d+)\\.\\.(\\d+)"};
-    std::regex horizontal_regex{"y=(\\d+), x=(\\d+)\\.\\.(\\d+)"};
+  Ground(const std::vector<std::string> &input) {
+    std::regex description_regex{"^([xy])=(\\d+), ([xy])=(\\d+)\\.\\.(\\d+)$"};
     std::smatch matches;
-    for (auto line : input) {
-      std::cout << line << std::endl;
-      std::regex_match(line, matches, vertical_regex);
-      if (matches.size() == 4) {
-        size_t x{std::stoul(matches[1].str())};
-        size_t y_min{std::stoul(matches[2].str())};
-        size_t y_max{std::stoul(matches[3].str())};
-        for (size_t y{y_min}; y <= y_max; ++y) {
-          m_tiles.insert({{x, y}, Tile::clay});
+    for (const auto &line : input) {
+      std::regex_match(line, matches, description_regex);
+      if (matches[1].str() == "x") {
+        assert(matches[3].str() == "y");
+        int x{std::stoi(matches[2].str())};
+        for (int y{std::stoi(matches[4].str())};
+             y <= std::stoi(matches[5].str()); ++y) {
+          this->clay.insert(Point{{x, y}});
         }
+
       } else {
-        std::regex_match(line, matches, horizontal_regex);
-        assert(matches.size() == 4);
-        size_t y{std::stoul(matches[1].str())};
-        size_t x_min{std::stoul(matches[2].str())};
-        size_t x_max{std::stoul(matches[3].str())};
-        for (size_t x{x_min}; x <= x_max; ++x) {
-          m_tiles.insert({{x, y}, Tile::clay});
+        assert(matches[1].str() == "y");
+        assert(matches[3].str() == "x");
+        int y{std::stoi(matches[2].str())};
+        for (int x{std::stoi(matches[4].str())};
+             x <= std::stoi(matches[5].str()); ++x) {
+          this->clay.insert(Point{{x, y}});
         }
       }
     }
-  }
-
-  Tile
-  operator[](const Point& point) const noexcept {
-    if (this->m_tiles.count(point) > 0) {
-      return this->m_tiles.at(point);
+    this->upper_left = Point{{500, 0}};
+    this->lower_right = Point{{500, 0}};
+    if (this->clay.size() > 0) {
+      this->upper_left = *this->clay.begin();
+      this->lower_right = *this->clay.begin();
     }
-    return Tile::sand;
+    for (const auto &point : this->clay) {
+      this->upper_left[0] = std::min(this->upper_left[0], point[0]);
+      this->upper_left[1] = std::min(this->upper_left[1], point[1]);
+      this->lower_right[0] = std::max(this->lower_right[0], point[0]);
+      this->lower_right[1] = std::max(this->lower_right[1], point[1]);
+    }
   }
 
-  friend std::ostream&
-  operator<<(std::ostream& os, const Slice& slice) {
-    auto [min, max] = slice.border();
-    if (min.first > 0) min.first--;
-    if (min.second > 0) min.second--;
-    max.first++;
-    max.second++;
+  bool fill(Point point = Point{{500, 0}}, Point direction = Point{{0, 1}}) {
+    this->flowing.insert(point);
+    Point below{point + Point{{0, 1}}};
 
-    for (size_t y{min.second}; y <= max.second; ++y) {
-      for (size_t x{min.first}; x <= max.first; ++x) {
-        os << slice[Point(x, y)];
+    // std::cout << "step\n" << *this << std::endl;
+
+    if (!this->clay.count(below) && !this->flowing.count(below) &&
+        1 <= below[1] && below[1] <= this->lower_right[1]) {
+      this->fill(below);
+    }
+
+    if (!this->clay.count(below) && !this->settled.count(below)) {
+      return false;
+    }
+
+    Point left{point + Point{{-1, 0}}};
+    Point right{point + Point{{1, 0}}};
+
+    bool left_filled =
+        this->clay.count(left) ||
+        (!this->flowing.count(left) && this->fill(left, Point{{-1, 0}}));
+    bool right_filled =
+        this->clay.count(right) ||
+        (!this->flowing.count(right) && this->fill(right, Point{{1, 0}}));
+
+    if (direction == Point{{0, 1}} && left_filled && right_filled) {
+      this->settled.insert(point);
+      while (this->flowing.count(left)) {
+        this->settled.insert(left);
+        --left[0];
       }
-      if (y < max.second) os << "\n";
+      while (this->flowing.count(right)) {
+        this->settled.insert(right);
+        ++right[0];
+      }
+    }
+
+    if (direction == Point{{-1, 0}}) {
+      return (left_filled || this->clay.count(left));
+    }
+    if (direction == Point{{1, 0}}) {
+      return (right_filled || this->clay.count(right));
+    }
+    return false;
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, const Ground &ground) {
+    Point point{{0, 0}};
+    for (int y{0}; y <= ground.lower_right[1] + 1; ++y) {
+      point[1] = y;
+      for (int x{ground.upper_left[0] - 1}; x <= ground.lower_right[0] + 1;
+           ++x) {
+        point[0] = x;
+        if (point[0] == 500 && point[1] == 0) {
+          os << '+';
+        } else if (ground.clay.count(point)) {
+          os << '#';
+        } else if (ground.settled.count(point)) {
+          os << '~';
+        } else if (ground.flowing.count(point)) {
+          os << '|';
+        } else {
+          os << '.';
+        }
+      }
+      os << '\n';
     }
 
     return os;
   }
 };
 
-auto
-part_one(const std::vector<std::string>& input) {
-  Slice slice(input);
-  std::cout << slice << std::endl;
-  return 1;
+auto part_one(const std::vector<std::string> &input) {
+  Ground ground(input);
+  ground.fill();
+  size_t result{0};
+  for (auto point : ground.flowing) {
+    if (point[1] >= ground.upper_left[1] && point[1] <= ground.lower_right[1]) {
+      ++result;
+    }
+  }
+  return result;
 }
 
-
-// auto
-// part_two(const std::vector<std::string>& input) {
-//   return 2;
-// }
-
+auto part_two(const std::vector<std::string> &input) {
+  Ground ground(input);
+  ground.fill();
+  return ground.settled.size();
+}
 
 int main() {
-  utils::Reader reader(std::filesystem::path("../../data/2018/input_17_mock.txt"));
+  // std::filesystem::path input_path{"../../data/2018/input_17_mock.txt"};
+  std::filesystem::path input_path{"../../data/2018/input_17.txt"};
+  utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  auto answer_one =  part_one(input);
-  std::cout << "The answer to part one is: " << answer_one << std::endl;
-  // auto answer_two =  part_two(input);
-  // std::cout << "The answer to part two is: " << answer_two << std::endl;
+  fmt::print("The answer to part one is: {}\n", part_one(input));
+  fmt::print("The answer to part two is: {}\n", part_two(input));
 
   return 0;
 }
-
