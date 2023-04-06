@@ -1,42 +1,88 @@
 #include "../utils/geometry.hpp"
 #include "../utils/input.hpp"
+#include "../../vendors/BigInt/release/BigInt.hpp"
 
 using Point = utils::geometry::Point<size_t, 2>;
 
+size_t extract_depth(const std::vector<std::string> &input) {
+  return std::stoull(input[0].substr(7, std::string::npos));
+}
+
+Point extract_target(const std::vector<std::string> &input) {
+  auto splits = utils::split_string(input[1], ',');
+  assert(splits.size() == 2);
+  return Point{{std::stoull(splits[0].substr(8, std::string::npos)),
+                          std::stoull(splits[1])}};
+}
+
 class Cave {
 private:
-  size_t m_depth;
-  Point m_target;
+  const size_t m_divisor;
+  const size_t m_depth;
+  const Point m_target;
+  std::map<Point, size_t> m_geological_indeces;
 
 public:
-  Cave(const std::vector<std::string> &input) {
-    std::string temp;
-    this->m_depth = std::stoull(input[0].substr(7, std::string::npos));
-    auto splits = utils::split_string(input[1], ',');
-    assert(splits.size() == 2);
-    this->m_target = Point{{std::stoull(splits[0].substr(8, std::string::npos)),
-                            std::stoull(splits[1])}};
-  }
+  Cave(const std::vector<std::string> &input, size_t divisor = 20183) : m_divisor(divisor), m_depth(extract_depth(input)), m_target(extract_target(input)) {
+      }
 
   size_t geological_index(const Point &position) {
+    if (this->m_geological_indeces.count(position)) {
+      return this->m_geological_indeces.at(position);
+    }
+    size_t result{0};
     if ((position[0] == 0 && position[1] == 0) || position == this->m_target) {
-      return 0;
+      result = 0;
+    } else if (position[1] == 0) {
+      result = position[0] * 16807;
+    } else if (position[0] == 0) {
+      result = position[1] * 48271;
+    } else {
+      Point lhs{{position[0] - 1, position[1]}},
+          rhs{{position[0], position[1] - 1}};
+      result = erosion_level(lhs) * erosion_level(rhs);
     }
-    if (position[1] == 0) {
-      return position[0] * 16807;
-    }
-    if (position[0] == 0) {
-      return position[1] * 48271;
-    }
-
-    Point lhs{{position[0] - 1, position[1]}},
-        rhs{{position[0], position[1] - 1}};
-
-    return geological_index(lhs) * geological_index(rhs);
+    this->m_geological_indeces.emplace(position, result);
+    return result;
   }
 
-  friend std::ostream &operator<<(std::ostream &os, const Cave &cave) {
-    os << cave.m_depth << '\t' << cave.m_target;
+  size_t erosion_level(const Point &position) {
+    return (geological_index(position) + this->m_depth) % this->m_divisor;
+  }
+
+  size_t risk_level() {
+    Point pos{{0, 0}};
+    size_t result{0};
+    for (size_t y{0}; y <= this->m_target.coordinates()[1]; ++y) {
+      for (size_t x{0}; x <= this->m_target.coordinates()[0]; ++x) {
+        pos = Point{{x, y}};
+        auto ground_type = this->erosion_level(pos) % 3;
+        switch (ground_type) {
+          case 0: break;
+          case 1: ++result; break;
+          case 2: result += 2; break;
+          default: throw std::runtime_error("This should never happen!"); break;
+        }
+      }
+    }
+    return result;
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, Cave &cave) {
+    Point pos{{0, 0}};
+    for (size_t y{0}; y <= cave.m_target.coordinates()[1]; ++y) {
+      for (size_t x{0}; x <= cave.m_target.coordinates()[0]; ++x) {
+        pos = Point{{x, y}};
+        auto ground_type = cave.erosion_level(pos) % 3;
+        switch (ground_type) {
+          case 0: os << '.'; break;
+          case 1: os << '='; break;
+          case 2: os << '|'; break;
+          default: throw std::runtime_error("This should never happen!"); break;
+        }
+      }
+      os << '\n';
+    }
     return os;
   }
 };
@@ -44,16 +90,17 @@ public:
 auto part_one(const std::vector<std::string> &input) {
   Cave cave{input};
   std::cout << cave << std::endl;
-  return 1;
+  return cave.risk_level();
 }
 
 auto part_two(const std::vector<std::string> &input) { return 2; }
 
 int main() {
-  std::filesystem::path input_path{"../../data/2018/input_22_mock.txt"};
-  // std::filesystem::path input_path{"../../data/2018/input_22.txt"};
+  // std::filesystem::path input_path{"../../data/2018/input_22_mock.txt"};
+  std::filesystem::path input_path{"../../data/2018/input_22.txt"};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
+
 
   fmt::print("The answer to part one is: {}\n", part_one(input));
   fmt::print("The answer to part two is: {}\n", part_two(input));
