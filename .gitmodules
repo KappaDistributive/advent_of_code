@@ -1,3 +1,6 @@
 [submodule "cpp/vendors/fmt"]
 	path = cpp/vendors/fmt
 	url = https://github.com/fmtlib/fmt
+[submodule "cpp/vendors/BigInt"]
+	path = cpp/vendors/BigInt
+	url = https://github.com/faheel/BigInt
