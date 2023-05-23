@@ -3,6 +3,7 @@ tags
 tags.lock
 tags.temp
 build/
+arm32/build
 c/debug/
 c/release/
 cpp/compile_commands.json
