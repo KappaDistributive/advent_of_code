@@ -14,9 +14,11 @@ triple: .skip 3*4
 .text
 .global main
 
-// input: r0=a, r1=b, r2=c
-// output: total amount of wrapping paper required for aXbXc
 wrapping_paper:
+/*
+  input: r0=a, r1=b, r2=c
+  output: total amount of wrapping paper required for aXbXc
+*/
   push {r1-r6}
   mul r4, r0, r1  // stores total area
   mov r3, r4  // smallest area
@@ -37,6 +39,19 @@ wrapping_paper:
 
   pop {r1-r6}
   bx lr
+
+parse_line: 
+/*
+  input:
+    - r0: address of the desired output. Needs to be able to hold 4*4 bytes.
+    - r1: address of first byte of the string to be parsed; of the form aXbXc(\n|\0),
+      where a,b,c, are non-negative integers
+  output: 4*4 bytes
+    - address of the byte in the input string we stopped at
+    - integer value of a
+    - integer value of b
+    - integer value of c
+*/
 
 
 main:
