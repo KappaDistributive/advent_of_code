@@ -14,47 +14,36 @@ triple: .skip 3*4
 .text
 .global main
 
-// input: address of triple (a, b, c) of 32 bit integers in r0
+// input: r0=a, r1=b, r2=c
 // output: total amount of wrapping paper required for aXbXc
 wrapping_paper:
   push {r1-r6}
-  mov r6, #0    // smallest side
-  ldr r1, [r0], #4
-  ldr r2, [r0], #4
-  ldr r3, [r0]
-  mul r4, r1, r2
-  mov r6, r4
+  mul r4, r0, r1  // stores total area
+  mov r3, r4  // smallest area
 
-  mul r5, r2, r3
+  mul r5, r0, r2
   add r4, r5
-  cmp r6, r5
-  movge r6, r5
+  cmp r3, r5
+  movge r3, r5
 
-  mul r5, r1, r3
+  mul r5, r1, r2
   add r4, r5
-  cmp r6, r5
-  movge r6, r5
+  cmp r3, r5
+  movge r3, r5
 
   add r4, r4
-  add r4, r6
+  add r4, r3
   mov r0, r4
+
   pop {r1-r6}
   bx lr
 
 
 main:
   push {lr}
-  ldr r1, =triple_addr
-  ldr r1, [r1]
   mov r0, #2
-  str r0, [r1], #4
-  mov r0, #3
-  str r0, [r1], #4
-  mov r0, #4
-  str r0, [r1]
-
-  ldr r0, =triple_addr
-  ldr r0, [r0]
+  mov r1, #3
+  mov r2, #4
   bl wrapping_paper
 
   mov r1, r0
