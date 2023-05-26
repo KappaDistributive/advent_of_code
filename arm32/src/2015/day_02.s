@@ -4,12 +4,6 @@
 
 msg_1: .asciz "The answer to part 1 is: %d\n"
 msg_2: .asciz "The answer to part 2 is: %d\n"
-msg_debug: .asciz "%d\t%d\t%d\n"
-
-.balign 8
-.data
-
-triple: .skip 3*4
 
 .balign 8
 .text
@@ -18,7 +12,7 @@ triple: .skip 3*4
 wrapping_paper:
 /*
   input: r0=a, r1=b, r2=c
-  output: total amount of wrapping paper required for aXbXc
+  output: r0=total amount of wrapping paper required for aXbXc
 */
   push {r1-r6}
   mul r4, r0, r1  // stores total area
@@ -95,40 +89,43 @@ parse_line_store:
 
 parse_line_end:
   pop {r0, r4, r5}
+  str r1, [r0]
   bx lr
 
-
 main:
-  push {lr}
+  push {r4, lr}
   sub sp, #16
-  
-  mov r0, sp
+  mov r4, #0 // collects answer for part one
+
   ldr r1, =input_addr
   ldr r1, [r1]
+  sub r1, #1
+main_loop:
+  add r1, #1
+  mov r0, sp
   bl parse_line
 
-  ldr r1, [sp, #4]
-  ldr r2, [sp, #8]
-  ldr r3, [sp, #12]
-
-  ldr r0, msg_debug_addr
-  bl printf
+  ldr r0, [sp, #4]
+  ldr r1, [sp, #8]
+  ldr r2, [sp, #12]
+  bl wrapping_paper
+  add r4, r0
   
-  // bl wrapping_paper
+  ldr r1, [sp]
+  ldrb r2, [r1]
+  cmp r2, #0
+  bne main_loop
+  
+  ldr r0, msg_1_addr
+  mov r1, r4
+  bl printf
 
-  // mov r1, r0
-
-  // ldr r0, msg_1_addr
-  // bl printf
- 
   add sp, #16
-  pop {lr}
+  pop {r4, lr}
   bx lr
 
 input_addr: .word input
 msg_1_addr: .word msg_1
 msg_2_addr: .word msg_2
-msg_debug_addr: .word msg_debug
-triple_addr: .word triple
 
 .global printf
