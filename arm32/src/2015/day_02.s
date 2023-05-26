@@ -4,6 +4,7 @@
 
 msg_1: .asciz "The answer to part 1 is: %d\n"
 msg_2: .asciz "The answer to part 2 is: %d\n"
+msg_debug: .asciz "%d\t%d\t%d\n"
 
 .balign 8
 .data
@@ -52,26 +53,82 @@ parse_line:
     - integer value of b
     - integer value of c
 */
+  push {r0, r4, r5}
+  // r1: the position of the current character we are parsing
+  // r2: the current character we are parsing
+  // r3: offset for storage
+  // r4: partially parsed value
+  // r5: is always 10
+  mov r3, #4
+  mov r4, #0
+  mov r5, #10
+
+parse_line_loop:
+  ldrb r2, [r1]
+  
+  // check whether we are at the end of a number
+  cmp r2, #'x'
+  beq parse_line_store
+  cmp r2, #'\n'
+  beq parse_line_store
+  cmp r2, #0
+  beq parse_line_store
+
+  // update
+  mul r4, r5
+  sub r2, #'0'
+  add r4, r2
+  add r1, #1
+  b parse_line_loop
+
+parse_line_store:
+  push {r0}
+  add r0, r3
+  str r4, [r0]
+  pop {r0}
+  cmp r3, #12
+  beq parse_line_end
+  mov r4, #0
+  add r1, #1
+  add r3, #4
+  b parse_line_loop
+
+parse_line_end:
+  pop {r0, r4, r5}
+  bx lr
 
 
 main:
   push {lr}
-  mov r0, #2
-  mov r1, #3
-  mov r2, #4
-  bl wrapping_paper
+  sub sp, #16
+  
+  mov r0, sp
+  ldr r1, =input_addr
+  ldr r1, [r1]
+  bl parse_line
 
-  mov r1, r0
+  ldr r1, [sp, #4]
+  ldr r2, [sp, #8]
+  ldr r3, [sp, #12]
 
-  ldr r0, msg_1_addr
+  ldr r0, msg_debug_addr
   bl printf
   
+  // bl wrapping_paper
+
+  // mov r1, r0
+
+  // ldr r0, msg_1_addr
+  // bl printf
+ 
+  add sp, #16
   pop {lr}
   bx lr
 
 input_addr: .word input
 msg_1_addr: .word msg_1
 msg_2_addr: .word msg_2
+msg_debug_addr: .word msg_debug
 triple_addr: .word triple
 
 .global printf
