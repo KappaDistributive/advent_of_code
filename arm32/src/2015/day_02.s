@@ -9,6 +9,35 @@ msg_2: .asciz "The answer to part 2 is: %d\n"
 .text
 .global main
 
+ribbon:
+ /*
+  input: r0=a, r1=b, r2=c
+  output: r0=total length of ribbon for aXbXc
+*/
+  push {r4-r6}
+
+  // volume
+  mul r4, r0, r1
+  mul r4, r4, r2
+
+  // perimeter of smallest size
+  add r5, r0, r1
+  mov r5, r5, LSL #1
+
+  add r6, r0, r2
+  mov r6, r6, LSL #1
+  cmp r6, r5
+  movle r5, r6
+  
+  add r6, r1, r2
+  mov r6, r6, LSL #1
+  cmp r6, r5
+  movle r5, r6
+  
+  add r0, r4, r5
+  pop {r4-r6}
+  bx lr
+
 wrapping_paper:
 /*
   input: r0=a, r1=b, r2=c
@@ -93,9 +122,11 @@ parse_line_end:
   bx lr
 
 main:
-  push {r4, lr}
+  push {r4-r5, lr}
   sub sp, #16
   mov r4, #0 // collects answer for part one
+  mov r5, #0 // collects answer for part one
+
 
   ldr r1, =input_addr
   ldr r1, [r1]
@@ -110,6 +141,13 @@ main_loop:
   ldr r2, [sp, #12]
   bl wrapping_paper
   add r4, r0
+
+  ldr r0, [sp, #4]
+  ldr r1, [sp, #8]
+  ldr r2, [sp, #12]
+  bl ribbon
+  add r5, r0
+
   
   ldr r1, [sp]
   ldrb r2, [r1]
@@ -120,8 +158,12 @@ main_loop:
   mov r1, r4
   bl printf
 
+  ldr r0, msg_2_addr
+  mov r1, r5
+  bl printf
+
   add sp, #16
-  pop {r4, lr}
+  pop {r4-r5, lr}
   bx lr
 
 input_addr: .word input
