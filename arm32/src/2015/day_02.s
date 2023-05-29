@@ -1,7 +1,5 @@
 .section .rodata
 
-.global input
-
 msg_1: .asciz "The answer to part 1 is: %d\n"
 msg_2: .asciz "The answer to part 2 is: %d\n"
 
@@ -127,9 +125,7 @@ main:
   mov r4, #0 // collects answer for part one
   mov r5, #0 // collects answer for part one
 
-
-  ldr r1, =input_addr
-  ldr r1, [r1]
+  ldr r1, [r1, #4]
   sub r1, #1
 main_loop:
   add r1, #1
@@ -164,9 +160,9 @@ main_loop:
 
   add sp, #16
   pop {r4-r5, lr}
+  mov r0, #0
   bx lr
 
-input_addr: .word input
 msg_1_addr: .word msg_1
 msg_2_addr: .word msg_2
 

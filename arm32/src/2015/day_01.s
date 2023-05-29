@@ -1,7 +1,5 @@
 .section .rodata
 
-.global input
-
 msg_1: .asciz "The answer to part 1 is: %d\n"
 msg_2: .asciz "The answer to part 2 is: %d\n"
 
@@ -17,8 +15,8 @@ output:
 
 
 part_1:
+  mov r1, r0
   mov r0, #0
-  ldr r1, input_addr
 part_1_loop:
   ldrb r2, [r1]
   cmp r2, #0
@@ -33,9 +31,9 @@ part_1_end:
   bx lr
 
 part_2:
+  mov r1, r0
   mov r0, #0
   mov r3, #0
-  ldr r1, input_addr
 part_2_loop:
   ldrb r2, [r1]
   cmp r0, #-1
@@ -59,21 +57,25 @@ part_2_end:
   
 main:
   push {lr}
+  ldr r0, [r1, #4]
+  push {r0}
 
+  ldr r0, [sp]
   bl part_1
   mov r1, r0
   ldr r0, msg_1_addr
   bl printf
 
+  ldr r0, [sp]
   bl part_2
   mov r1, r0
   ldr r0, msg_2_addr
   bl printf
 
-  pop {lr}
+  pop {r0, lr}
+  mov r0, #0
   bx lr
 
-input_addr: .word input
 msg_1_addr: .word msg_1
 msg_2_addr: .word msg_2
 
