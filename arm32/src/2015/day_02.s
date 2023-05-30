@@ -150,11 +150,11 @@ main_loop:
   cmp r2, #0
   bne main_loop
   
-  ldr r0, msg_1_addr
+  ldr r0, =msg_1
   mov r1, r4
   bl printf
 
-  ldr r0, msg_2_addr
+  ldr r0, =msg_2
   mov r1, r5
   bl printf
 
@@ -162,8 +162,5 @@ main_loop:
   pop {r4-r5, lr}
   mov r0, #0
   bx lr
-
-msg_1_addr: .word msg_1
-msg_2_addr: .word msg_2
 
 .global printf
