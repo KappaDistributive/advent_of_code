@@ -9,7 +9,7 @@ msg_2: .asciz "The answer to part 2 is: %d\n"
 
 output:
   mov r1, r0
-  ldr r0, msg_1_addr
+  ldr r0, =msg_1
   bl printf
   b exit
 
@@ -63,21 +63,17 @@ main:
   ldr r0, [sp]
   bl part_1
   mov r1, r0
-  ldr r0, msg_1_addr
+  ldr r0, =msg_1
   bl printf
 
   ldr r0, [sp]
   bl part_2
   mov r1, r0
-  ldr r0, msg_2_addr
+  ldr r0, =msg_2
   bl printf
 
   pop {r0, lr}
   mov r0, #0
   bx lr
-
-msg_1_addr: .word msg_1
-msg_2_addr: .word msg_2
-
 
 .global printf
