@@ -10,17 +10,13 @@ buffer: .skip 400000
 .global main
 
 main:
-  push {lr}
+  push {r4-r6, lr}
+  ldr r6, =buffer             // r6 = current position in buffer
+  ldr r1, [r1, #4]            // r1 = position of current character
+  ldrb r2, [r1]               // r2 = current character
 
-  // r6 = current position in buffer
-  ldr r6, =buffer
-  // r1 = position of current character
-  ldr r1, [r1, #4]
-  // r2 = current character
-  ldrb r2, [r1]
-
-  mov r4, #0  // current x
-  mov r5, #0  // current y
+  mov r4, #0                  // current x
+  mov r5, #0                  // current y
   str r4, [r6], #4
   str r5, [r6], #4
 
@@ -44,8 +40,8 @@ travel_loop:
   b travel_loop
 
 end_travel:
-  mov r1, #0 // number of unique positions
-  ldr r2, =buffer // current position in buffer
+  mov r1, #0                  // number of unique positions
+  ldr r2, =buffer             // current position in buffer
 
 check_outer_loop:
   cmp r2, r6
@@ -68,7 +64,9 @@ check_inner_loop:
   cmp r0, r1
   pop {r0, r1}
   addeq r4, #1
+  // r4 == 2 if this position is not unique
   cmp r4, #2
+  // move on to the next position and short-circuit the inner loop
   addeq r2, #8
   beq check_outer_loop
 
@@ -76,12 +74,10 @@ check_inner_loop:
   b check_inner_loop
 
 end:
-  ldr r0, msg1_addr
+  ldr r0, =msg1
   bl printf
   mov r0, #0
-  pop {lr}
+  pop {r4-r6, lr}
   bx lr
   
-msg1_addr: .word msg1
-
 .global printf
