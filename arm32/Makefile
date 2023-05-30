@@ -12,3 +12,8 @@ CC = gcc
 	$(CC) -o build/2015_02 build/2015_02.o
 	./build/2015_02 "`cat ../data/2015/input_02.txt`"
 
+2015_03:
+	$(AS) $(ASFLAGS) -o build/2015_03.o src/2015/day_03.s
+	$(CC) -o build/2015_03 build/2015_03.o
+	./build/2015_03 "`cat ../data/2015/input_03.txt`"
+
