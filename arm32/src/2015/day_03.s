@@ -80,10 +80,11 @@ part_1_end:
 
 main:
   push {r1-r6, lr}
-
   bl part_1
+  mov r1, r0
   ldr r0, =msg1
   bl printf
+
   mov r0, #0
   pop {r1-r6, lr}
   bx lr
