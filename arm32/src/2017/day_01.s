@@ -6,50 +6,8 @@ part_2_msg: .asciz "The answer to part two is: %d\n"
 
 .balign 8
 .text
+.global my_strlen
 .global main
-
-strlen:
-/*
-input:
-    r0 = address to first byte of null-terminated string.
-return:
-    r0 = length of string (number of bytes).
-*/
-    push {r4}
-    mov r1, r0
-    mov r0, #0
-    mov r3, #0xff
-strlen_loop:
-    ldr r2, [r1]
-
-    // check least significant byte
-    and r4, r2, r3
-    cmp r4, #0
-    beq strlen_end
-    add r0, #1
-
-    and r4, r2, r3, LSL #8
-    cmp r4, #0
-    beq strlen_end
-    add r0, #1
-    
-    and r4, r2, r3, LSL #16
-    cmp r4, #0
-    beq strlen_end
-    add r0, #1
-
-    // check most significant byte
-    and r4, r2, r3, LSL #24
-    cmp r4, #0
-    beq strlen_end
-    add r0, #1
-
-    add r1, #4
-    b strlen_loop
-
-strlen_end:
-    pop {r4}
-    bx lr
 
 part_1:
     push {r0}
@@ -82,7 +40,7 @@ part_2:
     push {r0, r4-r6, lr}
     
     push {r0}
-    bl strlen
+    bl my_strlen
     mov r4, r0  // r4 = length of input string
     pop {r0}
 
