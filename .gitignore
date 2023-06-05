@@ -7,12 +7,14 @@ arm32/build
 c/debug/
 c/release/
 cpp/compile_commands.json
+cpp/.cache/
 cpp/debug/
 cpp/release/
 .ccls
 .ccls-cache
 .mypy_cache  
 .venv
+sync.sh
 
 **/.DS_Store
 embedded/esp-01/data
