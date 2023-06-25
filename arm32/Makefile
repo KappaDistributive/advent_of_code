@@ -8,6 +8,7 @@ BIN_PATH := build
 DATA_PATH := ../data
 
 %:
+	mkdir -p $(BIN_PATH)
 	# assemble
 	$(AS) $(ASFLAGS) -o $(BIN_PATH)/text.o $(SOURCE_PATH)/utils/text.s
 	$(AS) $(ASFLAGS) -o $(BIN_PATH)/$@.o $(SOURCE_PATH)/$(word 1,$(subst _, ,$@))/day_$(word 2,$(subst _, ,$@)).s
