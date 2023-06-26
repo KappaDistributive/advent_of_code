@@ -23,7 +23,7 @@ my_parse_next_number_loop:
     cmp r2, #'0'
     blt my_parse_next_number_end
     cmp r2, #'9'
-    bgt my_parse_next_number
+    bgt my_parse_next_number_end
     mul r3, r3, r4
     add r3, r2
     sub r3, #'0'
