@@ -11,6 +11,12 @@ data_my_parse_next_number_simple: .asciz "123"
 name_my_parse_next_number_simple2: .asciz "my_parse_next_number_simple2"
 data_my_parse_next_number_simple2: .asciz "123:"
 
+name_my_parse_next_number_simple3: .asciz "my_parse_next_number_simple3"
+data_my_parse_next_number_simple3: .asciz " 123:"
+
+name_my_parse_next_number_simple4: .asciz "my_parse_next_number_simple4"
+data_my_parse_next_number_simple4: .asciz "123:456"
+
 .balign 8
 .text
 .global main
@@ -56,6 +62,18 @@ main:
 
     ldr r0, =name_my_parse_next_number_simple2
     ldr r1, =data_my_parse_next_number_simple2
+    mov r2, #123
+    bl test_my_parse_next_number
+    orr r4, r0
+
+    ldr r0, =name_my_parse_next_number_simple3
+    ldr r1, =data_my_parse_next_number_simple3
+    mov r2, #0
+    bl test_my_parse_next_number
+    orr r4, r0
+
+    ldr r0, =name_my_parse_next_number_simple4
+    ldr r1, =data_my_parse_next_number_simple4
     mov r2, #123
     bl test_my_parse_next_number
     orr r4, r0
