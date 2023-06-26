@@ -22,25 +22,33 @@ data_my_parse_next_number_simple4: .asciz "123:456"
 .global main
 
 test_my_parse_next_number:
-    push {r4-r6, lr}
+    push {r4-r8, lr}
     mov r4, #0
     mov r5, r0
     mov r6, r2
+    mov r8, r3
     sub sp, #8
     mov r0, sp
     bl my_parse_next_number
-    ldr r0, [sp]
+    ldr r2, [sp]
+    ldr r1, [sp, #4]
     add sp, #8
-    cmp r0, r6
-    ldreq r0, =msg_success
+
+    ldr r0, =msg_success
+
+    cmp r2, r6
     movne r4, #1
     ldrne r0, =msg_failure
     
+    cmp r1, r8
+    movne r4, #1
+    ldrne r0, =msg_failure
+
     mov r1, r5
     bl printf
 
     mov r0, r4
-    pop {r4-r6, lr}
+    pop {r4-r8, lr}
     bx lr
 
 
@@ -51,30 +59,38 @@ main:
     ldr r0, =name_my_parse_next_number_empty 
     ldr r1, =data_my_parse_next_number_empty
     mov r2, #0
+    ldr r3, =data_my_parse_next_number_empty
     bl test_my_parse_next_number
     orr r4, r0
 
     ldr r0, =name_my_parse_next_number_simple
     ldr r1, =data_my_parse_next_number_simple
     mov r2, #123
+    ldr r3, =data_my_parse_next_number_simple
+    add r3, #3
     bl test_my_parse_next_number
     orr r4, r0
 
     ldr r0, =name_my_parse_next_number_simple2
     ldr r1, =data_my_parse_next_number_simple2
     mov r2, #123
+    ldr r3, =data_my_parse_next_number_simple2
+    add r3, #3
     bl test_my_parse_next_number
     orr r4, r0
 
     ldr r0, =name_my_parse_next_number_simple3
     ldr r1, =data_my_parse_next_number_simple3
     mov r2, #0
+    ldr r3, =data_my_parse_next_number_simple3
     bl test_my_parse_next_number
     orr r4, r0
 
     ldr r0, =name_my_parse_next_number_simple4
     ldr r1, =data_my_parse_next_number_simple4
     mov r2, #123
+    ldr r3, =data_my_parse_next_number_simple4
+    add r3, #3
     bl test_my_parse_next_number
     orr r4, r0
 
