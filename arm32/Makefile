@@ -18,10 +18,8 @@ tests: text.o
 	# execute
 	$(BIN_PATH)/tests
 
-# %: text.o
-# 	$(AS) $(ASFLAGS) -o $(BIN_PATH)/$@.o $(SOURCE_PATH)/$(word 1,$(subst _, ,$@))/day_$(word 2,$(subst _, ,$@)).s
-# 	# link
-# 	$(CC) -o $(BIN_PATH)/$@ $(BIN_PATH)/$@.o $(INCLUDES)
-# 	# execute
-# 	$(BIN_PATH)/$@ "`cat $(DATA_PATH)/$(word 1,$(subst _, ,$@))/input_$(word 2,$(subst _, ,$@)).txt`"
+2%: text.o
+	$(AS) $(ASFLAGS) -o $(BIN_PATH)/$@.o $(SOURCE_PATH)/$(word 1,$(subst _, ,$@))/day_$(word 2,$(subst _, ,$@)).s
+	$(CC) -o $(BIN_PATH)/$@ $(BIN_PATH)/$@.o $(INCLUDES)
+	$(BIN_PATH)/$@ "`cat $(DATA_PATH)/$(word 1,$(subst _, ,$@))/input_$(word 2,$(subst _, ,$@)).txt`"
 
