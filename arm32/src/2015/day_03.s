@@ -1,5 +1,6 @@
 .section .rodata
 msg1: .asciz "The answer to part 1 is: %d\n"
+msg2: .asciz "The answer to part 2 is: %d\n"
 
 .balign 8
 .data
@@ -10,7 +11,7 @@ buffer: .skip 400000
 .global main
 
 part_1:
-  push {r1-r6, lr}
+  push {r1-r10, lr}
   ldr r6, =buffer             // r6 = current position in buffer
   ldr r1, [r1, #4]            // r1 = position of current character
   ldrb r2, [r1]               // r2 = current character
@@ -75,8 +76,62 @@ part_1_check_inner_loop:
 
 part_1_end:
   mov r0, r1
-  pop {r1-r6, lr}
+  pop {r1-r10, lr}
   bx lr
+
+part_2:
+  push {r1-r10, lr}
+  ldr r6, =buffer             // r6 = current position in buffer
+  ldr r1, [r1, #4]            // r1 = position of current character
+  ldrb r2, [r1]               // r2 = current character
+
+  mov r4, #0                  // Santa: current x
+  mov r5, #0                  // Santa: current y
+  str r4, [r6], #4
+  str r5, [r6], #4
+
+  mov r9, #0                  // Robo-Santa: current x
+  mov r10, #0                 // Robo-Santa: current y
+  str r9, [r6], #4
+  str r10, [r6], #4
+
+part_2_travel_loop:
+  cmp r2, #0
+  beq part_1_end_travel
+  cmp r2, #'<'
+  subeq r4, #1
+  cmp r2, #'>'
+  addeq r4, #1
+  cmp r2, #'^'
+  subeq r5, #1
+  cmp r2, #'v'
+  addeq r5, #1
+  
+  str r4, [r6], #4
+  str r5, [r6], #4
+  
+  add r1, #1
+  ldrb r2, [r1]
+
+  cmp r2, #0
+  beq part_1_end_travel
+  cmp r2, #'<'
+  subeq r9, #1
+  cmp r2, #'>'
+  addeq r9, #1
+  cmp r2, #'^'
+  subeq r10, #1
+  cmp r2, #'v'
+  addeq r10, #1
+  
+  str r9, [r6], #4
+  str r10, [r6], #4
+  
+  add r1, #1
+  ldrb r2, [r1]
+
+  b part_2_travel_loop
+
 
 main:
   push {r1-r6, lr}
@@ -84,6 +139,14 @@ main:
   mov r1, r0
   ldr r0, =msg1
   bl printf
+
+  pop {r1-r6}
+  push {r1-r6}
+  bl part_2
+  mov r1, r0
+  ldr r0, =msg2
+  bl printf
+
 
   mov r0, #0
   pop {r1-r6, lr}
