@@ -1,8 +1,4 @@
 #include "../utils/input.hpp"
-#include <cstddef>
-#include <iterator>
-#include <map>
-#include <vector>
 
 auto part_one(const std::vector<std::string>& input) {
   size_t total = 0;
