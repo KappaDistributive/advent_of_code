@@ -1,5 +1,7 @@
 #include "../utils/input.hpp"
+#include <cstddef>
 #include <iterator>
+#include <map>
 #include <vector>
 
 auto part_one(const std::vector<std::string>& input) {
@@ -19,24 +21,98 @@ auto part_one(const std::vector<std::string>& input) {
         break;
       }
     }
-    fmt::print("{}\n", value);
+    // fmt::print("{}\n", value);
     total += value;
   }
   return total;
 }
 
-auto part_two(void) {
-  return 2;
+auto part_two(const std::vector<std::string>& input) {
+  size_t result{0};
+  for (auto line: input) {
+    size_t value{0};
+    for (size_t index{0}; index < line.length(); ++ index) {
+      if ('0' <= line[index] && line[index] <= '9') {
+        value += (size_t)(line[index] - '0');
+        break;
+      } else if (line.substr(index, 3) == "one") {
+        value += 1;
+        break;
+      } else if (line.substr(index, 3) == "two") {
+        value += 2;
+        break;
+      } else if (line.substr(index, 5) == "three") {
+        value += 3;
+        break;
+      } else if (line.substr(index, 4) == "four") {
+        value += 4;
+        break;
+      } else if (line.substr(index, 4) == "five") {
+        value += 5;
+        break;
+      } else if (line.substr(index, 3) == "six") {
+        value += 6;
+        break;
+      } else if (line.substr(index, 5) == "seven") {
+        value += 7;
+        break;
+      } else if (line.substr(index, 5) == "eight") {
+        value += 8;
+        break;
+      } else if (line.substr(index, 4) == "nine") {
+        value += 9;
+        break;
+      }
+    }
+    value *= 10;
+    for (size_t index{0}; index <= line.length(); ++index) {
+      auto position = line.length() - index;
+      if (position < line.length() && '0' <= line[position] && line[position] <= '9') {
+        value += (size_t)(line[position] - '0');
+        break;
+      } else if (position >= 3 && line.substr(position - 3, 3) == "one") {
+        value += 1;
+        break;
+      } else if (position >= 3 && line.substr(position - 3, 3) == "two") {
+        value += 2;
+        break;
+      } else if (position >= 5 && line.substr(position - 5, 5) == "three") {
+        value += 3;
+        break;
+      } else if (position >= 4 && line.substr(position - 4, 4) == "four") {
+        value += 4;
+        break;
+      } else if (position >= 4 && line.substr(position - 4, 4) == "five") {
+        value += 5;
+        break;
+      } else if (position >= 3 && line.substr(position - 3, 3) == "six") {
+        value += 6;
+        break;
+      } else if (position >= 5 && line.substr(position - 5, 5) == "seven") {
+        value += 7;
+        break;
+      } else if (position >= 5 && line.substr(position - 5, 5) == "eight") {
+        value += 8;
+        break;
+      } else if (position >= 4 && line.substr(position - 4, 4) == "nine") {
+        value += 9;
+        break;
+      }
+    }
+    // fmt::print("{} -> {}\n", line, value);
+    result += value;
+  }
+  return result;
 }
 
 int main() {
-  // std::filesystem::path input_path{"../../data/2023/input_01_mock.txt"};
+  // std::filesystem::path input_path{"../../data/2023/input_01_mock2.txt"};
   std::filesystem::path input_path{"../../data/2023/input_01.txt"};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
   fmt::print("The answer to part one is: {}\n", part_one(input));
-  fmt::print("The answer to part two is: {}\n", part_two());
+  fmt::print("The answer to part two is: {}\n", part_two(input));
 
   return 0;
 }
