@@ -1,8 +1,8 @@
 #include "../utils/input.hpp"
 
-auto part_one(const std::vector<std::string>& input) {
+auto part_one(const std::vector<std::string> &input) {
   size_t total = 0;
-  for (auto line: input) {
+  for (auto line : input) {
     size_t value = 0;
     for (auto c : line) {
       if (c >= '0' && c <= '9') {
@@ -23,11 +23,11 @@ auto part_one(const std::vector<std::string>& input) {
   return total;
 }
 
-auto part_two(const std::vector<std::string>& input) {
+auto part_two(const std::vector<std::string> &input) {
   size_t result{0};
-  for (auto line: input) {
+  for (auto line : input) {
     size_t value{0};
-    for (size_t index{0}; index < line.length(); ++ index) {
+    for (size_t index{0}; index < line.length(); ++index) {
       if ('0' <= line[index] && line[index] <= '9') {
         value += (size_t)(line[index] - '0');
         break;
@@ -63,7 +63,8 @@ auto part_two(const std::vector<std::string>& input) {
     value *= 10;
     for (size_t index{0}; index <= line.length(); ++index) {
       auto position = line.length() - index;
-      if (position < line.length() && '0' <= line[position] && line[position] <= '9') {
+      if (position < line.length() && '0' <= line[position] &&
+          line[position] <= '9') {
         value += (size_t)(line[position] - '0');
         break;
       } else if (position >= 3 && line.substr(position - 3, 3) == "one") {
