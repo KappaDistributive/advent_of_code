@@ -79,6 +79,17 @@ public:
     return result;
   }
 
+  size_t span_to_number(const Coord left, const Coord right) const {
+    assert(left.x <= right.x && left.y == right.y);
+    size_t number{0};
+    for (int x{left.x}; x <= right.x; ++x) {
+      char symbol = this->at(x, left.y);
+      assert('0' <= symbol && symbol <= '9');
+      number = number * 10 + static_cast<size_t>(symbol - '0');
+    }
+    return number;
+  }
+
   friend std::ostream &operator<<(std::ostream &os, const Engine engine) {
     for (size_t y{0}; y < engine.m_height; ++y) {
       for (size_t x{0}; x < engine.m_width; ++x) {
@@ -100,21 +111,14 @@ auto part_one(Engine engine) {
         continue;
       }
       for (auto span : engine.spans_in_reach(x, y)) {
-        // if (std::find(spans_in_reach.cbegin(), spans_in_reach.cend(), span)
-        // == spans_in_reach.cend()) {
         spans_in_reach.push_back(span);
-        // }
       }
     }
   }
 
   size_t result{0};
   for (auto [left, right] : spans_in_reach) {
-    size_t number{0};
-    for (int x{left.x}; x <= right.x; ++x) {
-      number = number * 10 + static_cast<size_t>(engine.at(x, left.y) - '0');
-    }
-    result += number;
+    result += engine.span_to_number(left, right);
   }
   return result;
 }
@@ -122,8 +126,8 @@ auto part_one(Engine engine) {
 auto part_two() { return 2; }
 
 int main() {
-  std::filesystem::path input_path{"../../data/2023/input_03_mock.txt"};
-  // std::filesystem::path input_path{"../../data/2023/input_03.txt"};
+  // std::filesystem::path input_path{"../../data/2023/input_03_mock.txt"};
+  std::filesystem::path input_path{"../../data/2023/input_03.txt"};
   utils::Reader reader(input_path);
   auto engine = Engine(reader.get_lines());
 
