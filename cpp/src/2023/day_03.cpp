@@ -123,7 +123,24 @@ auto part_one(Engine engine) {
   return result;
 }
 
-auto part_two() { return 2; }
+auto part_two(Engine engine) {
+  std::vector<std::pair<Coord, Coord>> spans_in_reach;
+  size_t result{0};
+  for (int y{0}; y < static_cast<int>(engine.m_height); ++y) {
+    for (int x{0}; x < static_cast<int>(engine.m_width); ++x) {
+      if (engine.at(x, y) != '*') {
+        continue;
+      }
+      auto spans = engine.spans_in_reach(x, y);
+      if (spans.size() == 2) {
+        result += engine.span_to_number(spans[0].first, spans[0].second) *
+                  engine.span_to_number(spans[1].first, spans[1].second);
+      }
+    }
+  }
+
+  return result;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2023/input_03_mock.txt"};
@@ -132,7 +149,7 @@ int main() {
   auto engine = Engine(reader.get_lines());
 
   fmt::print("The answer to part one is: {}\n", part_one(engine));
-  fmt::print("The answer to part two is: {}\n", part_two());
+  fmt::print("The answer to part two is: {}\n", part_two(engine));
 
   return 0;
 }
