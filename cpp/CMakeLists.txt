@@ -603,3 +603,6 @@ target_link_libraries(2023_04 input)
 
 add_executable(2023_06 src/2023/day_06.cpp)
 target_link_libraries(2023_06 input)
+
+add_executable(2023_08 src/2023/day_08.cpp)
+target_link_libraries(2023_08 input)
