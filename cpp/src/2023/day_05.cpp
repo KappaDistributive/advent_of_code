@@ -29,9 +29,6 @@ auto extract_seeds(const std::vector<std::string> &input) {
 
 auto parse(const std::vector<std::string> &input) {
   auto seeds = extract_seeds(input);
-  for (auto seed : seeds) {
-    std::cout << seed << std::endl;
-  }
   std::vector<std::vector<std::tuple<int64_t, int64_t, int64_t>>> maps;
   maps.push_back(extract_rules(input, "seed-to-soil"));
   maps.push_back(extract_rules(input, "soil-to-fertilizer"));
@@ -40,14 +37,6 @@ auto parse(const std::vector<std::string> &input) {
   maps.push_back(extract_rules(input, "light-to-temperature"));
   maps.push_back(extract_rules(input, "temperature-to-humidity"));
   maps.push_back(extract_rules(input, "humidity-to-location"));
-
-  for (const auto &map : maps) {
-    for (const auto &entry : map) {
-      fmt::print("{} {} {}\n", std::get<0>(entry), std::get<1>(entry),
-                 std::get<2>(entry));
-    }
-    fmt::print("\n");
-  }
 
   return std::make_pair(seeds, maps);
 }
@@ -72,10 +61,24 @@ auto part_one(
     for (const auto &map : maps) {
       value = transform(value, map);
     }
-    if (value < answer)
+    if (value < answer) {
       answer = value;
+    }
   }
   return answer;
+}
+
+auto part_two(
+    const std::vector<int64_t> &seeds,
+    const std::vector<std::vector<std::tuple<int64_t, int64_t, int64_t>>>
+        maps) {
+  std::vector<int64_t> real_seeds;
+  for (size_t index{0}; index < seeds.size(); index += 2) {
+    for (int64_t offset{0}; offset < seeds[index + 1]; ++offset) {
+      real_seeds.push_back(seeds[index] + offset);
+    }
+  }
+  return part_one(real_seeds, maps);
 }
 
 auto part_two() { return 2; }
@@ -88,7 +91,8 @@ int main() {
 
   fmt::print("The answer to part one is: {}\n",
              part_one(input.first, input.second));
-  fmt::print("The answer to part two is: {}\n", part_two());
+  fmt::print("The answer to part two is: {}\n",
+             part_two(input.first, input.second));
 
   return 0;
 }
