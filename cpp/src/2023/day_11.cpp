@@ -1,8 +1,7 @@
 #include "../utils/geometry.hpp"
 #include "../utils/input.hpp"
 
-using Point = utils::geometry::Point<int, 2>;
-
+using Point = utils::geometry::Point<int64_t, 2>;
 
 std::vector<size_t> empty(const std::vector<std::string> &map,
                           bool row = true) {
@@ -36,7 +35,7 @@ std::vector<Point> extract_galaxies(const std::vector<std::string> &input) {
     for (size_t x{0}; x < input[y].size(); ++x) {
       if (input[y][x] == '#') {
         galaxy_coordinates.push_back(
-            Point{{static_cast<int>(x), static_cast<int>(y)}});
+            Point{{static_cast<int64_t>(x), static_cast<int64_t>(y)}});
       }
     }
   }
@@ -44,13 +43,14 @@ std::vector<Point> extract_galaxies(const std::vector<std::string> &input) {
   return galaxy_coordinates;
 }
 
-std::vector<Point> calculate_offsets(const std::vector<Point>& galaxies, size_t size) {
+std::vector<Point> calculate_offsets(const std::vector<Point> &galaxies,
+                                     size_t size) {
   std::vector<Point> result(size);
-  int offset_x{0};
-  for (int index{0}; index < static_cast<int>(size); ++index) {
+  int64_t offset_x{0};
+  for (int64_t index{0}; index < static_cast<int64_t>(size); ++index) {
     bool empty{true};
-    for (const auto& galaxy: galaxies) {
-      if(galaxy[0] == index) {
+    for (const auto &galaxy : galaxies) {
+      if (galaxy[0] == index) {
         empty = false;
         break;
       }
@@ -60,11 +60,11 @@ std::vector<Point> calculate_offsets(const std::vector<Point>& galaxies, size_t 
     }
     result[index][0] = offset_x;
   }
-  int offset_y{0};
-  for (int index{0}; index < static_cast<int>(size); ++index) {
+  int64_t offset_y{0};
+  for (int64_t index{0}; index < static_cast<int64_t>(size); ++index) {
     bool empty{true};
-    for (const auto& galaxy: galaxies) {
-      if(galaxy[1] == index) {
+    for (const auto &galaxy : galaxies) {
+      if (galaxy[1] == index) {
         empty = false;
         break;
       }
@@ -74,24 +74,34 @@ std::vector<Point> calculate_offsets(const std::vector<Point>& galaxies, size_t 
     }
     result[index][1] = offset_y;
   }
-  
+
   return result;
 }
 
-auto part_one(const std::vector<std::string> &input) {
+auto part_one(const std::vector<std::string> &input,
+              int64_t expansion_factor = 2) {
   auto galaxies = extract_galaxies(input);
-  auto offsets = calculate_offsets(galaxies, std::max(input.size(), input[0].size()));
-  
-  int result{0};
+  auto offsets =
+      calculate_offsets(galaxies, std::max(input.size(), input[0].size()));
+
+  int64_t result{0};
   for (size_t left{0}; left < galaxies.size(); ++left) {
-    Point offset_left{{offsets[galaxies[left][0]][0], offsets[galaxies[left][1]][1]}};
+    Point offset_left{{(expansion_factor - 1) * offsets[galaxies[left][0]][0],
+                       (expansion_factor - 1) * offsets[galaxies[left][1]][1]}};
     for (size_t right{left + 1}; right < galaxies.size(); ++right) {
-      Point offset_right{{offsets[galaxies[right][0]][0], offsets[galaxies[right][1]][1]}};
-      result += (galaxies[left] + offset_left).manhatten_distance(galaxies[right] + offset_right);
+      Point offset_right{
+          {(expansion_factor - 1) * offsets[galaxies[right][0]][0],
+           (expansion_factor - 1) * offsets[galaxies[right][1]][1]}};
+      result += (galaxies[left] + offset_left)
+                    .manhatten_distance(galaxies[right] + offset_right);
     }
   }
 
   return result;
+}
+
+auto part_two(const std::vector<std::string> &input) {
+  return part_one(input, 1000000);
 }
 
 auto part_two() { return 2; }
@@ -103,7 +113,7 @@ int main() {
   auto input = reader.get_lines();
 
   fmt::print("The answer to part one is: {}\n", part_one(input));
-  fmt::print("The answer to part two is: {}\n", part_two());
+  fmt::print("The answer to part two is: {}\n", part_two(input));
 
   return 0;
 }
