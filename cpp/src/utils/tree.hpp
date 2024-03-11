@@ -1,12 +1,10 @@
 #pragma once
 
-#include <deque>
 #include <list>
 #include <iostream>
 #include <iterator>
 #include <vector>
 #include <stack>
-#include <type_traits>
 
 namespace utils {
 namespace tree {

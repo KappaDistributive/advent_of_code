@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../vendors/fmt/include/fmt/core.h"
+#include "../../vendors/fmt/include/fmt/ostream.h"
 
 #include <algorithm>
 #include <array>
