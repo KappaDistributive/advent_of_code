@@ -10,10 +10,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=stdlibc++")
 
-add_subdirectory(vendors/fmt)
+# add_subdirectory(vendors/fmt)
 
 add_library(input src/utils/input.cpp)
-target_link_libraries(input fmt::fmt)
+target_link_libraries(input)
 
 add_library(hexgrid src/utils/hexgrid.cpp)
 
@@ -612,3 +612,6 @@ target_link_libraries(2023_10 input)
 
 add_executable(2023_11 src/2023/day_11.cpp)
 target_link_libraries(2023_11 input)
+
+add_executable(2023_13 src/2023/day_13.cpp)
+target_link_libraries(2023_13 input)

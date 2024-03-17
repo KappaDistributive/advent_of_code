@@ -1,12 +1,10 @@
 #pragma once
 
-#include "../../vendors/fmt/include/fmt/core.h"
-#include "../../vendors/fmt/include/fmt/ostream.h"
-
 #include <algorithm>
 #include <array>
 #include <cassert>
 #include <filesystem>
+#include <format>
 #include <fstream>
 #include <functional>
 #include <iomanip>
@@ -23,9 +21,10 @@
 #include <unordered_set>
 #include <vector>
 
+
 inline int _assert_message(const char* condition, const char* function,
                            const char* file, int line, const char* message) {
-  std::cerr << fmt::format(
+  std::cerr << std::format(
                    "Assertion failed ({}),\nfunction {}, location {}:{}\n{}",
                    condition, function, file, line, message)
             << std::endl;
