@@ -5,13 +5,13 @@ auto registers(const std::vector<std::string> &input) {
   xs.push_back(1);
   for (const auto &line : input) {
     xs.push_back(xs.back());
-    fmt::print("{}\t{}\t{}\n", xs.size(), line, xs.back());
+    std::cout << std::format("{}\t{}\t{}", xs.size(), line, xs.back()) << std::endl;
     if (line.starts_with("addx")) {
       auto splits = utils::split_string(line, ' ');
       assert(splits.size() == 2);
       assert(splits[0] == "addx");
       xs.push_back(xs.back() + std::stoi(splits[1]));
-      fmt::print("{}\t{}\t{}\n", xs.size(), "", xs.back());
+      std::cout << std::format("{}\t{}\t{}", xs.size(), "", xs.back()) << std::endl;
     }
   }
   return xs;
@@ -21,7 +21,7 @@ auto part_one(const std::vector<std::string> &input) {
   auto xs = registers(input);
   int result{0};
   for (auto index : std::vector<int>{{20, 60, 100, 140, 180, 220}}) {
-    fmt::print("{} {} {}\n", index, xs[index], index * xs[index]);
+    std::cout << std::format("{} {} {}", index, xs[index], index * xs[index]) << std::endl;
     result += index * xs[index - 1];
   }
   return result;
@@ -47,8 +47,8 @@ int main() {
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  fmt::print("The answer to part one is: {}\n", part_one(input));
-  fmt::print("The answer to part two is:\n{}\n", part_two(input));
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is:\n{}", part_two(input)) << std::endl;
 
   return 0;
 }

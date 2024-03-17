@@ -22,8 +22,8 @@ struct Monkey {
       operation = [](uint64_t worry_level, bool verbose) {
         uint64_t result = worry_level * worry_level;
         if (verbose)
-          fmt::print("    Worry level is multiplied by itself to {}.\n",
-                     result);
+          std::cout << std::format("    Worry level is multiplied by itself to {}.",
+                     result) << std::endl;
         return result;
       };
     } else if (description[2].starts_with("  Operation: new = old *")) {
@@ -31,8 +31,8 @@ struct Monkey {
         uint64_t factor = std::stoi(description[2].substr(24));
         uint64_t result = worry_level * factor;
         if (verbose)
-          fmt::print("    Worry level is mutiplied by {} to {}.\n", factor,
-                     result);
+          std::cout << std::format("    Worry level is mutiplied by {} to {}.", factor,
+                     result) << std::endl;
         return result;
       };
     } else if (description[2].starts_with("  Operation: new = old +")) {
@@ -40,13 +40,13 @@ struct Monkey {
         uint64_t summand = std::stoi(description[2].substr(24));
         uint64_t result = worry_level + summand;
         if (verbose)
-          fmt::print("    Worry level is increased by {} to {}.\n", summand,
-                     result);
+          std::cout << std::format("    Worry level is increased by {} to {}.", summand,
+                     result) << std::endl;
         return result;
       };
     } else {
       throw std::runtime_error(
-          fmt::format("Failed to parse operation: {}\n", description[2]));
+          std::format("Failed to parse operation: {}", description[2]));
     }
     // test
     divisor = std::stoi(utils::split_string(description[3], ' ').back());
@@ -59,11 +59,11 @@ struct Monkey {
                                             bool verbose) {
       bool is_divisible = worry_level % div == 0;
       if (verbose) {
-        fmt::print("    Current worry level is ");
+        std::cout << "    Current worry level is ";
         if (!is_divisible) {
-          fmt::print("not ");
+          std::cout << "not ";
         }
-        fmt::print("divisible by {}.\n", div);
+        std::cout << std::format("divisible by {}.", div) << std::endl;
       }
       return is_divisible ? target_true : target_false;
     };
@@ -81,30 +81,30 @@ struct Game {
     ++num_round;
     for (size_t monkey{0}; monkey < monkeys.size(); ++monkey) {
       if (verbose)
-        fmt::print("Monkey {}:\n", monkey);
+        std::cout << std::format("Monkey {}:", monkey) << std::endl;
       while (!monkeys[monkey].worry_levels.empty()) {
         auto item = monkeys[monkey].worry_levels.front();
         monkeys[monkey].worry_levels.pop();
         if (verbose)
-          fmt::print("  Monkey inspects an item wity worry level of {}.\n",
-                     item);
+          std::cout << std::format("  Monkey inspects an item wity worry level of {}.",
+                     item) << std::endl;
         ++monkeys[monkey].num_inspections;
         item = monkeys[monkey].operation(item, verbose);
         if (nancy) {
           item /= 3;
           if (verbose)
-            fmt::print(
+            std::cout << std::format(
                 "    Monkey gets bored with item. Worry level is divided "
-                "by 3 to {}.\n",
-                item);
+                "by 3 to {}.",
+                item) << std::endl;
         } else {
           item = item % common_divisor;
         }
         auto target_monkey = monkeys[monkey].test(item, verbose);
         monkeys[target_monkey].worry_levels.push(item);
         if (verbose)
-          fmt::print("    Item with worry level {} is thrown to monkey {}.\n",
-                     item, target_monkey);
+          std::cout << std::format("    Item with worry level {} is thrown to monkey {}.",
+                     item, target_monkey) << std::endl;
       }
     }
 
@@ -113,21 +113,21 @@ struct Game {
   }
 
   void status() {
-    fmt::print("After round {}, the monkeys are holding items with these worry "
-               "levels:\n",
-               num_round);
+    std::cout << std::format("After round {}, the monkeys are holding items with these worry "
+               "levels:",
+               num_round) << std::endl;
     for (size_t monkey{0}; monkey < monkeys.size(); ++monkey) {
-      fmt::print("Monkey {}: ", monkey);
+      std::cout << std::format("Monkey {}: ", monkey);
       auto items = monkeys[monkey].worry_levels;
       while (!items.empty()) {
         auto item = items.front();
         items.pop();
-        fmt::print("{}", item);
+        std::cout << item;
         if (!items.empty()) {
-          fmt::print(", ");
+          std::cout << ", ";
         }
       }
-      fmt::print("\n");
+      std::cout << std::endl;
     }
   }
 };
@@ -176,10 +176,10 @@ auto part_two(const std::vector<std::string> &input) {
   for (size_t round{1}; round <= 10000; ++round) {
     game.round();
     if (round == 1 || round == 20 || round % 1000 == 0) {
-      fmt::print("== After round {} ==\n", round);
+      std::cout << std::format("== After round {} ==", round) << std::endl;
       for (size_t monkey{0}; monkey < game.monkeys.size(); ++monkey) {
-        fmt::print("Monkey {} inspected items {} times.\n", monkey,
-                   game.monkeys[monkey].num_inspections);
+        std::cout << std::format("Monkey {} inspected items {} times.", monkey,
+                   game.monkeys[monkey].num_inspections) << std::endl;
       }
     }
   }
@@ -198,8 +198,8 @@ int main() {
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  fmt::print("The answer to part one is: {}\n", part_one(input));
-  fmt::print("The answer to part two is: {}\n", part_two(input));
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;
 
   return 0;
 }

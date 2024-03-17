@@ -1,7 +1,5 @@
 #include "../utils/input.hpp"
-#include "fmt/core.h"
 #include <regex>
-#include <stdexcept>
 #include <utility>
 
 class Map {
@@ -45,7 +43,7 @@ public:
       break;
     default:
       throw std::runtime_error(
-          fmt::format("Invalid instruction: {}", instruction));
+          std::format("Invalid instruction: {}", instruction));
     }
 
     return node;
@@ -92,8 +90,8 @@ int main() {
   utils::Reader reader(input_path);
   auto map = Map(reader.get_lines());
 
-  // fmt::print("The answer to part one is: {}\n", part_one(map));
-  fmt::print("The answer to part two is: {}\n", part_two(map));
+  // std::cout << std::format("The answer to part one is: {}", part_one(map)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(map)) << std::endl;
 
   return 0;
 }

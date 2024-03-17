@@ -143,7 +143,7 @@ struct Packet {
     } else if (type_id == 7) {
       result = sub_packets[0]->value() == sub_packets[1]->value() ? 1 : 0;
     } else {
-      throw std::runtime_error(fmt::format("Invalid type ID: {}", type_id));
+      throw std::runtime_error(std::format("Invalid type ID: {}", type_id));
     }
 
     return result;
@@ -151,11 +151,11 @@ struct Packet {
 };
 
 std::ostream& operator<<(std::ostream& os, const Packet& packet) {
-  os << fmt::format("version: {} type ID: {} payload: (", packet.version,
+  os << std::format("version: {} type ID: {} payload: (", packet.version,
                     packet.type_id);
 
   if (std::holds_alternative<size_t>(packet.payload)) {
-    os << fmt::format(" {} )", std::get<0>(packet.payload));
+    os << std::format(" {} )", std::get<0>(packet.payload));
   } else {
     for (auto it{std::get<1>(packet.payload).begin()};
          it != std::get<1>(packet.payload).end(); ++it) {
@@ -193,14 +193,12 @@ int main(int argc, char* argv[]) {
     extension = "_" + extension;
   }
   std::filesystem::path input_path{
-      fmt::format("../../data/2021/input_16{}.txt", extension)};
+      std::format("../../data/2021/input_16{}.txt", extension)};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  auto answer_one = part_one(input);
-  fmt::print("The answer to part one is: {}\n", answer_one);
-  auto answer_two = part_two(input);
-  fmt::print("The answer to part two is: {}\n", answer_two);
-
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;;
+  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;;
+  
   return 0;
 }

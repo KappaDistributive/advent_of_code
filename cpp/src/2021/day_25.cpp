@@ -123,12 +123,12 @@ int main(int argc, char* argv[]) {
     extension = "_" + std::string(argv[1]);
   }
   std::filesystem::path input_path{
-      fmt::format("../../data/2021/input_25{}.txt", extension)};
+      std::format("../../data/2021/input_25{}.txt", extension)};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
   auto answer_one = part_one(input);
-  fmt::print("The answer to part one is: {}\n", answer_one);
+  std::cout << std::format("The answer to part one is: {}", answer_one) << std::endl;
 
   return 0;
 }

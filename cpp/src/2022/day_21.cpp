@@ -81,8 +81,8 @@ int main() {
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  fmt::print("The answer to part one is: {}\n", part_one(input));
-  fmt::print("The answer to part two is: {}\n", part_two(input));
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;
 
   return 0;
 }

@@ -28,7 +28,7 @@ struct File : public INode {
 
   std::string str(size_t depth = 0) const noexcept override {
     return std::string(depth * 2, ' ') +
-           fmt::format("- {} (file, size={})\n", this->name, this->size);
+           std::format("- {} (file, size={})\n", this->name, this->size);
   }
 
   void visit_dirs(
@@ -48,7 +48,7 @@ struct Directory : public INode {
 
   std::string str(size_t depth = 0) const noexcept override {
     std::string result =
-        std::string(depth * 2, ' ') + fmt::format("- {} (dir)\n", this->name);
+        std::string(depth * 2, ' ') + std::format("- {} (dir)\n", this->name);
     for (const auto &node : this->nodes) {
       result += node->str(depth + 1);
     }
@@ -97,7 +97,7 @@ std::unique_ptr<Directory> parse_directory(std::queue<std::string> &input,
 
 auto part_one(std::queue<std::string> input) {
   auto root = parse_directory(input, "/");
-  fmt::print("{}", root->str());
+  std::cout << root->str() << std::endl;
   size_t result{0};
   root->visit_dirs([&result](const Directory &dir) {
     if (dir.total_size() <= 100000)
@@ -131,8 +131,8 @@ int main() {
     input.push(*it);
   }
 
-  fmt::print("The answer to part one is: {}\n", part_one(input));
-  fmt::print("The answer to part two is: {}\n", part_two(input));
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;
 
   return 0;
 }

@@ -48,7 +48,7 @@ class Grid {
     for (auto line : input) {
       std::regex_match(line, matches, instruction_regex);
       assertm(matches.size() == 8,
-              fmt::format("Failed to parse reboot step `{}`\n", line).c_str());
+              std::format("Failed to parse reboot step `{}`\n", line).c_str());
       bool on = matches[1] == "on";
       Cuboid cuboid{{std::make_pair(std::stoi(matches[2].str()),
                                     std::stoi(matches[3].str())),
@@ -108,14 +108,12 @@ int main(int argc, char *argv[]) {
     extension = "_" + std::string(argv[1]);
   }
   std::filesystem::path input_path{
-      fmt::format("../../data/2021/input_22{}.txt", extension)};
+      std::format("../../data/2021/input_22{}.txt", extension)};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  auto answer_one = part_one(input);
-  fmt::print("The answer to part one is: {}\n", answer_one);
-  auto answer_two = part_two(input);
-  fmt::print("The answer to part two is: {}\n", answer_two);
+  std::cout << std::format("the answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("the answer to part two is: {}", part_two(input)) << std::endl;
 
   return 0;
 }

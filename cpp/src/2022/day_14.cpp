@@ -151,7 +151,7 @@ auto part_one(const std::vector<std::string> &input) {
 auto part_two(const std::vector<std::string> &input) {
   Cave cave(input);
   auto [upper_left, lower_right] = cave.border();
-  cave.add_rock(fmt::format("{},{} -> {},{}", upper_left[0] - 10000,
+  cave.add_rock(std::format("{},{} -> {},{}", upper_left[0] - 10000,
                             lower_right[1] + 2, lower_right[0] + 10000,
                             lower_right[1] + 2));
   size_t result{0};
@@ -169,8 +169,8 @@ int main() {
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  fmt::print("The answer to part one is: {}\n", part_one(input));
-  fmt::print("The answer to part two is: {}\n", part_two(input));
-
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;
+  
   return 0;
 }

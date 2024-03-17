@@ -81,13 +81,13 @@ auto part_two(const std::vector<Card> &cards) {
     for (size_t offset{0};
          offset < static_cast<size_t>(cards[index].matching_numbers());
          ++offset) {
-      fmt::print("Increasing {} by {} from {}\n", index + 2 + offset,
-                 amount[index], index + 1);
+      std::cout << std::format("Increasing {} by {} from {}", index + 2 + offset,
+                 amount[index], index + 1) << std::endl;
       amount[index + 1 + offset] += amount[index];
     }
   }
   for (size_t index{0}; index < amount.size(); ++index) {
-    fmt::print("{}: {}\n", index + 1, amount[index]);
+    std::cout << std::format("{}: {}", index + 1, amount[index]) << std::endl;
   }
   return std::accumulate(amount.cbegin(), amount.cend(), 0ull);
 }
@@ -98,8 +98,8 @@ int main() {
   utils::Reader reader(input_path);
   auto cards = parse_input(reader.get_lines());
 
-  fmt::print("The answer to part one is: {}\n", part_one(cards));
-  fmt::print("The answer to part two is: {}\n", part_two(cards));
+  std::cout << std::format("The answer to part one is: {}", part_one(cards)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(cards)) << std::endl;
 
   return 0;
 }

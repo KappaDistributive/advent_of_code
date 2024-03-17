@@ -85,7 +85,7 @@ class SnailfishNumber {
         auto [left_, right_] = splits.value();
         node->left = create_node(left_, right_, node);
       } else {
-        throw std::runtime_error(fmt::format("Failed to parse: {}\n", left));
+        throw std::runtime_error(std::format("Failed to parse: {}\n", left));
       }
     }
 
@@ -98,7 +98,7 @@ class SnailfishNumber {
         auto [left_, right_] = splits.value();
         node->right = create_node(left_, right_, node);
       } else {
-        throw std::runtime_error(fmt::format("Failed to parse: {}\n", right));
+        throw std::runtime_error(std::format("Failed to parse: {}\n", right));
       }
     }
 
@@ -112,7 +112,7 @@ class SnailfishNumber {
       auto [left, right] = splits.value();
       this->m_root = create_node(left, right);
     } else {
-      throw std::runtime_error(fmt::format(
+      throw std::runtime_error(std::format(
           "Failed to create SnailfishNumber from: {}\n", description));
     }
   }
@@ -140,14 +140,14 @@ int main(int argc, char* argv[]) {
     extension = "_" + std::string(argv[1]);
   }
   std::filesystem::path input_path{
-      fmt::format("../../data/2021/input_18{}.txt", extension)};
+      std::format("../../data/2021/input_18{}.txt", extension)};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
   auto answer_one = part_one(input);
-  fmt::print("The answer to part one is: {}\n", answer_one);
+  std::cout << std::format("The answer to part one is: {}", answer_one) << std::endl;
   // auto answer_two = part_two(input);
-  // fmt::print("The answer to part two is: {}\n", answer_two);
+  // std::cout << std::format("The answer to part two is: {}", answer_two) << std::endl;
 
   return 0;
 }

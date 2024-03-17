@@ -83,9 +83,9 @@ auto part_one(const std::vector<std::string>& input) {
   for (size_t num_step{1}; num_step <= 100; ++num_step) {
     auto update = step(grid);
     result += std::get<1>(update);
-    // fmt::print("\nStep: {}\n", num_step);
+    // std::cout << std::format("\nStep: {}", num_step) << std::endl;
     grid = std::get<0>(update);
-    // fmt::print("Num flashes: {}\n", std::get<1>(update));
+    // std::cout << std::format("Num flashes: {}", std::get<1>(update)) << std::endl;
     // visualize(grid);
   }
   return result;
@@ -111,14 +111,12 @@ int main(int argc, char* argv[]) {
     extension = "_mock";
   }
   std::filesystem::path input_path{
-      fmt::format("../../data/2021/input_11{}.txt", extension)};
+    std::format("../../data/2021/input_11{}.txt", extension)};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  auto answer_one = part_one(input);
-  fmt::print("The answer to part one is: {}\n", answer_one);
-  auto answer_two = part_two(input);
-  fmt::print("The answer to part two is: {}\n", answer_two);
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;
 
   return 0;
 }

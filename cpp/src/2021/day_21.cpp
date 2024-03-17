@@ -19,7 +19,7 @@ class DiracDice {
     for (auto line : input) {
       std::regex_match(line, matches, position_regex);
       assertm(matches.size() == 3,
-              fmt::format("Illegal input line `{}`.", line).c_str());
+              std::format("Illegal input line `{}`.", line).c_str());
 
       if (std::stoi(matches[1].str()) == 1) {
         this->m_position_player_one = std::stoul(matches[2].str());
@@ -27,7 +27,7 @@ class DiracDice {
 
       } else {
         assertm(std::stoi(matches[1].str()) == 2,
-                fmt::format("Illegal input line `{}`.", line).c_str());
+                std::format("Illegal input line `{}`.", line).c_str());
         this->m_position_player_two = std::stoul(matches[2].str());
         assert(this->m_position_player_two-- > 0);
       }
@@ -159,7 +159,7 @@ auto part_two(const std::vector<std::string>& input) {
       }
     }
     games = new_games;
-    // std::cout << fmt::format("{}\t{}\n", player_one_wins, player_two_wins);
+    // std::cout << std::format("{}\t{}\n", player_one_wins, player_two_wins);
   }
 
   return std::max(player_one_wins, player_two_wins);
@@ -172,14 +172,14 @@ int main(int argc, char* argv[]) {
     extension = "_" + std::string(argv[1]);
   }
   std::filesystem::path input_path{
-      fmt::format("../../data/2021/input_21{}.txt", extension)};
+    std::format("../../data/2021/input_21{}.txt", extension)};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
   auto answer_one = part_one(input);
-  fmt::print("The answer to part one is: {}\n", answer_one);
+  std::cout << std::format("The answer to part one is: {}", answer_one) << std::endl;
   auto answer_two = part_two(input);
-  fmt::print("The answer to part two is: {}\n", answer_two);
+  std::cout << std::format("The answer to part two is: {}", answer_two) << std::endl;
 
   return 0;
 }

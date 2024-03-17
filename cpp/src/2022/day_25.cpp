@@ -4,7 +4,7 @@ int64_t decode(const std::string &snafu) {
   int64_t result{0};
   int64_t place{1};
   int64_t factor{0};
-  for (int64_t index{0}; index < snafu.size(); ++index) {
+  for (int64_t index{0}; index < static_cast<int64_t>(snafu.size()); ++index) {
     switch (snafu[snafu.size() - index - 1]) {
     case '0':
       factor = 0;
@@ -63,7 +63,7 @@ auto part_one(const std::vector<std::string> &input) {
   return snafu(sum);
 }
 
-auto part_two(const std::vector<std::string> &input) { return 2; }
+auto part_two() { return 2; }
 
 int main() {
   // std::filesystem::path input_path{"../../data/2022/input_25_mock.txt"};
@@ -71,8 +71,8 @@ int main() {
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  fmt::print("The answer to part one is: {}\n", part_one(input));
-  fmt::print("The answer to part two is: {}\n", part_two(input));
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two()) << std::endl;
 
   return 0;
 }

@@ -89,7 +89,7 @@ class Map {
 
   friend std::ostream& operator<<(std::ostream& os, const Map& map) {
     for (const auto& [source, destination] : map.m_adjacency_list) {
-      os << fmt::format("{} -> {}\n", source, destination);
+      os << std::format("{} -> {}\n", source, destination);
     }
     return os;
   }
@@ -118,14 +118,12 @@ int main(int argc, char* argv[]) {
     extension = "_" + std::string(argv[1]);
   }
   std::filesystem::path input_path{
-      fmt::format("../../data/2021/input_12{}.txt", extension)};
+      std::format("../../data/2021/input_12{}.txt", extension)};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  auto answer_one = part_one(input);
-  fmt::print("The answer to part one is: {}\n", answer_one);
-  auto answer_two = part_two(input);
-  fmt::print("The answer to part two is: {}\n", answer_two);
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;
 
   return 0;
 }

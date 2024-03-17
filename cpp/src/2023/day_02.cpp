@@ -1,5 +1,4 @@
 #include "../utils/input.hpp"
-#include "fmt/core.h"
 #include <cstddef>
 #include <regex> // NOLINT
 #include <vector>
@@ -107,8 +106,8 @@ int main() {
   utils::Reader reader(input_path);
   auto games = parse_input(reader.get_lines());
 
-  fmt::print("The answer to part one is: {}\n", part_one(games));
-  fmt::print("The answer to part two is: {}\n", part_two(games));
+  std::cout << std::format("The answer to part one is: {}", part_one(games)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(games)) << std::endl;
 
   return 0;
 }

@@ -66,10 +66,10 @@ auto run(const std::vector<std::string>& input, size_t num_iterations) {
   auto [polymer, insertion_rules] = prepare_input(input);
 
   // for (auto [pair, count] : polymer) {
-  //   fmt::print("{}{}: {}\n", pair.first, pair.second, count);
+  //   std::cout << std::format("{}{}: {}", pair.first, pair.second, count) << std::endl;
   // }
   // for (auto [pair, insertion] : insertion_rules) {
-  //   fmt::print("{}{} -> {}\n", pair.first, pair.second, insertion);
+  //   std::cout << std::format("{}{} -> {}", pair.first, pair.second, insertion) << std::endl;
   // }
 
   for (size_t step_index{0}; step_index < num_iterations; ++step_index) {
@@ -79,7 +79,7 @@ auto run(const std::vector<std::string>& input, size_t num_iterations) {
   auto element_counts = element_count(polymer);
 
   // for (auto [element, count] : element_counts) {
-  //   fmt::print("{}: {}\n", element, count);
+  //   std::cout << std::format("{}: {}", element, count) << std::endl;
   // }
 
   size_t maximum =
@@ -113,14 +113,12 @@ int main(int argc, char* argv[]) {
     extension = "_" + std::string(argv[1]);
   }
   std::filesystem::path input_path{
-      fmt::format("../../data/2021/input_14{}.txt", extension)};
+      std::format("../../data/2021/input_14{}.txt", extension)};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  auto answer_one = part_one(input);
-  fmt::print("The answer to part one is: {}\n", answer_one);
-  auto answer_two = part_two(input);
-  fmt::print("The answer to part two is: {}\n", answer_two);
-
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;
+  
   return 0;
 }

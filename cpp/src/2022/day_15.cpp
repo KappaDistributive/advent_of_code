@@ -62,7 +62,7 @@ struct Sensor {
   }
 
   friend std::ostream &operator<<(std::ostream &os, const Sensor &sensor) {
-    os << fmt::format("Sensor at x={}, y={}: closest beacon is at x={}, y={}",
+    os << std::format("Sensor at x={}, y={}: closest beacon is at x={}, y={}",
                       sensor.position[0], sensor.position[1],
                       sensor.closest_beacon[0], sensor.closest_beacon[1]);
     return os;
@@ -127,8 +127,8 @@ int main() {
   utils::Reader reader(input_path);
   auto input = parse_input(reader.get_lines());
 
-  fmt::print("The answer to part one is: {}\n", part_one(input));
-  fmt::print("The answer to part two is: {}\n", part_two(input));
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;
 
   return 0;
 }

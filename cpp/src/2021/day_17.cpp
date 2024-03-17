@@ -44,7 +44,7 @@ auto shoot(int x, int y, int min_x, int max_x, int min_y, int max_y) {
 
 auto part_one(const std::vector<std::string>& input) {
   auto [min_x, max_x, min_y, max_y] = prepare_input(input);
-  // std::cout << fmt::format("target area: x={}..{} y={}..{}", min_x, max_x,
+  // std::cout << std::format("target area: x={}..{} y={}..{}", min_x, max_x,
   // min_y, max_y) << std::endl;
   int result{0};
 
@@ -83,14 +83,12 @@ int main(int argc, char* argv[]) {
     extension = "_" + std::string(argv[1]);
   }
   std::filesystem::path input_path{
-      fmt::format("../../data/2021/input_17{}.txt", extension)};
+      std::format("../../data/2021/input_17{}.txt", extension)};
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  auto answer_one = part_one(input);
-  fmt::print("The answer to part one is: {}\n", answer_one);
-  auto answer_two = part_two(input);
-  fmt::print("The answer to part two is: {}\n", answer_two);
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;
 
   return 0;
 }

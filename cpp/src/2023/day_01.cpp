@@ -17,7 +17,7 @@ auto part_one(const std::vector<std::string> &input) {
         break;
       }
     }
-    // fmt::print("{}\n", value);
+    // std::cout << std::format("{}", value) << std::endl;
     total += value;
   }
   return total;
@@ -96,7 +96,7 @@ auto part_two(const std::vector<std::string> &input) {
         break;
       }
     }
-    // fmt::print("{} -> {}\n", line, value);
+    // std::cout << std::format("{} -> {}", line, value) << std::endl;
     result += value;
   }
   return result;
@@ -108,8 +108,8 @@ int main() {
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  fmt::print("The answer to part one is: {}\n", part_one(input));
-  fmt::print("The answer to part two is: {}\n", part_two(input));
+  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;
 
   return 0;
 }
