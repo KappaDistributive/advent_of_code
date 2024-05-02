@@ -18,8 +18,9 @@ if __name__ == "__main__":
     if data_path.exists():
         print(f"Data already exists at {data_path}")
     else:
-        response = requests.get(f"https://adventofcode.com/{args.year}/day/{args.day}/input",
-                                cookies={"session": session_cookie})
+        response = requests.get(
+            f"https://adventofcode.com/{args.year}/day/{args.day}/input", cookies={"session": session_cookie}
+        )
         with open(data_path, "w") as writer:
             writer.write(response.text)
         print(f"Data written to {data_path}")
