@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+import argparse
+from pathlib import Path
+import os
+import requests
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-y", "--year", nargs="?", type=int, required=True, help="Year")
+    parser.add_argument("-d", "--day", nargs="?", type=int, required=True, help="Day")
+    args = parser.parse_args()
+    session_cookie = os.environ.get("AOC_SESSION_COOKIE", None)
+    assert session_cookie, "Missing session cookie"
+    data_root = os.environ.get("AOC_DATA_PATH", None)
+    assert data_root, "AOC_DATA_PATH has not been set"
+    data_path = Path(data_root) / str(args.year) / f"input_{args.day:02}.txt"
+
+    if data_path.exists():
+        print(f"Data already exists at {data_path}")
+    else:
+        response = requests.get(f"https://adventofcode.com/{args.year}/day/{args.day}/input",
+                                cookies={"session": session_cookie})
+        with open(data_path, "w") as writer:
+            writer.write(response.text)
+        print(f"Data written to {data_path}")
