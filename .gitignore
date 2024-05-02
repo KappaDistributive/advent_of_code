@@ -17,4 +17,5 @@ cpp/release/
 sync.sh
 
 **/.DS_Store
+data
 embedded/esp-01/data
