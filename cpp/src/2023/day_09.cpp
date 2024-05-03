@@ -13,7 +13,7 @@ auto parse_input(const std::vector<std::string> &input) {
   return result;
 }
 
-int next_value(const std::vector<int>& history) {
+int next_value(const std::vector<int> &history) {
   std::vector<std::vector<int>> expanded_history;
   expanded_history.push_back(history);
   bool done = false;
@@ -51,7 +51,7 @@ auto part_one(std::vector<std::vector<int>> histories) {
 
 auto part_two(std::vector<std::vector<int>> histories) {
   int result{0};
-  for (auto history: histories) {
+  for (auto history : histories) {
     std::vector<int> reverse_history;
     for (auto it{history.rbegin()}; it != history.rend(); ++it) {
       reverse_history.push_back(*it);
