@@ -5,14 +5,16 @@ import os
 import requests
 
 if __name__ == "__main__":
+    session_cookie = os.environ.get("AOC_SESSION_COOKIE", None)
+    assert session_cookie, "Missing session cookie. Please set environment variable `AOC_SESSION_COOKIE`."
+    data_root = os.environ.get("AOC_DATA_PATH", None)
+    assert data_root, "Environment variable `AOC_DATA_PATH` has not been set."
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-y", "--year", nargs="?", type=int, required=True, help="Year")
     parser.add_argument("-d", "--day", nargs="?", type=int, required=True, help="Day")
     args = parser.parse_args()
-    session_cookie = os.environ.get("AOC_SESSION_COOKIE", None)
-    assert session_cookie, "Missing session cookie"
-    data_root = os.environ.get("AOC_DATA_PATH", None)
-    assert data_root, "AOC_DATA_PATH has not been set"
+
     data_path = Path(data_root) / str(args.year) / f"input_{args.day:02}.txt"
 
     if data_path.exists():
