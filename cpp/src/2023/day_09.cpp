@@ -49,7 +49,17 @@ auto part_one(std::vector<std::vector<int>> histories) {
   return result;
 }
 
-auto part_two() { return 2; }
+auto part_two(std::vector<std::vector<int>> histories) {
+  int result{0};
+  for (auto history: histories) {
+    std::vector<int> reverse_history;
+    for (auto it{history.rbegin()}; it != history.rend(); ++it) {
+      reverse_history.push_back(*it);
+    }
+    result += next_value(reverse_history);
+  }
+  return result;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2023/input_09_mock.txt"};
@@ -58,7 +68,7 @@ int main() {
   auto input = parse_input(reader.get_lines());
 
   std::cout << std::format("The answer to part one is: {}\n", part_one(input));
-  std::cout << std::format("The answer to part two is: {}\n", part_two());
+  std::cout << std::format("The answer to part two is: {}\n", part_two(input));
 
   return 0;
 }
