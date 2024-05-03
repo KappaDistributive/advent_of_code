@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import argparse
-from pathlib import Path
 import os
+from pathlib import Path
+
 import requests
 
 if __name__ == "__main__":
