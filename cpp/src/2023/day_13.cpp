@@ -23,39 +23,49 @@ public:
     return this->m_buffer[y * this->m_width + x];
   }
 
-  bool has_horizontal_symmetry_at(size_t index) const {
-    if (index >= this->m_height - 1) {
-      return false;
-    }
+  size_t horizontal_diff(size_t index) const {
+    size_t diff{0};
     int index_low = index, index_high = index + 1;
-    ;
-    while (index_low >= 0 && index_high < static_cast<int>(this->m_height)) {
-      for (size_t x{0}; x < this->m_width; ++x) {
+    while (index_low >= 0 && index_high < static_cast<int>(this->height())) {
+      for (size_t x{0}; x < this->width(); ++x) {
         if (this->at(x, index_low) != this->at(x, index_high)) {
-          return false;
+          ++diff;
         }
       }
       --index_low;
       ++index_high;
     }
-    return true;
+    return diff;
+  }
+
+  bool has_horizontal_symmetry_at(size_t index) const {
+    if (index >= this->m_height - 1) {
+      return false;
+    }
+    return this->horizontal_diff(index) == 0;
+  }
+
+  size_t vertical_diff(size_t index) const {
+
+    size_t diff{0};
+    int index_left = index, index_right = index + 1;
+    while (index_left >= 0 && index_right < static_cast<int>(this->width())) {
+      for (size_t y{0}; y < this->height(); ++y) {
+        if (this->at(index_left, y) != this->at(index_right, y)) {
+          ++diff;
+        }
+      }
+      --index_left;
+      ++index_right;
+    }
+    return diff;
   }
 
   bool has_vertical_symmetry_at(size_t index) const {
     if (index >= this->m_width - 1) {
       return false;
     }
-    int index_left = index, index_right = index + 1;
-    while (index_left >= 0 && index_right < static_cast<int>(this->m_width)) {
-      for (size_t y{0}; y < this->m_height; ++y) {
-        if (this->at(index_left, y) != this->at(index_right, y)) {
-          return false;
-        }
-      }
-      --index_left;
-      ++index_right;
-    }
-    return true;
+    return this->vertical_diff(index) == 0;
   }
 
   bool has_symmetry_at(size_t index, bool horizontal) const {
@@ -65,14 +75,14 @@ public:
     return this->has_vertical_symmetry_at(index);
   }
 
-  std::pair<size_t, bool> reflection_type() const {
+  std::pair<size_t, bool> reflection_type(size_t diff = 0) const {
     for (size_t index{0}; index < this->m_width - 1; ++index) {
-      if (this->has_vertical_symmetry_at(index)) {
+      if (this->vertical_diff(index) == diff) {
         return {index, false};
       }
     }
     for (size_t index{0}; index < this->m_height - 1; ++index) {
-      if (this->has_horizontal_symmetry_at(index)) {
+      if (this->horizontal_diff(index) == diff) {
         return {index, true};
       }
     }
@@ -124,11 +134,22 @@ auto part_one(const std::vector<std::string> &input) {
       result += index + 1;
     }
   }
+
   return result;
 }
 
-auto part_two(const std::vector<std::string> &input) { 
-  return 0;
+auto part_two(const std::vector<std::string> &input) {
+  size_t result{0};
+  auto patterns = parse(input);
+  for (const auto &pattern : patterns) {
+    auto [index, horizontal] = pattern.reflection_type(1);
+    if (horizontal) {
+      result += (index + 1) * 100;
+    } else {
+      result += index + 1;
+    }
+  }
+  return result;
 }
 
 int main() {
