@@ -24,6 +24,9 @@ if __name__ == "__main__":
         response = requests.get(
             f"https://adventofcode.com/{args.year}/day/{args.day}/input", cookies={"session": session_cookie}
         )
+        if response.status_code != 200:
+            print(f"Failed to fetch data. Status code: {response.status_code}")
+            exit(1)
         with open(data_path, "w") as writer:
             writer.write(response.text)
         print(f"Data written to {data_path}")
