@@ -22,7 +22,19 @@ auto part_one(std::vector<int> left, std::vector<int> right) {
   return result;
 }
 
-auto part_two() { return 2; }
+auto part_two(std::vector<int> left, std::vector<int> right) {
+  int result{0};
+  for (auto l : left) {
+    int count{0};
+    for (auto r : right) {
+      if (l == r) {
+        ++count;
+      }
+    }
+    result += l * count;
+  }
+  return result;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2024/input_01_mock.txt"};
@@ -35,7 +47,8 @@ int main() {
   std::cout << std::format("The answer to part one is: {}",
                            part_one(left, right))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}",
+                           part_two(left, right))
             << std::endl;
 
   return 0;
