@@ -65,6 +65,20 @@ public:
     return this->has_vertical_symmetry_at(index);
   }
 
+  std::pair<size_t, bool> reflection_type() const {
+    for (size_t index{0}; index < this->m_width - 1; ++index) {
+      if (this->has_vertical_symmetry_at(index)) {
+        return {index, false};
+      }
+    }
+    for (size_t index{0}; index < this->m_height - 1; ++index) {
+      if (this->has_horizontal_symmetry_at(index)) {
+        return {index, true};
+      }
+    }
+    return {std::numeric_limits<size_t>::max(), false};
+  }
+
   size_t width() const { return this->m_width; }
 
   size_t height() const { return this->m_height; }
@@ -103,26 +117,19 @@ auto part_one(const std::vector<std::string> &input) {
   size_t result{0};
   auto patterns = parse(input);
   for (const auto &pattern : patterns) {
-    std::cout << pattern << std::endl;
-    std::cout << ("### Vertical symmetry ###") << std::endl;
-    for (size_t index{0}; index < pattern.width() - 1; ++index) {
-      std::cout << index << ": "
-                << (pattern.has_symmetry_at(index, false) ? '.' : 'x')
-                << std::endl;
-      if (pattern.has_vertical_symmetry_at(index)) {
-        result += index + 1;
-      }
-    }
-    for (size_t index{0}; index < pattern.height() - 1; ++index) {
-      if (pattern.has_horizontal_symmetry_at(index)) {
-        result += 100 * (index + 1);
-      }
+    auto [index, horizontal] = pattern.reflection_type();
+    if (horizontal) {
+      result += (index + 1) * 100;
+    } else {
+      result += index + 1;
     }
   }
   return result;
 }
 
-auto part_two() { return 2; }
+auto part_two(const std::vector<std::string> &input) { 
+  return 0;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2023/input_13_mock.txt"};
@@ -132,7 +139,7 @@ int main() {
 
   std::cout << std::format("The answer to part one is: {}", part_one(input))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(input))
             << std::endl;
 
   return 0;
