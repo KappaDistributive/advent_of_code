@@ -20,7 +20,7 @@ auto part_one(const std::vector<std::string> &input) {
 
     while (true) {
       pos = line.find("mul(", pos);
-      if (pos == std::string::npos || pos + 8 >= line.size()) {
+      if (pos == std::string::npos || pos + 7 >= line.size()) {
         break;
       }
       pos += 4;
@@ -43,7 +43,19 @@ auto part_one(const std::vector<std::string> &input) {
   return result;
 }
 
-auto part_two() { return 2; }
+auto part_two(const std::vector<std::string> &input) {
+  size_t result{0};
+  std::string combined_input{""};
+  for (auto line : input) {
+    combined_input += " " + line;
+  }
+  auto splits = utils::split_string(combined_input, "do()");
+  for (const auto &split : splits) {
+    result += part_one({split.substr(0, split.find("don't()"))});
+  }
+
+  return result;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2024/input_03_mock.txt"};
@@ -53,7 +65,7 @@ int main() {
 
   std::cout << std::format("The answer to part one is: {}", part_one(input))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(input))
             << std::endl;
   return 0;
 }
