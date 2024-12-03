@@ -13,7 +13,7 @@
 #include <map>
 #include <numeric>
 #include <optional>
-#include <regex>  // NOLINT
+#include <regex> // NOLINT
 #include <set>
 #include <sstream>
 #include <stdexcept>
@@ -21,9 +21,8 @@
 #include <unordered_set>
 #include <vector>
 
-
-inline int _assert_message(const char* condition, const char* function,
-                           const char* file, int line, const char* message) {
+inline int _assert_message(const char *condition, const char *function,
+                           const char *file, int line, const char *message) {
   std::cerr << std::format(
                    "Assertion failed ({}),\nfunction {}, location {}:{}\n{}",
                    condition, function, file, line, message)
@@ -43,10 +42,10 @@ inline int _assert_message(const char* condition, const char* function,
 
 namespace utils {
 class Reader {
- private:
+private:
   std::filesystem::path input;
 
- public:
+public:
   /**
    *
    * @param input Path to text file containing the puzzle input.
@@ -57,26 +56,25 @@ class Reader {
   std::vector<std::string> get_lines();
 };
 
-std::vector<std::string> split_string(const std::string& input,
-                                      const char& delimiter);
+std::vector<std::string> split_string(const std::string &input,
+                                      const char &delimiter);
 
-void replace_all_substrings(std::string* input, const std::string& search,
-                            const std::string& replacement);
+std::vector<std::string> split_string(const std::string &input,
+                               const std::string &delimiter);
 
-template <typename T>
-std::vector<T> rotate_vector(const std::vector<T>& input, const int& rotation);
-
-template <typename T>
-T pow(T base, T exponent);
+void replace_all_substrings(std::string *input, const std::string &search,
+                            const std::string &replacement);
 
 template <typename T>
-T factorial(T n);
+std::vector<T> rotate_vector(const std::vector<T> &input, const int &rotation);
 
-template <typename T>
-std::string stringify(T input);
+template <typename T> T pow(T base, T exponent);
+
+template <typename T> T factorial(T n);
+
+template <typename T> std::string stringify(T input);
 
 // Returns 1 if x > 0, -1 if x < 0, and 0 if x is zero.
-template <class T>
-int sign(const T& z);
+template <class T> int sign(const T &z);
 
-}  // namespace utils
+} // namespace utils
