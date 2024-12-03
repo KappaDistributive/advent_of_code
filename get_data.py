@@ -30,3 +30,8 @@ if __name__ == "__main__":
         with open(data_path, "w") as writer:
             writer.write(response.text)
         print(f"Data written to {data_path}")
+        with open(data_path, "r") as reader:
+            print("Data preview:")
+            print(reader.readline())
+            print()
+            print(reader.readline())
