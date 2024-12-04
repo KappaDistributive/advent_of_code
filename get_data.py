@@ -7,7 +7,9 @@ import requests
 
 if __name__ == "__main__":
     session_cookie = os.environ.get("AOC_SESSION_COOKIE", None)
-    assert session_cookie, "Missing session cookie. Please set environment variable `AOC_SESSION_COOKIE`."
+    assert (
+        session_cookie
+    ), "Missing session cookie. Please set environment variable `AOC_SESSION_COOKIE`."
     data_root = os.environ.get("AOC_DATA_PATH", None)
     assert data_root, "Environment variable `AOC_DATA_PATH` has not been set."
 
@@ -22,7 +24,8 @@ if __name__ == "__main__":
         print(f"Data already exists at {data_path}")
     else:
         response = requests.get(
-            f"https://adventofcode.com/{args.year}/day/{args.day}/input", cookies={"session": session_cookie}
+            f"https://adventofcode.com/{args.year}/day/{args.day}/input",
+            cookies={"session": session_cookie},
         )
         if response.status_code != 200:
             print(f"Failed to fetch data. Status code: {response.status_code}")
@@ -32,6 +35,5 @@ if __name__ == "__main__":
         print(f"Data written to {data_path}")
         with open(data_path, "r") as reader:
             print("Data preview:")
-            print(reader.readline())
-            print()
-            print(reader.readline())
+            print(reader.readline(), end="")
+            print(reader.readline(), end="")
