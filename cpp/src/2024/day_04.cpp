@@ -60,7 +60,51 @@ auto part_one(const std::vector<std::string> &input) {
   return result;
 }
 
-auto part_two() { return 1; }
+auto part_two(const std::vector<std::string> &input) {
+  size_t result{0};
+  class Puzzle puzzle(input);
+
+  // clang-format off
+  const std::vector<std::vector<std::pair<char, Point>>> targets{
+    // 1
+    {{'M', Point{{-1, -1}}}, /*                    */ {'S', Point{{+1, -1}}},
+    /*                   */ {'A', Point{{+0, +0}}}, /*                  */
+    {'M', Point{{-1, +1}}}, /*                    */ {'S', Point{{+1, +1}}}},
+    // 2
+    {{'S', Point{{-1, -1}}}, /*                    */ {'S', Point{{+1, -1}}},
+    /*                   */ {'A', Point{{+0, +0}}}, /*                  */
+    {'M', Point{{-1, +1}}}, /*                    */ {'M', Point{{+1, +1}}}},
+    // 3
+    {{'S', Point{{-1, -1}}}, /*                    */ {'M', Point{{+1, -1}}},
+    /*                   */ {'A', Point{{+0, +0}}}, /*                  */
+    {'S', Point{{-1, +1}}}, /*                    */ {'M', Point{{+1, +1}}}},
+    // 4
+    {{'M', Point{{-1, -1}}}, /*                    */ {'M', Point{{+1, -1}}},
+    /*                   */ {'A', Point{{+0, +0}}}, /*                  */
+    {'S', Point{{-1, +1}}}, /*                    */ {'S', Point{{+1, +1}}}},
+  };
+  // clang-format on
+
+  for (int y = 0; y < static_cast<int>(puzzle.height()); y++) {
+    for (int x = 0; x < static_cast<int>(puzzle.width()); x++) {
+      const Point pos{{x, y}};
+      for (const auto &target : targets) {
+        bool hit{true};
+        for (const auto &[letter, direction] : target) {
+          Point current_pos = pos + direction;
+          if (puzzle.at(current_pos[0], current_pos[1]) != letter) {
+            hit = false;
+            break;
+          }
+        }
+        if (hit) {
+          ++result;
+        }
+      }
+    }
+  }
+  return result;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2024/input_04_mock.txt"};
@@ -70,7 +114,7 @@ int main() {
 
   std::cout << std::format("The answer to part one is: {}", part_one(input))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(input))
             << std::endl;
 
   return 0;
