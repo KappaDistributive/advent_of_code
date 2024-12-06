@@ -61,6 +61,18 @@ public:
 
   Point position() const { return this->m_position; }
 
+  Point direction() const { return this->m_direction; }
+
+  void insert_obstacle(const Point &pos) { this->m_obstacles.push_back(pos); }
+
+  void orient() {
+    auto attempt = this->m_position + this->m_direction;
+    if (this->at(attempt) == '#') {
+      this->m_direction = turn_right(this->m_direction);
+      orient();
+    }
+  }
+
   bool step() {
     auto attempt = this->m_position + this->m_direction;
     if (attempt[0] < 0 || attempt[0] >= static_cast<int>(this->m_width) ||
@@ -68,10 +80,11 @@ public:
       return false;
     }
     if (this->at(attempt) == '#') {
-      this->m_direction = turn_right(this->m_direction);
+      this->orient();
       return this->step();
     }
     this->m_position = attempt;
+    this->orient();
     return true;
   }
 
@@ -105,7 +118,57 @@ auto part_one(const std::vector<std::string> &input) {
   return unique_visited.size();
 }
 
-auto part_two() { return 1; }
+std::pair<bool, std::vector<std::pair<Point, Point>>> trace(Guard guard) {
+  bool loop = false;
+  std::vector<std::pair<Point, Point>> result;
+  auto pos = guard.position();
+  auto dir = guard.direction();
+  result.push_back({pos, dir});
+  while (guard.step()) {
+    auto pos = guard.position();
+    auto dir = guard.direction();
+    loop = std::find(result.begin(), result.end(), std::make_pair(pos, dir)) !=
+           result.end();
+    result.push_back({pos, dir});
+    if (loop) {
+      break;
+    }
+  }
+
+  return {loop, result};
+}
+
+auto part_two(const std::vector<std::string> &input) {
+  Guard guard{input};
+  auto unmodified_trace = trace(guard).second;
+  std::vector<std::pair<Point, Point>> valid_obstacles;
+
+  for (auto [pos, dir] : unmodified_trace) {
+    if (std::make_pair(pos, dir) == unmodified_trace[0]) {
+      continue;
+    }
+    Guard guard{input};
+    guard.insert_obstacle(pos);
+    auto [loop, new_trace] = trace(guard);
+    if (loop) {
+      valid_obstacles.push_back({pos, dir});
+    }
+  }
+  size_t result{0};
+  for (size_t index{0}; index < valid_obstacles.size(); ++index) {
+    bool new_obstacle = true;
+    for (size_t check_dup{0}; check_dup < index; ++check_dup) {
+      if (valid_obstacles[check_dup].first == valid_obstacles[index].first) {
+        new_obstacle = false;
+        break;
+      }
+    }
+    if (new_obstacle) {
+      ++result;
+    }
+  }
+  return result;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2024/input_06_mock.txt"};
@@ -115,7 +178,7 @@ int main() {
 
   std::cout << std::format("The answer to part one is: {}", part_one(input))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(input))
             << std::endl;
 
   return 0;
