@@ -105,8 +105,6 @@ public:
     this->m_start_symbol = this->infer_start_symbol();
     this->m_position = this->m_start;
     this->m_direction = this->infer_direction(this->m_start_symbol)[0];
-    std::cout << "Start symbol: " << this->m_start_symbol << std::endl;
-    std::cout << "Direction: " << this->m_direction << std::endl;
   }
 
   char at(const Point &position) const {
@@ -122,7 +120,6 @@ public:
 
   void step() {
     Point next = this->m_position + this->m_direction;
-    std::cout << "Inferring direction for: " << this->at(next) << std::endl;
     auto possible_directions = this->infer_direction(this->at(next));
     if (possible_directions[0] == -this->m_direction) {
       this->m_direction = possible_directions[1];
@@ -131,6 +128,10 @@ public:
     }
     this->m_position = next;
   }
+
+  size_t width() const { return this->m_width; }
+
+  size_t height() const { return this->m_height; }
 
   Point start_position() const { return this->m_start; }
 
@@ -169,7 +170,28 @@ auto part_one(const std::vector<std::string> &input) {
   return loop.size() / 2;
 }
 
-auto part_two() { return 2; }
+auto part_two(const std::vector<std::string> &input) {
+  Maze maze(input);
+  auto loop = trace(maze);
+  size_t result{0};
+  for (size_t y{0}; y < maze.height(); ++y) {
+    bool in{false};
+    for (size_t x{0}; x < maze.width(); ++x) {
+      Point pos{{static_cast<int>(x), static_cast<int>(y)}};
+      if (std::find(loop.begin(), loop.end(), pos) != loop.end()) {
+        if (maze.at(pos) == '|' || maze.at(pos) == 'J' || maze.at(pos) == 'L') {
+          in = !in;
+        }
+      } else {
+        if (in) {
+          ++result;
+        }
+      }
+    }
+  }
+
+  return result;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2023/input_10_mock.txt"};
@@ -179,7 +201,7 @@ int main() {
 
   std::cout << std::format("The answer to part one is: {}", part_one(input))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(input))
             << std::endl;
 
   return 0;
