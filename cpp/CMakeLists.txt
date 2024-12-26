@@ -639,3 +639,6 @@ target_link_libraries(2024_05 input)
 
 add_executable(2024_06 src/2024/day_06.cpp)
 target_link_libraries(2024_06 input)
+
+add_executable(2024_07 src/2024/day_07.cpp)
+target_link_libraries(2024_07 input)
