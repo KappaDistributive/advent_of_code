@@ -1,5 +1,5 @@
+#include "../utils/combinatorics.hpp"
 #include "../utils/input.hpp"
-#include <bitset>
 
 std::vector<std::vector<int64_t>> parse(const std::vector<std::string> &input) {
   std::vector<std::vector<int64_t>> result;
@@ -63,64 +63,12 @@ bool is_match(const std::vector<std::int64_t> &numbers,
   return numbers[0] == result;
 }
 
-// get all combinations
-// 0        0 0
-// 1        0 0
-// ...
-// max_size 0 0
-// 0        1 0
-// 1        1 0
-// 2        1 0
-// ...
-std::vector<std::vector<int>> get_all_combinations(size_t size, int max_size) {
-  std::vector<std::vector<int>> result;
-  std::vector<int> sequence(size, 0);
-  result.push_back(sequence);
-  while (!std::all_of(sequence.begin(), sequence.end(),
-                      [max_size](int i) { return i == max_size; })) {
-    for (size_t index{0}; index < sequence.size(); ++index) {
-      if (sequence[index] < max_size) {
-        sequence[index] += 1;
-        break;
-      } else {
-        sequence[index] = 0;
-      }
-    }
-    result.push_back(sequence);
-  }
-  return result;
-}
-
-std::vector<std::vector<Operator>> get_operations(size_t size,
-                                                  bool concat = false) {
-  auto combincations = get_all_combinations(size, concat ? 2 : 1);
-  std::vector<std::vector<Operator>> result;
-  for (const auto &comb : combincations) {
-    std::vector<Operator> temp;
-    for (const auto &c : comb) {
-      switch (c) {
-      case 0:
-        temp.push_back(Operator::ADD);
-        break;
-      case 1:
-        temp.push_back(Operator::MUL);
-        break;
-      case 2:
-        temp.push_back(Operator::CONCAT);
-        break;
-      default:
-        assert(false);
-      }
-    }
-    result.push_back(temp);
-  }
-  return result;
-}
-
 auto part_one(const std::vector<std::vector<int64_t>> &input) {
   int64_t result{0};
+  std::vector<Operator> allowed_ops{{Operator::ADD, Operator::MUL}};
   for (const auto &numbers : input) {
-    auto ops = get_operations(numbers.size() - 2);
+    auto ops =
+        utils::combinatorics::all_combinations(numbers.size() - 2, allowed_ops);
     for (const auto &op : ops) {
       if (is_match(numbers, op)) {
         result += numbers[0];
@@ -133,8 +81,11 @@ auto part_one(const std::vector<std::vector<int64_t>> &input) {
 
 auto part_two(const std::vector<std::vector<int64_t>> &input) {
   int64_t result{0};
+  std::vector<Operator> allowed_ops{
+      {Operator::ADD, Operator::MUL, Operator::CONCAT}};
   for (const auto &numbers : input) {
-    auto ops = get_operations(numbers.size() - 2, true);
+    auto ops =
+        utils::combinatorics::all_combinations(numbers.size() - 2, allowed_ops);
     for (const auto &op : ops) {
       if (is_match(numbers, op)) {
         result += numbers[0];
