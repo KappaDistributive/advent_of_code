@@ -28,6 +28,11 @@ public:
     return '.';
   }
 
+  bool in_bounds(const Point &p) const {
+    return p[0] >= 0 && p[0] < this->m_width && p[1] >= 0 &&
+           p[1] < this->m_height;
+  }
+
   std::map<Point, char> antennas() const { return m_antennas; }
 
   int width() const { return m_width; }
@@ -55,11 +60,7 @@ auto part_one(const std::vector<std::string> &input) {
         continue;
       }
       Point target = base_pos - pos + base_pos;
-
-      if (target[0] >= 0 && target[0] < map.width() && target[1] >= 0 &&
-          target[1] < map.height()) {
-        // std::cout << std::format("Found resonance for {} at ({},{})", freq,
-        // target[0], target[1]) << std::endl;
+      if (map.in_bounds(target)) {
         antinodes.insert(target);
       }
     }
@@ -67,7 +68,26 @@ auto part_one(const std::vector<std::string> &input) {
   return antinodes.size();
 }
 
-auto part_two() { return 0; }
+auto part_two(const std::vector<std::string> &input) {
+  Map map(input);
+  std::set<Point> antinodes;
+  const auto antennas = map.antennas();
+  for (auto [base_pos, base_freq] : antennas) {
+    for (auto [pos, freq] : antennas) {
+      if (base_pos == pos || base_freq != freq) {
+        continue;
+      }
+      const Point diff = base_pos - pos;
+      Point target = base_pos;
+      while (map.in_bounds(target)) {
+        antinodes.insert(target);
+        target += diff;
+      }
+    }
+  }
+  return antinodes.size();
+  ;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2024/input_08_mock.txt"};
@@ -77,7 +97,7 @@ int main() {
 
   std::cout << std::format("The answer to part one is: {}", part_one(input))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(input))
             << std::endl;
 
   return 0;
