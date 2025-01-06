@@ -25,7 +25,7 @@ public:
         this->m_map.push_back(c - '0');
       }
     }
-    assert(this->m_map.size() == this->m_width * this->m_height);
+    assert(static_cast<int>(this->m_map.size()) == this->m_width * this->m_height);
   }
 
   int at(const Point &position) const {
