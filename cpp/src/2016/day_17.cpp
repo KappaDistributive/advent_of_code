@@ -1,12 +1,9 @@
 #include "../../includes/md5.hpp"
 #include "../utils/input.hpp"
+#include "../utils/geometry.hpp"
 
-enum Direction {
-  up,
-  down,
-  left,
-  right,
-};
+using utils::geometry::Direction;
+using utils::geometry::ALL_DIRECTIONS;
 
 class Path {
  private:
@@ -48,16 +45,16 @@ class Path {
     }
     std::string path_str;
     switch (path[offset]) {
-      case up:
+      case Direction::Up:
         path_str += 'U';
         break;
-      case down:
+      case Direction::Down:
         path_str += 'D';
         break;
-      case left:
+      case Direction::Left:
         path_str += 'L';
         break;
-      case right:
+      case Direction::Right:
         path_str += 'R';
         break;
     }
@@ -67,10 +64,10 @@ class Path {
   std::string path_to_string() const { return path_to_string(this->path); }
 
   bool valid_move(const Direction& direction) {
-    if ((this->position.first == 0 && direction == left) ||
-        (this->position.second == 0 && direction == up) ||
-        (this->position.first == 3 && direction == right) ||
-        (this->position.second == 3 && direction == down)) {
+    if ((this->position.first == 0 && direction == Direction::Left) ||
+        (this->position.second == 0 && direction == Direction::Up) ||
+        (this->position.first == 3 && direction == Direction::Right) ||
+        (this->position.second == 3 && direction == Direction::Down)) {
       return false;
     }
 
@@ -79,22 +76,22 @@ class Path {
     bool open_door;
 
     switch (direction) {
-      case up:
+      case Direction::Up:
         open_door =
             open_door_codes.find(md5(this->passcode + path_to_string())[0]) !=
             std::string::npos;
         break;
-      case down:
+      case Direction::Down:
         open_door =
             open_door_codes.find(md5(this->passcode + path_to_string())[1]) !=
             std::string::npos;
         break;
-      case left:
+      case Direction::Left:
         open_door =
             open_door_codes.find(md5(this->passcode + path_to_string())[2]) !=
             std::string::npos;
         break;
-      case right:
+      case Direction::Right:
         open_door =
             open_door_codes.find(md5(this->passcode + path_to_string())[3]) !=
             std::string::npos;
@@ -110,16 +107,16 @@ class Path {
     }
     this->path.push_back(direction);
     switch (direction) {
-      case up:
+      case Direction::Up:
         this->position.second--;
         break;
-      case down:
+      case Direction::Down:
         this->position.second++;
         break;
-      case right:
+      case Direction::Right:
         this->position.first++;
         break;
-      case left:
+      case Direction::Left:
         this->position.first--;
         break;
     }
@@ -131,7 +128,6 @@ class Path {
 std::string part_one(const std::string& input) {
   std::string shortest_path;
   std::vector<Path> paths{{Path(input)}};
-  const std::vector<Direction> directions = {up, down, left, right};
   bool searching{true};
   bool stuck{false};
   std::vector<Path> new_paths;
@@ -141,7 +137,7 @@ std::string part_one(const std::string& input) {
     stuck = true;
     for (auto& path : paths) {
       if (searching) {
-        for (auto direction : directions) {
+        for (auto direction : ALL_DIRECTIONS) {
           if (path.valid_move(direction)) {
             stuck = false;
             Path new_path(path);
@@ -168,7 +164,6 @@ std::string part_one(const std::string& input) {
 size_t part_two(const std::string& input) {
   std::string longest_path;
   std::vector<Path> paths{{Path(input)}};
-  const std::vector<Direction> directions = {up, down, left, right};
   bool searching{true};
   bool stuck{false};
   std::vector<Path> new_paths;
@@ -178,7 +173,7 @@ size_t part_two(const std::string& input) {
     stuck = true;
     for (auto& path : paths) {
       if (searching) {
-        for (auto& direction : directions) {
+        for (auto& direction : ALL_DIRECTIONS) {
           if (path.valid_move(direction)) {
             stuck = false;
             Path new_path(path);
