@@ -42,7 +42,7 @@ std::ostream &operator<<(std::ostream &os, const Operator &op) {
 
 bool is_match(const std::vector<std::int64_t> &numbers,
               const std::vector<Operator> &operations) {
-  assert(operation.size() + 2 == numbers.size());
+  assert(operations.size() + 2 == numbers.size());
   int64_t result{numbers[1]};
   for (size_t index{0}; index < operations.size(); ++index) {
     switch (operations[index]) {
