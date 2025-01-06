@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include <gtest/gtest.h>
 
 #include <array>
@@ -8,6 +9,7 @@
 #define LOG_ERROR(X) {if(Log::error_is_active()){std::ostringstream o;o<<X;Log::error(o.str());}}
 
 namespace geometry {
+using utils::geometry::Direction;
 using utils::geometry::Point;
 using utils::geometry::RasterCuboid;
 
@@ -26,6 +28,14 @@ TEST(Point, Coordinates) {
 
   EXPECT_EQ(want, got);
   EXPECT_FALSE(want != got);
+}
+
+TEST(Point, Direction) {
+  Point<int, 2> point(Direction::North);
+  auto got = point.coordinates();
+  std::array<int, 2> want{{0, -1}};
+
+  EXPECT_EQ(want, got);
 }
 
 TEST(Point, Print) {
@@ -82,6 +92,28 @@ TEST(Point, AdditionInPlaceCoordinates) {
   got += rhs.coordinates();
   Point<int, 3> want(std::array<int, 3>{5, 7, 9});
 
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, AdditionDirection) {
+  Point<int, 2> got{{0, 0}};
+  got += Direction::North;
+  Point<int, 2> want{{0, -1}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}};
+  got += Direction::East;
+  want = Point<int, 2>{{1, 0}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}};
+  got += Direction::South;
+  want = Point<int, 2>{{0, 1}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}};
+  got += Direction::West;
+  want = Point<int, 2>{{-1, 0}};
   EXPECT_EQ(want, got);
 }
 

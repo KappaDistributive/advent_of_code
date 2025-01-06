@@ -36,6 +36,8 @@ public:
 
   Point<T, d>(const Point<T, d> &point);
 
+  Point<T, d>(const Direction& direction); // only supported for 2D points
+
   ~Point<T, d>() = default;
 
   T &operator[](size_t index);
@@ -60,6 +62,8 @@ public:
                                  const Point<T_, d_> &rhs);
 
   Point<T, d> &operator+=(const Point<T, d> &other);
+
+  Point<T, d> &operator+=(const Direction& direction); // only supported for 2D points
 
   Point<T, d> &operator+=(const std::array<T, d> &coordinates);
 

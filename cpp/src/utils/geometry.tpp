@@ -33,6 +33,30 @@ template <typename T, size_t d>
 Point<T, d>::Point(const Point<T, d> &point)
     : m_coordinates(point.m_coordinates) {}
 
+
+template <typename T, size_t d>
+Point<T, d>::Point(const Direction& direction) {
+  assert(d == 2);  // only suppored for 2D points
+  switch (direction) {
+  case Direction::North:
+    this->m_coordinates[0] = 0;
+    this->m_coordinates[1] = -1;
+    break;
+  case Direction::East:
+    this->m_coordinates[0] = 1;
+    this->m_coordinates[1] = 0;
+    break;
+  case Direction::South:
+    this->m_coordinates[0] = 0;
+    this->m_coordinates[1] = 1;
+    break;
+  case Direction::West:
+    this->m_coordinates[0] = -1;
+    this->m_coordinates[1] = 0;
+    break;
+  }
+}
+
 template <typename T, size_t d> T &Point<T, d>::operator[](size_t index) {
   return this->m_coordinates[index];
 }
@@ -80,6 +104,12 @@ Point<T, d> operator+(const Point<T, d> &lhs, const Point<T, d> &rhs) {
 template <typename T, size_t d>
 Point<T, d> &Point<T, d>::operator+=(const Point<T, d> &other) {
   return this->operator+=(other.coordinates());
+}
+
+template <typename T, size_t d>
+Point<T,d> &Point<T, d>::operator+=(const Direction& direction) {
+  assert (d == 2); // only supported for 2D points
+  return this->operator+=(Point<T, d>(direction));
 }
 
 template <typename T, size_t d>
