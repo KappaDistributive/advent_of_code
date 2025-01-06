@@ -1,3 +1,7 @@
+#ifndef GEOMETRY_HPP  // satisfy IDE
+  #include "geometry.hpp"
+#endif
+
 namespace utils {
 namespace geometry {
 

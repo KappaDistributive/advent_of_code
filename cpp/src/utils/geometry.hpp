@@ -1,4 +1,5 @@
 #pragma once
+#define GEOMETRY_HPP
 
 #include <algorithm>
 #include <array>
