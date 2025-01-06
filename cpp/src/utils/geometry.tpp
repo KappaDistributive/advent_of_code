@@ -7,17 +7,17 @@ namespace geometry {
 
 std::ostream &operator<<(std::ostream &os, const Direction &direction) {
   switch (direction) {
-  case Direction::North:
-    os << "North";
+  case Direction::Up:
+    os << "^";
     break;
-  case Direction::East:
-    os << "East";
+  case Direction::Right:
+    os << ">";
     break;
-  case Direction::South:
-    os << "South";
+  case Direction::Down:
+    os << "v";
     break;
-  case Direction::West:
-    os << "West";
+  case Direction::Left:
+    os << "<";
   }
   return os;
 }
@@ -36,19 +36,19 @@ Point<T, d>::Point(const Point<T, d> &point)
 template <typename T, size_t d> Point<T, d>::Point(const Direction &direction) {
   assert(d == 2); // only suppored for 2D points
   switch (direction) {
-  case Direction::North:
+  case Direction::Up:
     this->m_coordinates[0] = 0;
     this->m_coordinates[1] = -1;
     break;
-  case Direction::East:
+  case Direction::Right:
     this->m_coordinates[0] = 1;
     this->m_coordinates[1] = 0;
     break;
-  case Direction::South:
+  case Direction::Down:
     this->m_coordinates[0] = 0;
     this->m_coordinates[1] = 1;
     break;
-  case Direction::West:
+  case Direction::Left:
     this->m_coordinates[0] = -1;
     this->m_coordinates[1] = 0;
     break;

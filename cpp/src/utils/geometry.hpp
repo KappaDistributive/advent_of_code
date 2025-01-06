@@ -15,7 +15,7 @@
 namespace utils {
 namespace geometry {
 
-enum Direction { North, East, South, West };
+enum Direction { Up, Right, Down, Left }; 
 
 std::ostream &operator<<(std::ostream &os, const Direction &direction);
 

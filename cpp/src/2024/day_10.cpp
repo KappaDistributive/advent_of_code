@@ -36,8 +36,8 @@ public:
       return std::set<Point>{{position}};
     }
     std::set<Point> peaks;
-    for (const auto &direction : {Direction::North, Direction::East,
-                                  Direction::South, Direction::West}) {
+    for (const auto &direction : {Direction::Up, Direction::Right,
+                                  Direction::Down, Direction::Left}) {
       auto next = position + direction;
       if (this->at(next) == this->at(position) + 1) {
         peaks.merge(this->peaks(next));
@@ -65,8 +65,8 @@ public:
       return std::set<std::vector<Point>>{{position}};
     }
     std::set<std::vector<Point>> trails;
-    for (const auto &direction : {Direction::North, Direction::East,
-                                  Direction::South, Direction::West}) {
+    for (const auto &direction : {Direction::Up, Direction::Right,
+                                  Direction::Down, Direction::Left}) {
       auto next = position + direction;
       if (this->at(next) == this->at(position) + 1) {
         for (auto trail : this->trails(next)) {

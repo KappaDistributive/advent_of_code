@@ -31,7 +31,7 @@ TEST(Point, Coordinates) {
 }
 
 TEST(Point, Direction) {
-  Point<int, 2> point(Direction::North);
+  Point<int, 2> point(Direction::Up);
   auto got = point.coordinates();
   std::array<int, 2> want{{0, -1}};
 
@@ -74,19 +74,19 @@ TEST(Point, Addition) {
 }
 
 TEST(Point, AdditionDirection) {
-  auto got = Point<int, 2>{{0, 0}} + Direction::North;
+  auto got = Point<int, 2>{{0, 0}} + Direction::Up;
   Point<int, 2> want{{0, -1}};
   EXPECT_EQ(want, got);
 
-  got = Point<int, 2>{{0, 0}} + Direction::East;
+  got = Point<int, 2>{{0, 0}} + Direction::Right;
   want = Point<int, 2>{{1, 0}};
   EXPECT_EQ(want, got);
 
-  got = Point<int, 2>{{0, 0}} + Direction::South;
+  got = Point<int, 2>{{0, 0}} + Direction::Down;
   want = Point<int, 2>{{0, 1}};
   EXPECT_EQ(want, got);
 
-  got = Point<int, 2>{{0, 0}} + Direction::West;
+  got = Point<int, 2>{{0, 0}} + Direction::Left;
   want = Point<int, 2>{{-1, 0}};
   EXPECT_EQ(want, got);
 }
@@ -116,22 +116,22 @@ TEST(Point, AdditionInPlaceCoordinates) {
 
 TEST(Point, AdditionInPlaceDirection) {
   Point<int, 2> got{{0, 0}};
-  got += Direction::North;
+  got += Direction::Up;
   Point<int, 2> want{{0, -1}};
   EXPECT_EQ(want, got);
 
   got = Point<int, 2>{{0, 0}};
-  got += Direction::East;
+  got += Direction::Right;
   want = Point<int, 2>{{1, 0}};
   EXPECT_EQ(want, got);
 
   got = Point<int, 2>{{0, 0}};
-  got += Direction::South;
+  got += Direction::Down;
   want = Point<int, 2>{{0, 1}};
   EXPECT_EQ(want, got);
 
   got = Point<int, 2>{{0, 0}};
-  got += Direction::West;
+  got += Direction::Left;
   want = Point<int, 2>{{-1, 0}};
   EXPECT_EQ(want, got);
 }
@@ -156,19 +156,19 @@ TEST(Point, Subtraction) {
 }
 
 TEST(Point, SubtractionDirection) {
-  auto got = Point<int, 2>{{0, 0}} - Direction::North;
+  auto got = Point<int, 2>{{0, 0}} - Direction::Up;
   Point<int, 2> want{{0, 1}};
   EXPECT_EQ(want, got);
 
-  got = Point<int, 2>{{0, 0}} - Direction::East;
+  got = Point<int, 2>{{0, 0}} - Direction::Right;
   want = Point<int, 2>{{-1, 0}};
   EXPECT_EQ(want, got);
 
-  got = Point<int, 2>{{0, 0}} - Direction::South;
+  got = Point<int, 2>{{0, 0}} - Direction::Down;
   want = Point<int, 2>{{0, -1}};
   EXPECT_EQ(want, got);
 
-  got = Point<int, 2>{{0, 0}} - Direction::West;
+  got = Point<int, 2>{{0, 0}} - Direction::Left;
   want = Point<int, 2>{{1, 0}};
   EXPECT_EQ(want, got);
 }
@@ -197,22 +197,22 @@ TEST(Point, SubtractionInPlaceCoordinates) {
 
 TEST(Point, SubtractionInPlaceDirection) {
   Point<int, 2> got{{0, 0}};
-  got -= Direction::North;
+  got -= Direction::Up;
   Point<int, 2> want{{0, 1}};
   EXPECT_EQ(want, got);
 
   got = Point<int, 2>{{0, 0}};
-  got -= Direction::East;
+  got -= Direction::Right;
   want = Point<int, 2>{{-1, 0}};
   EXPECT_EQ(want, got);
 
   got = Point<int, 2>{{0, 0}};
-  got -= Direction::South;
+  got -= Direction::Down;
   want = Point<int, 2>{{0, -1}};
   EXPECT_EQ(want, got);
 
   got = Point<int, 2>{{0, 0}};
-  got -= Direction::West;
+  got -= Direction::Left;
   want = Point<int, 2>{{1, 0}};
   EXPECT_EQ(want, got);
 }
