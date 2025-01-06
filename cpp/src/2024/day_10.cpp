@@ -76,6 +76,40 @@ public:
       for (int x = 0; x < m_width; ++x) {
         if (this->at(Point{{x, y}}) == 0) {
           result += this->peaks(Point{{x, y}}).size();
+          // std::cout << std::format("Trailhead: ({}, {}), score: {}\n", x, y,
+          //                          this->peaks(Point{{x, y}}).size());
+        }
+      }
+    }
+    return result;
+  }
+
+  std::set<std::vector<Point>> trails(const Point &position) const {
+    if (this->at(position) == 9) {
+      return std::set<std::vector<Point>>{{position}};
+    }
+    std::set<std::vector<Point>> trails;
+    for (const auto &direction : {Direction::North, Direction::East,
+                                  Direction::South, Direction::West}) {
+      auto next = this->step(position, direction);
+      if (this->at(next) == this->at(position) + 1) {
+        for (auto trail : this->trails(next)) {
+          trail.push_back(position);
+          trails.insert(trail);
+        }
+      }
+    }
+    return trails;
+  }
+
+  int rating() const {
+    int result{0};
+    for (int y = 0; y < m_height; ++y) {
+      for (int x = 0; x < m_width; ++x) {
+        if (this->at(Point{{x, y}}) == 0) {
+          result += this->trails(Point{{x, y}}).size();
+          // std::cout << std::format("Trailhead: ({}, {}), trails: {}\n", x, y,
+          //                          this->trails(Point{{x, y}}).size());
         }
       }
     }
@@ -88,7 +122,10 @@ auto part_one(const std::vector<std::string> &input) {
   return map.score();
 }
 
-auto part_two() { return 0; }
+auto part_two(const std::vector<std::string> &input) {
+  Map map(input);
+  return map.rating();
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2024/input_10_mock.txt"};
@@ -98,7 +135,7 @@ int main() {
 
   std::cout << std::format("The answer to part one is: {}", part_one(input))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(input))
             << std::endl;
 
   return 0;
