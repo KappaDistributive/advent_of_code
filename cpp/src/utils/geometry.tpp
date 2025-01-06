@@ -1,6 +1,23 @@
 namespace utils {
 namespace geometry {
 
+std::ostream &operator<<(std::ostream &os, const Direction &direction) {
+  switch (direction) {
+  case Direction::North:
+    os << "North";
+    break;
+  case Direction::East:
+    os << "East";
+    break;
+  case Direction::South:
+    os << "South";
+    break;
+  case Direction::West:
+    os << "West";
+  }
+  return os;
+}
+
 template <typename T, size_t d>
 Point<T, d>::Point() : m_coordinates(std::array<T, d>()){};
 
@@ -39,21 +56,6 @@ bool Point<T, d>::operator!=(const Point<T, d> &other) const {
 }
 
 template <typename T, size_t d>
-bool Point<T, d>::operator<(const Point<T, d> &other) const {
-  auto coordinates_lhs = this->coordinates();
-  auto coordinates_rhs = other.coordinates();
-
-  for (size_t index{0}; index < d; ++index) {
-    if (coordinates_lhs[index] < coordinates_rhs[index]) {
-      return true;
-    } else if (coordinates_lhs[index] > coordinates_rhs[index]) {
-      return false;
-    }
-  }
-  return false;
-}
-
-template <typename T, size_t d>
 std::array<T, d> Point<T, d>::coordinates() const {
   return this->m_coordinates;
 }
@@ -85,13 +87,15 @@ Point<T, d> &Point<T, d>::operator+=(const std::array<T, d> &coordinates) {
 }
 
 template <typename T, size_t d>
-bool Point<T, d>::operator<(const Point<T, d> &other) {
+bool Point<T, d>::operator<(const Point<T, d> &other) const {
   for (size_t index{0}; index < d; ++index) {
-    if (!(this->operator[](index) < other[index])) {
+    if (this->operator[](index) < other[index]) {
+      return true;
+    } else if (this->operator[](index) > other[index]) {
       return false;
     }
   }
-  return true;
+  return false;
 }
 
 template <typename T, size_t d>

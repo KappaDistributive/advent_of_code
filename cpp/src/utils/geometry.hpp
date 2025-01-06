@@ -14,6 +14,15 @@
 namespace utils {
 namespace geometry {
 
+enum Direction {
+  North,
+  East,
+  South,
+  West
+};
+
+std::ostream& operator<<(std::ostream& os, const Direction& direction);
+
 using std::size_t;
 
 template <typename T, size_t d> class Point {
@@ -64,8 +73,6 @@ public:
   Point<T, d> &operator-=(const std::array<T, d> &coordinates);
 
   Point<T, d> &operator*=(const T &factor);
-
-  bool operator<(const Point<T, d> &other);
 
   template <typename T_, size_t d_>
   friend std::ostream &operator<<(std::ostream &, const Point<T_, d_> &point);

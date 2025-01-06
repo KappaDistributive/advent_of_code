@@ -5,6 +5,8 @@
 
 #include "../src/utils/geometry.hpp"
 
+#define LOG_ERROR(X) {if(Log::error_is_active()){std::ostringstream o;o<<X;Log::error(o.str());}}
+
 namespace geometry {
 using utils::geometry::Point;
 using utils::geometry::RasterCuboid;
@@ -142,7 +144,7 @@ TEST(Point, Order) {
 
   EXPECT_TRUE(a < b);
   EXPECT_TRUE(a < c);
-  EXPECT_TRUE(a < d);
+  EXPECT_TRUE(a.operator<(d));
   EXPECT_TRUE(a < e);
 
   EXPECT_TRUE(b < c);
@@ -151,8 +153,8 @@ TEST(Point, Order) {
 
   EXPECT_TRUE(c < d);
   EXPECT_TRUE(c < e);
-
-  EXPECT_TRUE(d < e);
+  
+  EXPECT_TRUE(d.operator<(e));
 
   EXPECT_FALSE(a < a);
   EXPECT_FALSE(b < a);
