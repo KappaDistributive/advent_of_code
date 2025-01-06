@@ -17,6 +17,9 @@ namespace geometry {
 
 enum Direction { Up, Right, Down, Left }; 
 
+constexpr std::array<Direction, 4> ALL_DIRECTIONS{
+    {Direction::Up, Direction::Right, Direction::Down, Direction::Left}};
+
 std::ostream &operator<<(std::ostream &os, const Direction &direction);
 
 using std::size_t;
