@@ -1,80 +1,81 @@
+#include "../utils/geometry.hpp"
 #include "../utils/input.hpp"
 
-enum Direction { north, east, south, west };
+using utils::geometry::Direction;
 
 class Path {
- private:
+private:
   std::pair<int, int> location;
   std::vector<std::pair<int, int>> path;
   Direction direction;
   std::regex re{"^\\s?([LR])(\\d+)$"};
   std::smatch matches;
 
- public:
+public:
   Path() {
     location = {0, 0};
     path.push_back(location);
-    direction = north;
+    direction = Direction::Up;
   }
 
-  void step(const std::string& instruction) {
+  void step(const std::string &instruction) {
     std::regex_match(instruction, matches, re);
     assert(matches.size() == 3);
     char rotation = matches[1].str()[0];
     int distance = std::stoi(matches[2].str());
 
     switch (rotation) {
-      case 'L':
-        switch (direction) {
-          case north:
-            direction = west;
-            break;
-          case east:
-            direction = north;
-            break;
-          case south:
-            direction = east;
-            break;
-          case west:
-            direction = south;
-            break;
-        }
+    case 'L':
+      switch (direction) {
+      case Direction::Up:
+        direction = Direction::Left;
         break;
-      case 'R':
-        switch (direction) {
-          case north:
-            direction = east;
-            break;
-          case east:
-            direction = south;
-            break;
-          case south:
-            direction = west;
-            break;
-          case west:
-            direction = north;
-            break;
-        }
+      case Direction::Right:
+        direction = Direction::Up;
         break;
-      default:
-        throw std::invalid_argument("Invalid rotation.");
+      case Direction::Down:
+        direction = Direction::Right;
         break;
+      case Direction::Left:
+        direction = Direction::Down;
+        break;
+      }
+      break;
+    case 'R':
+      switch (direction) {
+      case Direction::Up:
+        direction = Direction::Right;
+        break;
+      case Direction::Right:
+        direction = Direction::Down;
+        break;
+      case Direction::Down:
+        direction = Direction::Left;
+        break;
+      case Direction::Left:
+        direction = Direction::Up;
+        break;
+      }
+      break;
+    default:
+      throw std::invalid_argument("Invalid rotation.");
+      break;
     }
 
     for (int step{0}; step < distance; step++) {
       switch (direction) {
-        case north:
-          location.second += 1;
-          break;
-        case east:
-          location.first += 1;
-          break;
-        case south:
-          location.second -= 1;
-          break;
-        case west:
-          location.first -= 1;
-          break;
+      case Direction::Up:
+        location.second += 1;
+        break;
+      case Direction::Right:
+        location.first += 1;
+        break;
+      case Direction::Down:
+        location.second -= 1;
+        break;
+      case Direction::Left:
+        location.first -= 1;
+        break;
       }
       path.push_back(location);
     }
@@ -95,7 +96,7 @@ class Path {
   }
 };
 
-auto part_one(const std::vector<std::string>& input) {
+auto part_one(const std::vector<std::string> &input) {
   Path path;
   for (auto instruction : input) {
     path.step(instruction);
@@ -104,7 +105,7 @@ auto part_one(const std::vector<std::string>& input) {
   return abs(location.first) + abs(location.second);
 }
 
-auto part_two(const std::vector<std::string>& input) {
+auto part_two(const std::vector<std::string> &input) {
   Path path;
   for (auto instruction : input) {
     path.step(instruction);
@@ -123,4 +124,3 @@ int main() {
 
   return 0;
 }
-
