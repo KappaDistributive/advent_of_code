@@ -1,41 +1,45 @@
 #include "../utils/input.hpp"
 
-void step(std::list<int64_t> &stones) {
-  for (auto it{stones.begin()}; it != stones.end(); ++it) {
-    if (*it == 0) {
-      *it = 1;
-    } else if (std::to_string(*it).size() % 2 == 0) {
-      auto text = std::to_string(*it);
+static std::map<std::pair<int64_t, int>, int64_t> cache;
+
+int64_t expansion(int64_t stone, int steps) {
+  if (auto it = cache.find({stone, steps}); it != cache.end()) {
+    return it->second;
+  }
+  int64_t result{0};
+  if (steps == 0) {
+    result = 1;
+  } else if (stone == 0) {
+    result = expansion(1, steps - 1);
+  } else {
+    auto text = std::to_string(stone);
+    if (text.size() % 2 == 0) {
       int64_t left = std::stoi(text.substr(0, text.size() / 2));
       int64_t right = std::stoi(text.substr(text.size() / 2));
-      stones.emplace(it, left);
-      *it = right;
+      result = expansion(left, steps - 1) + expansion(right, steps - 1);
     } else {
-      *it *= 2024;
+      result = expansion(stone * 2024, steps - 1);
     }
   }
-}
-
-void step(std::list<int64_t> &stones, int64_t steps) {
-  while (steps-- > 0) {
-    step(stones);
-  }
+  cache[{stone, steps}] = result;
+  return result;
 }
 
 auto part_one(std::list<int64_t> stones) {
-
-  for (int s{0}; s < 25; ++s) {
-    // std::cout << "Step " << s << ": ";
-    // for (auto stone : stones) {
-    //     std::cout << stone << ' ';
-    //   }
-    //   std::cout << std::endl;
-    step(stones);
+  int64_t result{0};
+  for (auto stone : stones) {
+    result += expansion(stone, 25);
   }
-  return stones.size();
+  return result;
 }
 
-auto part_two() { return 2; }
+auto part_two(std::list<int64_t> stones) {
+  int64_t result{0};
+  for (auto stone : stones) {
+    result += expansion(stone, 75);
+  }
+  return result;
+}
 
 std::list<int64_t> parse(const std::vector<std::string> &input) {
   assert(input.size() == 1);
@@ -54,7 +58,7 @@ int main() {
 
   std::cout << std::format("The answer to part one is: {}", part_one(input))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(input))
             << std::endl;
 
   return 0;
