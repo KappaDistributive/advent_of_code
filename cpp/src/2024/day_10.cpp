@@ -2,13 +2,7 @@
 #include "../utils/input.hpp"
 
 using Point = utils::geometry::Point<int, 2>;
-
-enum class Direction {
-  North,
-  East,
-  South,
-  West,
-};
+using Direction = utils::geometry::Direction;
 
 class Map {
 private:
@@ -25,7 +19,8 @@ public:
         this->m_map.push_back(c - '0');
       }
     }
-    assert(static_cast<int>(this->m_map.size()) == this->m_width * this->m_height);
+    assert(static_cast<int>(this->m_map.size()) ==
+           this->m_width * this->m_height);
   }
 
   int at(const Point &position) const {
@@ -36,25 +31,6 @@ public:
     return this->m_map[position[1] * this->m_width + position[0]];
   }
 
-  Point step(const Point &position, Direction direction) const {
-    Point offset{{0, 0}};
-    switch (direction) {
-    case Direction::North:
-      offset[1] = -1;
-      break;
-    case Direction::East:
-      offset[0] = 1;
-      break;
-    case Direction::South:
-      offset[1] = 1;
-      break;
-    case Direction::West:
-      offset[0] = -1;
-      break;
-    }
-    return position + offset;
-  }
-
   std::set<Point> peaks(const Point &position) const {
     if (this->at(position) == 9) {
       return std::set<Point>{{position}};
@@ -62,7 +38,7 @@ public:
     std::set<Point> peaks;
     for (const auto &direction : {Direction::North, Direction::East,
                                   Direction::South, Direction::West}) {
-      auto next = this->step(position, direction);
+      auto next = position + direction;
       if (this->at(next) == this->at(position) + 1) {
         peaks.merge(this->peaks(next));
       }
@@ -91,7 +67,7 @@ public:
     std::set<std::vector<Point>> trails;
     for (const auto &direction : {Direction::North, Direction::East,
                                   Direction::South, Direction::West}) {
-      auto next = this->step(position, direction);
+      auto next = position + direction;
       if (this->at(next) == this->at(position) + 1) {
         for (auto trail : this->trails(next)) {
           trail.push_back(position);
