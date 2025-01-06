@@ -15,14 +15,9 @@
 namespace utils {
 namespace geometry {
 
-enum Direction {
-  North,
-  East,
-  South,
-  West
-};
+enum Direction { North, East, South, West };
 
-std::ostream& operator<<(std::ostream& os, const Direction& direction);
+std::ostream &operator<<(std::ostream &os, const Direction &direction);
 
 using std::size_t;
 
@@ -36,7 +31,7 @@ public:
 
   Point<T, d>(const Point<T, d> &point);
 
-  Point<T, d>(const Direction& direction); // only supported for 2D points
+  Point<T, d>(const Direction &direction); // only supported for 2D points
 
   ~Point<T, d>() = default;
 
@@ -61,9 +56,15 @@ public:
   friend Point<T_, d_> operator+(const Point<T_, d_> &lhs,
                                  const Point<T_, d_> &rhs);
 
+  template <typename T_, size_t d_>
+  friend Point<T_, d_>
+  operator+(const Point<T_, d_> &lhs,
+            const Direction &rhs); // only supported for 2D points
+
   Point<T, d> &operator+=(const Point<T, d> &other);
 
-  Point<T, d> &operator+=(const Direction& direction); // only supported for 2D points
+  Point<T, d> &
+  operator+=(const Direction &direction); // only supported for 2D points
 
   Point<T, d> &operator+=(const std::array<T, d> &coordinates);
 
@@ -71,11 +72,16 @@ public:
   friend Point<T_, d_> operator-(const Point<T_, d_> &lhs,
                                  const Point<T_, d_> &rhs);
 
+  template <typename T_, size_t d_>
+  friend Point<T_, d_> operator-(const Point<T_, d_> &lhs,
+                                 const Direction &rhs);
+
   Point<T, d> operator-() const;
 
   Point<T, d> &operator-=(const Point<T, d> &other);
 
-  Point<T, d> &operator-=(const Direction& direction); // only supported for 2D points
+  Point<T, d> &
+  operator-=(const Direction &direction); // only supported for 2D points
 
   Point<T, d> &operator-=(const std::array<T, d> &coordinates);
 

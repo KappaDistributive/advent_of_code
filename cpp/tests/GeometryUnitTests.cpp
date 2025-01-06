@@ -73,6 +73,25 @@ TEST(Point, Addition) {
   EXPECT_EQ(want, got);
 }
 
+TEST(Point, AdditionDirection) {
+  auto got = Point<int, 2>{{0, 0}} + Direction::North;
+  Point<int, 2> want{{0, -1}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}} + Direction::East;
+  want = Point<int, 2>{{1, 0}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}} + Direction::South;
+  want = Point<int, 2>{{0, 1}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}} + Direction::West;
+  want = Point<int, 2>{{-1, 0}};
+  EXPECT_EQ(want, got);
+}
+
+
 TEST(Point, AdditionInPlace) {
   Point<int, 3> lhs(std::array<int, 3>{1, 2, 3});
   Point<int, 3> rhs(std::array<int, 3>{4, 5, 6});
@@ -133,6 +152,24 @@ TEST(Point, Subtraction) {
   auto got = lhs - rhs;
   Point<int, 3> want(std::array<int, 3>{-3, -3, -3});
 
+  EXPECT_EQ(want, got);
+}
+
+TEST(Point, SubtractionDirection) {
+  auto got = Point<int, 2>{{0, 0}} - Direction::North;
+  Point<int, 2> want{{0, 1}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}} - Direction::East;
+  want = Point<int, 2>{{-1, 0}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}} - Direction::South;
+  want = Point<int, 2>{{0, -1}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}} - Direction::West;
+  want = Point<int, 2>{{1, 0}};
   EXPECT_EQ(want, got);
 }
 

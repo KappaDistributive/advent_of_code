@@ -1,5 +1,5 @@
-#ifndef GEOMETRY_HPP  // satisfy IDE
-  #include "geometry.hpp"
+#ifndef GEOMETRY_HPP // satisfy IDE
+#include "geometry.hpp"
 #endif
 
 namespace utils {
@@ -33,10 +33,8 @@ template <typename T, size_t d>
 Point<T, d>::Point(const Point<T, d> &point)
     : m_coordinates(point.m_coordinates) {}
 
-
-template <typename T, size_t d>
-Point<T, d>::Point(const Direction& direction) {
-  assert(d == 2);  // only suppored for 2D points
+template <typename T, size_t d> Point<T, d>::Point(const Direction &direction) {
+  assert(d == 2); // only suppored for 2D points
   switch (direction) {
   case Direction::North:
     this->m_coordinates[0] = 0;
@@ -102,13 +100,18 @@ Point<T, d> operator+(const Point<T, d> &lhs, const Point<T, d> &rhs) {
 }
 
 template <typename T, size_t d>
+Point<T, d> operator+(const Point<T, d> &lhs, const Direction &rhs) {
+  return lhs + Point<T, d>(rhs);
+}
+
+template <typename T, size_t d>
 Point<T, d> &Point<T, d>::operator+=(const Point<T, d> &other) {
   return this->operator+=(other.coordinates());
 }
 
 template <typename T, size_t d>
-Point<T,d> &Point<T, d>::operator+=(const Direction& direction) {
-  assert (d == 2); // only supported for 2D points
+Point<T, d> &Point<T, d>::operator+=(const Direction &direction) {
+  assert(d == 2); // only supported for 2D points
   return this->operator+=(Point<T, d>(direction));
 }
 
@@ -145,6 +148,11 @@ Point<T, d> operator-(const Point<T, d> &lhs, const Point<T, d> &rhs) {
   return result;
 }
 
+template <typename T, size_t d>
+Point<T, d> operator-(const Point<T, d> &lhs, const Direction &rhs) {
+  return lhs - Point<T, d>(rhs);
+}
+
 template <typename T, size_t d> Point<T, d> Point<T, d>::operator-() const {
   std::array<T, d> coordinates;
   for (size_t index{0}; index < d; ++index) {
@@ -160,11 +168,10 @@ Point<T, d> &Point<T, d>::operator-=(const Point<T, d> &other) {
 }
 
 template <typename T, size_t d>
-Point<T,d> &Point<T, d>::operator-=(const Direction& direction) {
-  assert (d == 2); // only supported for 2D points
+Point<T, d> &Point<T, d>::operator-=(const Direction &direction) {
+  assert(d == 2); // only supported for 2D points
   return this->operator-=(Point<T, d>(direction));
 }
-
 
 template <typename T, size_t d>
 Point<T, d> &Point<T, d>::operator-=(const std::array<T, d> &coordinates) {
