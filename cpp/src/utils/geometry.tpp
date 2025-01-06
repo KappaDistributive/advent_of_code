@@ -160,6 +160,13 @@ Point<T, d> &Point<T, d>::operator-=(const Point<T, d> &other) {
 }
 
 template <typename T, size_t d>
+Point<T,d> &Point<T, d>::operator-=(const Direction& direction) {
+  assert (d == 2); // only supported for 2D points
+  return this->operator-=(Point<T, d>(direction));
+}
+
+
+template <typename T, size_t d>
 Point<T, d> &Point<T, d>::operator-=(const std::array<T, d> &coordinates) {
   for (size_t index{0}; index < d; ++index) {
     this->m_coordinates[index] -= coordinates[index];

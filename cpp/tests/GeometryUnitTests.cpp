@@ -95,7 +95,7 @@ TEST(Point, AdditionInPlaceCoordinates) {
   EXPECT_EQ(want, got);
 }
 
-TEST(Point, AdditionDirection) {
+TEST(Point, AdditionInPlaceDirection) {
   Point<int, 2> got{{0, 0}};
   got += Direction::North;
   Point<int, 2> want{{0, -1}};
@@ -157,6 +157,29 @@ TEST(Point, SubtractionInPlaceCoordinates) {
 
   EXPECT_EQ(want, got);
 }
+
+TEST(Point, SubtractionInPlaceDirection) {
+  Point<int, 2> got{{0, 0}};
+  got -= Direction::North;
+  Point<int, 2> want{{0, 1}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}};
+  got -= Direction::East;
+  want = Point<int, 2>{{-1, 0}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}};
+  got -= Direction::South;
+  want = Point<int, 2>{{0, -1}};
+  EXPECT_EQ(want, got);
+
+  got = Point<int, 2>{{0, 0}};
+  got -= Direction::West;
+  want = Point<int, 2>{{1, 0}};
+  EXPECT_EQ(want, got);
+}
+
 
 TEST(Point, Scaling) {
   Point<int, 3> lhs(std::array<int, 3>{1, 2, 3});

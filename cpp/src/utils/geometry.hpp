@@ -75,6 +75,8 @@ public:
 
   Point<T, d> &operator-=(const Point<T, d> &other);
 
+  Point<T, d> &operator-=(const Direction& direction); // only supported for 2D points
+
   Point<T, d> &operator-=(const std::array<T, d> &coordinates);
 
   Point<T, d> &operator*=(const T &factor);
