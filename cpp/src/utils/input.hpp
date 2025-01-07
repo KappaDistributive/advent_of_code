@@ -65,6 +65,8 @@ std::vector<std::string> split_string(const std::string &input,
 void replace_all_substrings(std::string *input, const std::string &search,
                             const std::string &replacement);
 
+template <typename T> std::vector<T> extract_numbers(const std::string& input);
+
 template <typename T>
 std::vector<T> rotate_vector(const std::vector<T> &input, const int &rotation);
 

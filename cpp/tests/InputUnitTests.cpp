@@ -21,6 +21,48 @@ TEST(SplitString, RepeatDelimiters) {
   EXPECT_EQ(want, got);
 }
 
+TEST(ExtractNumbers, Simple) {
+  std::vector<int> want{{1, -2, 3, 4, 5}};
+  auto got = utils::extract_numbers<int>("1 -2 +3 4 5");
+  EXPECT_EQ(want, got);
+}
+
+TEST(ExtractNumbers, Organic) {
+  std::vector<int> want{{3, 0, -2, -2}};
+  auto got = utils::extract_numbers<int>("p=+3,0 v=-2,-2");
+  EXPECT_EQ(want, got);
+}
+
+TEST(ExtractNumbers, Math) {
+  std::vector<int> want{{3, 14, 2, 71828, -1, 10, -2}};
+  auto got = utils::extract_numbers<int>("pi=3.14 e=2.71828 i=-1 x=10E-2");
+  EXPECT_EQ(want, got);
+}
+
+TEST(ExtractNumbers64, Simple) {
+  std::vector<int64_t> want{{1, -2, 3, 4, 5}};
+  auto got = utils::extract_numbers<int64_t>("1 -2 +3 4 5");
+  EXPECT_EQ(want, got);
+}
+
+TEST(ExtractNumbers64, Organic) {
+  std::vector<int64_t> want{{3, 0, -2, -2}};
+  auto got = utils::extract_numbers<int64_t>("p=+3,0 v=-2,-2");
+  EXPECT_EQ(want, got);
+}
+
+TEST(ExtractNumbers64, Math) {
+  std::vector<int64_t> want{{3, 14, 2, 71828, -1, 10, -2}};
+  auto got = utils::extract_numbers<int64_t>("pi=3.14 e=2.71828 i=-1 x=10E-2");
+  EXPECT_EQ(want, got);
+}
+
+TEST(ExtractNumbers64, Large) {
+  std::vector<int64_t> want{{-23372036854775808, 23372036854775808}};
+  auto got = utils::extract_numbers<int64_t>("-23372036854775808 23372036854775808");
+  EXPECT_EQ(want, got);
+}
+
 TEST(RotateVector, NoOp) {
   std::vector<int> want{{1, 2, 3}};
   auto got = utils::rotate_vector(std::vector<int>{{1, 2, 3}}, 0);

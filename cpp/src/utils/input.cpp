@@ -77,6 +77,52 @@ void replace_all_substrings(std::string *input, const std::string &search,
   }
 }
 
+template<> std::vector<int> extract_numbers<int>(const std::string& input) {
+  std::vector<int> result;
+  std::string buffer;
+  for (auto c : input) {
+    if (buffer.size() == 0 && c == '-') {
+      buffer += c;
+    } else if (buffer.size() == 0 && c == '+') {
+      continue;
+    } else if (std::isdigit(c)) {
+      buffer += c;
+    } else {
+      if (buffer.size() > 0) {
+        result.push_back(std::stoi(buffer));
+        buffer = "";
+      }
+    }
+  }
+  if (buffer.size() > 0) {
+    result.push_back(std::stoi(buffer));
+  }
+  return result;
+}
+
+template<> std::vector<int64_t> extract_numbers<int64_t>(const std::string& input) {
+  std::vector<int64_t> result;
+  std::string buffer;
+  for (auto c : input) {
+    if (buffer.size() == 0 && c == '-') {
+      buffer += c;
+    } else if (buffer.size() == 0 && c == '+') {
+      continue;
+    } else if (std::isdigit(c)) {
+      buffer += c;
+    } else {
+      if (buffer.size() > 0) {
+        result.push_back(std::stoll(buffer));
+        buffer = "";
+      }
+    }
+  }
+  if (buffer.size() > 0) {
+    result.push_back(std::stoll(buffer));
+  }
+  return result;
+}
+
 template <typename T>
 std::vector<T> rotate_vector(const std::vector<T> &input, const int &rotation) {
   std::vector<T> result;
