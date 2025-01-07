@@ -3,6 +3,10 @@
 
 using Point = utils::geometry::Point<int, 2>;
 
+static const std::vector<Point> offsets{
+    Point{{-1, -1}}, Point{{0, -1}}, Point{{1, -1}}, Point{{-1, 0}},
+    Point{{1, 0}},   Point{{-1, 1}}, Point{{0, 1}},  Point{{1, 1}}};
+
 class Robot {
 private:
   Point m_position;
@@ -81,7 +85,6 @@ public:
 
   int64_t safety_factor() const {
     Point mid_point{{this->m_width / 2, this->m_height / 2}};
-    std::cout << "Mid point: " << mid_point << std::endl;
     int64_t a{0}, b{0}, c{0}, d{0};
     for (const auto &robot : this->m_robots) {
       if (robot.position()[0] < mid_point[0] &&
@@ -100,6 +103,22 @@ public:
     }
     return a * b * c * d;
   }
+
+  int isolated_points() {
+    int count{0};
+    for (const auto &robot : this->m_robots) {
+      for (const auto &offset : offsets) {
+        Point neighbour = robot.position() + offset;
+        auto it = std::find_if(
+            this->m_robots.begin(), this->m_robots.end(),
+            [&neighbour](const Robot &r) { return r.position() == neighbour; });
+        if (it == this->m_robots.end()) {
+          ++count;
+        }
+      }
+    }
+    return count;
+  }
 };
 
 auto part_one(Grid grid) {
@@ -109,7 +128,16 @@ auto part_one(Grid grid) {
   return grid.safety_factor();
 }
 
-auto part_two() { return 2; }
+auto part_two(Grid grid) {
+  for (int step{1}; step <= 10000; ++step) {
+    grid.step();
+    if (grid.isolated_points() <
+        3000) { // based on manual inspection; might not generalize
+      return step;
+    }
+  }
+  return 0;
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2024/input_14_mock.txt"};
@@ -120,7 +148,7 @@ int main() {
 
   std::cout << std::format("The answer to part one is: {}", part_one(grid))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(grid))
             << std::endl;
 
   return EXIT_SUCCESS;
