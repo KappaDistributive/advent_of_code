@@ -1,3 +1,6 @@
+#include "../utils/geometry.hpp"
+#include "../utils/input.hpp"
+
 #include <cassert>
 #include <map>
 #include <memory>
@@ -5,66 +8,30 @@
 #include <set>
 #include <sstream>
 
-#include "../utils/input.hpp"
-
-
-
-enum class Direction: size_t {
-  north,
-  east,
-  south,
-  west,
-};
-
-
-static const std::vector<Direction> DIRECTIONS{
-  Direction::north, Direction::east, Direction::south, Direction::west};
-
-
-std::ostream&
-operator<<(std::ostream& os, Direction direction) {
-  switch (direction) {
-    case Direction::north: os << "Direction::north"; break;
-    case Direction::east:  os << "Direction::east";  break;
-    case Direction::south: os << "Direction::south"; break;
-    case Direction::west:  os << "Direction::west"; break;
-    default:
-      throw std::runtime_error("This should never happen.");
-      break;
-  }
-
-  return os;
-}
-
+using utils::geometry::ALL_DIRECTIONS;
+using utils::geometry::Direction;
 
 struct Point {
   size_t x;
   size_t y;
 
-  bool
-  operator<(const Point& other) const noexcept {
+  bool operator<(const Point &other) const noexcept {
     return this->y < other.y || (this->y == other.y && this->x < other.x);
   }
 
-  bool
-  operator==(const Point& other) const noexcept {
+  bool operator==(const Point &other) const noexcept {
     return this->x == other.x && this->y == other.y;
   }
 };
 
-
 typedef std::vector<Point> Path;
 
-
-std::ostream&
-operator<<(std::ostream& os, const Point& point) noexcept {
+std::ostream &operator<<(std::ostream &os, const Point &point) noexcept {
   os << "Point(x=" << point.x << ", y=" << point.y << ")";
   return os;
 }
 
-
-std::ostream&
-operator<<(std::ostream& os, const Path& path) {
+std::ostream &operator<<(std::ostream &os, const Path &path) {
   for (auto it{path.begin()}; it != path.end(); ++it) {
     os << *it;
     if (std::next(it) != path.end()) {
@@ -75,62 +42,51 @@ operator<<(std::ostream& os, const Path& path) {
   return os;
 }
 
-
-std::optional<Point>
-operator+(Point point, Direction direction) {
+std::optional<Point> operator+(Point point, Direction direction) {
   switch (direction) {
-    case Direction::north:
-      if (point.y > 0) {
-        return Point{point.x, point.y - 1};
-      } else {
-        return std::nullopt;
-      }
-      break;
-    case Direction::east:
-      return Point{point.x + 1, point.y};
-      break;
-    case Direction::south:
-      return Point{point.x, point.y + 1};
-      break;
-    case Direction::west:
-      if (point.x > 0) {
-        return Point{point.x - 1, point.y};
-      } else {
-        return std::nullopt;
-      }
-      break;
-    default:
-      throw std::runtime_error("This should never happen.");
-      break;
+  case Direction::Up:
+    if (point.y > 0) {
+      return Point{point.x, point.y - 1};
+    } else {
+      return std::nullopt;
+    }
+    break;
+  case Direction::Right:
+    return Point{point.x + 1, point.y};
+    break;
+  case Direction::Down:
+    return Point{point.x, point.y + 1};
+    break;
+  case Direction::Left:
+    if (point.x > 0) {
+      return Point{point.x - 1, point.y};
+    } else {
+      return std::nullopt;
+    }
+    break;
+  default:
+    throw std::runtime_error("This should never happen.");
+    break;
   }
 }
 
-
-
 class Entity {
- protected:
+protected:
   char m_symbol;
 
- public:
-  explicit Entity(char symbol)
-    : m_symbol(symbol) {
-  }
+public:
+  explicit Entity(char symbol) : m_symbol(symbol) {}
 
   virtual ~Entity() = default;
 
-  virtual bool
-  is_unit() const noexcept {
-    return false;
-  }
+  virtual bool is_unit() const noexcept { return false; }
 
-  friend std::ostream&
-  operator<<(std::ostream& os, const Entity& entity) {
+  friend std::ostream &operator<<(std::ostream &os, const Entity &entity) {
     os << entity.m_symbol;
     return os;
   }
 
-  virtual std::string
-  to_string() const noexcept {
+  virtual std::string to_string() const noexcept {
     std::string representation;
     representation += m_symbol;
     representation += "()";
@@ -139,30 +95,21 @@ class Entity {
   }
 };
 
-
 class Wall : public Entity {
- public:
+public:
   Wall() : Entity('#') {}
 };
 
-
 class Unit : public Entity {
- protected:
+protected:
   int m_hit_points;
 
- public:
-  explicit Unit(char symbol)
-    : Entity(symbol),
-      m_hit_points(200) {
-  }
+public:
+  explicit Unit(char symbol) : Entity(symbol), m_hit_points(200) {}
 
-  bool
-  is_unit() const noexcept {
-    return true;
-  }
+  bool is_unit() const noexcept { return true; }
 
-  std::string
-  to_string() const noexcept {
+  std::string to_string() const noexcept {
     std::string representation;
     representation += m_symbol;
     representation += "(" + std::to_string(m_hit_points) + ")";
@@ -171,43 +118,46 @@ class Unit : public Entity {
   }
 };
 
-
 class Elf : public Unit {
- public:
+public:
   Elf() : Unit('E') {}
 };
 
-
 class Goblin : public Unit {
- public:
+public:
   Goblin() : Unit('G') {}
 };
 
-
-std::optional<Entity>
-create_entity(char character) {
+std::optional<Entity> create_entity(char character) {
   switch (character) {
-    case '.': return std::nullopt; break;
-    case '#': return Wall();       break;
-    case 'E': return Elf();        break;
-    case 'G': return Goblin();     break;
-    default:
-      throw std::invalid_argument("There is no entity of kind: " + std::to_string(character));
-      break;
+  case '.':
+    return std::nullopt;
+    break;
+  case '#':
+    return Wall();
+    break;
+  case 'E':
+    return Elf();
+    break;
+  case 'G':
+    return Goblin();
+    break;
+  default:
+    throw std::invalid_argument("There is no entity of kind: " +
+                                std::to_string(character));
+    break;
   }
 }
 
-
 class Battlefield {
- private:
+private:
   std::map<Point, std::shared_ptr<Entity>> m_entities;
   std::shared_ptr<Entity> m_wall;
   size_t m_width{0}, m_height{0};
 
-  std::set<Point>
-  open_squares(Point point) {
+  std::set<Point> open_squares(Point point) {
     std::set<Point> result;
-    for (auto direction : DIRECTIONS) {
+    for (auto direction : ALL_DIRECTIONS) {
       auto candidate = point + direction;
       if (candidate.has_value() && m_entities.count(candidate.value()) == 0) {
         result.insert(candidate.value());
@@ -217,8 +167,8 @@ class Battlefield {
     return result;
   }
 
-  std::optional<std::vector<Path>>
-  shortest_paths(Point origin, Point destination) {
+  std::optional<std::vector<Path>> shortest_paths(Point origin,
+                                                  Point destination) {
     std::vector<std::vector<Point>> paths;
     paths.push_back(Path{origin});
     bool searching{true};
@@ -238,7 +188,8 @@ class Battlefield {
             if (new_point == destination) {
               break;
             }
-            if (std::find(old_path.begin(), old_path.end(), new_point) != old_path.end()) {
+            if (std::find(old_path.begin(), old_path.end(), new_point) !=
+                old_path.end()) {
               skip = true;
               break;
             }
@@ -271,9 +222,9 @@ class Battlefield {
     return std::nullopt;
   }
 
- public:
-  explicit Battlefield(const std::vector<std::string>& input)
-    : m_wall(std::make_shared<Entity>('.')) {
+public:
+  explicit Battlefield(const std::vector<std::string> &input)
+      : m_wall(std::make_shared<Entity>('.')) {
     for (size_t y{0}; y < input.size(); ++y) {
       auto line = input[y];
       m_height++;
@@ -287,27 +238,27 @@ class Battlefield {
         Point point{x, y};
 
         switch (character) {
-          case '.':
-            break;
-          case '#':
-            m_entities.insert({point, std::make_unique<Wall>()});
-            break;
-          case 'E':
-            m_entities.insert({point, std::make_unique<Elf>()});
-            break;
-          case 'G':
-            m_entities.insert({point, std::make_unique<Goblin>()});
-            break;
-          default:
-            throw std::invalid_argument("There is no entity of kind: " + std::to_string(character));
-            break;
+        case '.':
+          break;
+        case '#':
+          m_entities.insert({point, std::make_unique<Wall>()});
+          break;
+        case 'E':
+          m_entities.insert({point, std::make_unique<Elf>()});
+          break;
+        case 'G':
+          m_entities.insert({point, std::make_unique<Goblin>()});
+          break;
+        default:
+          throw std::invalid_argument("There is no entity of kind: " +
+                                      std::to_string(character));
+          break;
         }
       }
     }
   }
 
-  std::shared_ptr<Entity>
-  operator[](Point point) const noexcept {
+  std::shared_ptr<Entity> operator[](Point point) const noexcept {
     if (m_entities.count(point) > 0) {
       return m_entities.at(point);
     } else {
@@ -315,8 +266,8 @@ class Battlefield {
     }
   }
 
-  friend std::ostream&
-  operator<<(std::ostream& os, const Battlefield& battlefield) {
+  friend std::ostream &operator<<(std::ostream &os,
+                                  const Battlefield &battlefield) {
     for (size_t y{0}; y < battlefield.m_height; ++y) {
       std::stringstream ss_map, ss_meta;
       bool has_entered_meta{false};
@@ -332,7 +283,7 @@ class Battlefield {
         }
       }
       os << ss_map.str() << "\t" << ss_meta.str();
-      if (y+1 < battlefield.m_height) {
+      if (y + 1 < battlefield.m_height) {
         os << "\n";
       }
     }
@@ -348,32 +299,26 @@ class Battlefield {
   }
 };
 
-
-auto
-part_one(const std::vector<std::string>& input) {
+auto part_one(const std::vector<std::string> &input) {
   Battlefield battlefield(input);
   battlefield.test();
   // std::cout << battlefield << std::endl;
   return "";
 }
 
-
 // auto
 // part_two(const std::vector<std::string>& input) {
 //   return "";
 // }
 
-
-int
-main() {
+int main() {
   utils::Reader reader(std::filesystem::path("../../data/2018/input_15.txt"));
   auto input = reader.get_lines();
 
-  auto answer_one =  part_one(input);
+  auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
   // auto answer_two =  part_two(input);
   // std::cout << "The answer to part two is: " << answer_two << std::endl;
 
   return 0;
 }
-
