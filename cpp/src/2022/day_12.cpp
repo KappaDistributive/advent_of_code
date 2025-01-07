@@ -4,6 +4,8 @@
 #include "../utils/input.hpp"
 
 using Point = utils::geometry::Point<int, 2>;
+using utils::geometry::ALL_DIRECTIONS;
+using utils::geometry::Direction;
 
 struct Candidate {
   Point m_pos;
@@ -16,26 +18,12 @@ struct Compare {
   }
 };
 
-enum class Direction { Up, Right, Down, Left };
-
-constexpr std::array<Direction, 4> all_directions{
-    {Direction::Up, Direction::Right, Direction::Down, Direction::Left}};
-
 char mark(const Direction &direction) {
-  switch (direction) {
-  case Direction::Up:
-    return '^';
-    break;
-  case Direction::Right:
-    return '>';
-    break;
-  case Direction::Down:
-    return 'v';
-    break;
-  case Direction::Left:
-    return '<';
-    break;
-  }
+  std::stringstream ss;
+  ss << direction;
+  std::string str = ss.str();
+  assert(str.size() == 1);
+  return str[0];
 };
 
 Point step(Point pos, Direction direction) {
@@ -99,7 +87,7 @@ struct Terrain {
 
   std::vector<Point> neighbors(const Point &position) const {
     std::vector<Point> result;
-    for (const auto &direction : all_directions) {
+    for (const auto &direction : ALL_DIRECTIONS) {
       if (this->is_reachable(position, direction)) {
         result.push_back(step(position, direction));
       }
@@ -227,8 +215,10 @@ int main() {
   utils::Reader reader(input_path);
   auto input = reader.get_lines();
 
-  std::cout << std::format("The answer to part one is: {}", part_one(input)) << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two(input)) << std::endl;
+  std::cout << std::format("The answer to part one is: {}", part_one(input))
+            << std::endl;
+  std::cout << std::format("The answer to part two is: {}", part_two(input))
+            << std::endl;
 
   return 0;
 }
