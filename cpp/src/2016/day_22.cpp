@@ -4,46 +4,17 @@
 
 typedef std::pair<int, int> Point;
 
-std::ostream& operator<<(std::ostream& os, const Point& point) {
+std::ostream &operator<<(std::ostream &os, const Point &point) {
   os << "(" << point.first << ", " << point.second << ")";
   return os;
 }
 
-enum class Direction : size_t {
-  north,
-  east,
-  south,
-  west,
-};
-
-std::ostream& operator<<(std::ostream& os, Direction direction) {
-  switch (direction) {
-    case Direction::north:
-      os << "North";
-      break;
-    case Direction::east:
-      os << "East";
-      break;
-    case Direction::south:
-      os << "South";
-      break;
-    case Direction::west:
-      os << "West";
-      break;
-    default:
-      throw std::runtime_error("This should never happen.");
-      break;
-  }
-
-  return os;
-}
-
 class Node {
- private:
+private:
   Point m_pos;
   size_t m_capacity, m_used;
 
- public:
+public:
   Node(Point pos, size_t capacity, size_t used)
       : m_pos(pos), m_capacity(capacity), m_used(used) {}
 
@@ -59,7 +30,7 @@ class Node {
                    static_cast<float>(this->m_capacity)));
   }
 
-  friend std::ostream& operator<<(std::ostream& os, const Node& node) noexcept {
+  friend std::ostream &operator<<(std::ostream &os, const Node &node) noexcept {
     os << "/dev/grid/node-x" << node.m_pos.first << "-y" << node.m_pos.second
        << "\t" << node.m_capacity << "T"
        << "\t" << node.m_used << "T"
@@ -71,11 +42,11 @@ class Node {
 };
 
 class Grid {
- private:
+private:
   std::map<Point, Node> m_grid;
 
- public:
-  explicit Grid(std::map<Point, Node>&& grid) noexcept
+public:
+  explicit Grid(std::map<Point, Node> &&grid) noexcept
       : m_grid(std::move(grid)) {}
 
   std::pair<Point, Point> border() const noexcept {
@@ -92,7 +63,7 @@ class Grid {
     return std::make_pair(min, max);
   }
 
-  friend std::ostream& operator<<(std::ostream& os, const Grid& grid) {
+  friend std::ostream &operator<<(std::ostream &os, const Grid &grid) {
     auto [min, max] = grid.border();
     for (int y{min.second}; y <= max.second; ++y) {
       for (int x{min.first}; x <= max.first; ++x) {
@@ -131,7 +102,7 @@ class Grid {
  * /dev/grid/node-x0-y0     89T   67T    22T   75%
  * /dev/grid/node-x0-y1     91T   72T    19T   79%
  */
-std::map<Point, Node> prepare_input(const std::vector<std::string>& input) {
+std::map<Point, Node> prepare_input(const std::vector<std::string> &input) {
   std::map<Point, Node> nodes;
   std::regex fs_regex{
       "^/dev/grid/node-x(\\d+)-y(\\d+)\\s+(\\d+)T\\s+(\\d+)T.*$"};
@@ -149,7 +120,7 @@ std::map<Point, Node> prepare_input(const std::vector<std::string>& input) {
   return nodes;
 }
 
-auto part_one(const std::vector<std::string>& input) {
+auto part_one(const std::vector<std::string> &input) {
   auto nodes = prepare_input(input);
   size_t viable_counter{0};
   int x_max{0}, y_max{0};
@@ -179,7 +150,7 @@ auto part_one(const std::vector<std::string>& input) {
   return viable_counter;
 }
 
-auto part_two(const std::vector<std::string>& input) {
+auto part_two(const std::vector<std::string> &input) {
   Grid grid(prepare_input(input));
   auto [min, max] = grid.border();
   std::cout << min << " -- " << max << std::endl;
@@ -198,4 +169,3 @@ int main() {
   std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
-
