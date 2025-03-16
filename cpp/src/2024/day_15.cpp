@@ -53,6 +53,13 @@ public:
 
   int64_t score() const {
     int64_t result{0};
+    for (int y{0}; y < static_cast<int>(this->m_grid.size()); ++y) {
+      for (int x{0}; x < static_cast<int>(this->m_grid[0].size()); ++x) {
+        if (this->at(Point{{x, y}}) == 'O') {
+          result += this->gps(Point{{x, y}});
+        }
+      }
+    }
     return result;
   }
 
@@ -132,7 +139,7 @@ public:
 
 auto part_one(Grid grid) {
   do {
-    std::cout << grid << std::endl;
+    // std::cout << grid << std::endl;
   } while (grid.step());
   return grid.score();
 }
