@@ -56,6 +56,19 @@ public:
     }
   }
 
+  int gps(Point point) const {
+    const auto coordinates = point.coordinates();
+    return coordinates[0] + 100 * coordinates[1];
+  }
+
+  int64_t score() const {
+    int64_t result{0};
+    for (auto const &box : this->m_boxes) {
+      result += this->gps(box);
+    }
+    return result;
+  }
+
   bool step() {
     if (this->m_instruction_index >= this->m_instructions.size()) {
       return false;
@@ -163,20 +176,21 @@ void parse(const std::vector<std::string> &data) {
   }
 }
 
-auto part_one() { return 1; }
+auto part_one(Grid grid) {
+  do {
+  } while (grid.step());
+  return grid.score();
+}
 
 auto part_two() { return 2; }
 
 int main() {
-  std::filesystem::path input_path{"../../data/2024/input_15_mock2.txt"};
-  // std::filesystem::path input_path{"../../data/2024/input_15.txt"};
+  // std::filesystem::path input_path{"../../data/2024/input_15_mock2.txt"};
+  std::filesystem::path input_path{"../../data/2024/input_15.txt"};
   utils::Reader reader(input_path);
   Grid grid(reader.get_lines());
-  do {
-    std::cout << grid << std::endl;
-  } while (grid.step());
 
-  std::cout << std::format("The answer to part one is: {}", part_one())
+  std::cout << std::format("The answer to part one is: {}", part_one(grid))
             << std::endl;
   std::cout << std::format("The answer to part two is: {}", part_two())
             << std::endl;
