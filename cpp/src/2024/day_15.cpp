@@ -4,6 +4,48 @@
 using Point = utils::geometry::Point<int, 2>;
 using Direction = utils::geometry::Direction;
 
+std::vector<std::string> transform(const std::vector<std::string>& data) {
+  std::vector<std::string> result;
+  size_t index{0};
+  for (; index < data.size(); ++index) {
+    auto line = data[index];
+    if (line.size() == 0) {
+      break;
+    }
+    std::string new_line;
+    new_line.reserve(line.size() * 2);
+    for (const auto c: line) {
+      switch (c) {
+        case '#':
+          new_line.push_back('#');
+          new_line.push_back('#');
+          break;
+        case '@':
+          new_line.push_back('@');
+          new_line.push_back('.');
+          break;
+        case 'O':
+          new_line.push_back('[');
+          new_line.push_back(']');
+          break;
+        case '.':
+          new_line.push_back('.');
+          new_line.push_back('.');
+          break;
+        default:
+          throw std::runtime_error(std::format("Illegal symbol: {}", c));
+      }
+    }
+    result.push_back(new_line);
+  }
+  result.push_back("");
+  for (; index < data.size(); ++index) {
+    result.push_back(data[index]);
+  }
+
+    return result;
+}
+
 class Grid {
 private:
   std::vector<std::string> m_grid;
@@ -137,24 +179,34 @@ public:
   }
 };
 
-auto part_one(Grid grid) {
+auto part_one(const std::vector<std::string>& data) {
+  Grid grid(data);
   do {
     // std::cout << grid << std::endl;
   } while (grid.step());
   return grid.score();
 }
 
-auto part_two() { return 2; }
+auto part_two(const std::vector<std::string>& data) {
+  auto x = transform(data);
+  for (auto line: x) {
+    std::cout << line << std::endl;
+  }
+  /*do {
+    std::cout << grid << std::endl;
+  } while (false && grid.step());
+  return grid.score();*/
+  return 0;
+}
 
 int main() {
   std::filesystem::path input_path{"../../data/2024/input_15_mock2.txt"};
   // std::filesystem::path input_path{"../../data/2024/input_15.txt"};
   utils::Reader reader(input_path);
-  Grid grid(reader.get_lines());
-
-  std::cout << std::format("The answer to part one is: {}", part_one(grid))
+  auto data = reader.get_lines();
+  std::cout << std::format("The answer to part one is: {}", part_one(data))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(data))
             << std::endl;
 
   return EXIT_SUCCESS;
