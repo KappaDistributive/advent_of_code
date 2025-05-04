@@ -5,6 +5,41 @@
 namespace utils {
 namespace geometry {
 
+Direction rotate_clockwise(Direction direction) {
+  switch (direction) {
+  case Direction::Right:
+    return Direction::Down;
+    break;
+  case Direction::Down:
+    return Direction::Left;
+    break;
+  case Direction::Left:
+    return Direction::Up;
+    break;
+  case Direction::Up:
+    return Direction::Right;
+    break;
+  }
+}
+
+Direction rotate_counter_clockwise(Direction direction) {
+  switch (direction) {
+  case Direction::Right:
+    return Direction::Up;
+    break;
+  case Direction::Down:
+    return Direction::Right;
+    break;
+  case Direction::Left:
+    return Direction::Down;
+    break;
+  case Direction::Up:
+    return Direction::Left;
+    break;
+  }
+}
+
+
 std::ostream &operator<<(std::ostream &os, const Direction &direction) {
   switch (direction) {
   case Direction::Up:

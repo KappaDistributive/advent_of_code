@@ -15,7 +15,11 @@
 namespace utils {
 namespace geometry {
 
-enum Direction { Up, Right, Down, Left }; 
+enum Direction { Up, Right, Down, Left };
+
+Direction rotate_clockwise(Direction);
+
+Direction rotate_counter_clockwise(Direction);
 
 constexpr std::array<Direction, 4> ALL_DIRECTIONS{
     {Direction::Up, Direction::Right, Direction::Down, Direction::Left}};
