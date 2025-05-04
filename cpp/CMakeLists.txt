@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.17)
 project(advent_of_code)
 set(CMAKE_CXX_STANDARD 20)
 
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
+
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -DDEBUG")
@@ -666,3 +670,6 @@ target_link_libraries(2024_14 input)
 
 add_executable(2024_15 src/2024/day_15.cpp)
 target_link_libraries(2024_15 input)
+
+add_executable(2024_16 src/2024/day_16.cpp)
+target_link_libraries(2024_16 input)
