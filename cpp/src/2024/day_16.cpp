@@ -179,8 +179,8 @@ public:
   }
 };
 
-auto part_one(const std::vector<std::string> &data) {
-  Map map(data);
+std::pair<std::map<Reindeer, int64_t>, std::map<Reindeer, std::set<Reindeer>>>
+dijkstra(const Map &map) {
   std::map<Reindeer, int64_t> visited;
   std::map<Reindeer, int64_t> unvisited;
 
@@ -201,6 +201,8 @@ auto part_one(const std::vector<std::string> &data) {
     }
   }
 
+  std::map<Reindeer, std::set<Reindeer>> predecessors;
+
   while (!unvisited.empty()) {
     auto it = std::min_element(
         unvisited.begin(), unvisited.end(),
@@ -214,9 +216,22 @@ auto part_one(const std::vector<std::string> &data) {
         continue;
       }
       int weight = next.position == current.position ? 1000 : 1;
-      unvisited[next] = std::min(unvisited[next], visited[current] + weight);
+      auto new_distance = visited[current] + weight;
+      if (new_distance < unvisited[next]) {
+        unvisited[next] = new_distance;
+        predecessors[next].clear();
+        predecessors[next].insert(current);
+      } else if (new_distance == unvisited[next]) {
+        predecessors[next].insert(current);
+      }
     }
   }
+  return {visited, predecessors};
+}
+
+auto part_one(const std::vector<std::string> &data) {
+  Map map(data);
+  auto [visited, _] = dijkstra(map);
   int64_t min_score = std::numeric_limits<int64_t>::max();
   for (const auto &[reindeer, score] : visited) {
     if (reindeer.position == map.end()) {
@@ -226,7 +241,42 @@ auto part_one(const std::vector<std::string> &data) {
   return min_score;
 }
 
-auto part_two() { return 2; }
+auto part_two(const std::vector<std::string> &data) {
+  Map map(data);
+  const auto [visited, predecessor] = dijkstra(map);
+  std::set<Reindeer> frontier;
+  std::set<Point> optimals;
+
+  int64_t min_score = std::numeric_limits<int64_t>::max();
+  for (const auto &[reindeer, score] : visited) {
+    if (reindeer.position == map.end()) {
+      min_score = std::min(min_score, score);
+    }
+  }
+  for (const auto &[reindeer, score] : visited) {
+    if (reindeer.position == map.end() && score == min_score) {
+      frontier.insert(reindeer);
+      optimals.insert(reindeer.position);
+    }
+  }
+
+  while (!frontier.empty()) {
+    std::set<Reindeer> next_frontier;
+    for (const auto &reindeer : frontier) {
+      if (predecessor.find(reindeer) == predecessor.end()) {
+        assert(reindeer.position == map.start());
+        optimals.insert(reindeer.position);
+      } else {
+        for (auto predecessor : predecessor.at(reindeer)) {
+          next_frontier.insert(predecessor);
+          optimals.insert(predecessor.position);
+        }
+      }
+    }
+    frontier = next_frontier;
+  }
+  return optimals.size();
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2024/input_16_mock.txt"};
@@ -235,7 +285,7 @@ int main() {
   auto data = reader.get_lines();
   std::cout << std::format("The answer to part one is: {}", part_one(data))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(data))
             << std::endl;
 
   return EXIT_SUCCESS;
