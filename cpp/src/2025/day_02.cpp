@@ -13,7 +13,7 @@ parse_input(const std::vector<std::string> &data) {
   return parsed;
 }
 
-bool repeats(int64_t n) {
+bool repeated(int64_t n) {
   auto s = std::to_string(n);
   if (s.size() % 2 != 0) {
     return false;
@@ -26,7 +26,43 @@ bool repeats(int64_t n) {
   return true;
 }
 
+bool repeats(int64_t n) {
+  auto s = std::to_string(n);
+  for (size_t chunk{1}; chunk <= s.size() / 2; ++chunk) {
+    if (s.size() % chunk != 0) {
+      continue;
+    }
+    size_t offset{chunk};
+    bool match{true};
+    while (match && offset + chunk <= s.size()) {
+      for (size_t index{0}; index < chunk; ++index) {
+        if (s[index] != s[offset + index]) {
+          match = false;
+          break;
+        }
+      }
+      offset += chunk;
+    }
+    if (match) {
+      return true;
+    }
+  }
+  return false;
+}
+
 auto part_one(const std::vector<std::pair<int64_t, int64_t>> &data) {
+  int64_t result = 0;
+  for (const auto &[start, end] : data) {
+    for (int64_t n = start; n <= end; ++n) {
+      if (repeated(n)) {
+        result += n;
+      }
+    }
+  }
+  return result;
+}
+
+auto part_two(const std::vector<std::pair<int64_t, int64_t>> &data) {
   int64_t result = 0;
   for (const auto &[start, end] : data) {
     for (int64_t n = start; n <= end; ++n) {
@@ -38,8 +74,6 @@ auto part_one(const std::vector<std::pair<int64_t, int64_t>> &data) {
   return result;
 }
 
-auto part_two() { return 2; }
-
 int main() {
   // std::filesystem::path input_path{"../../data/2025/input_02_mock.txt"};
   std::filesystem::path input_path{"../../data/2025/input_02.txt"};
@@ -47,7 +81,7 @@ int main() {
   auto data = parse_input(reader.get_lines());
   std::cout << std::format("The answer to part one is: {}", part_one(data))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(data))
             << std::endl;
 
   return EXIT_SUCCESS;
