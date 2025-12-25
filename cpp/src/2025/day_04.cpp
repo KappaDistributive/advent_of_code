@@ -38,26 +38,67 @@ public:
     }
     return this->m_data[y][x];
   }
-};
 
-auto part_one(const std::vector<std::string> &data) {
-  int result{0};
-  Map map(data);
-
-  for (int y{0}; y < static_cast<int>(map.height()); ++y) {
-    for (int x{0}; x < static_cast<int>(map.width()); ++x) {
-      if (map.at(x, y) == '@') {
-        int neighbors = map.neighbors_count(x, y);
-        if (neighbors < 4) {
-          ++result;
+  size_t rolls() const {
+    size_t count = 0;
+    for (auto &line : m_data) {
+      for (auto &ch : line) {
+        if (ch == '@') {
+          ++count;
         }
       }
     }
+    return count;
   }
-  return result;
+
+  void clear(int x, int y) {
+    if (x >= 0 && x < static_cast<int>(m_width) && y >= 0 &&
+        y < static_cast<int>(m_height)) {
+      this->m_data[y][x] = 'x';
+    }
+  }
+
+  bool accessible(int x, int y) const {
+    return this->at(x, y) == '@' && this->neighbors_count(x, y) < 4;
+  }
+
+  std::vector<std::pair<int, int>> get_accessible_positions() const {
+    std::vector<std::pair<int, int>> positions;
+    for (int y = 0; y < static_cast<int>(m_height); ++y) {
+      for (int x = 0; x < static_cast<int>(m_width); ++x) {
+        if (this->accessible(x, y)) {
+          positions.emplace_back(x, y);
+        }
+      }
+    }
+    return positions;
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, const Map &map) {
+    for (const auto &line : map.m_data) {
+      os << line << std::endl;
+    }
+    return os;
+  }
+};
+
+auto part_one(const std::vector<std::string> &data) {
+  Map map(data);
+  return map.get_accessible_positions().size();
 }
 
-auto part_two() { return 2; }
+auto part_two(const std::vector<std::string> &data) {
+  Map map(data);
+  size_t before{map.rolls()};
+  auto ps = map.get_accessible_positions();
+  while (ps.size() > 0) {
+    for (const auto &[x, y] : ps) {
+      map.clear(x, y);
+    }
+    ps = map.get_accessible_positions();
+  }
+  return before - map.rolls();
+}
 
 int main() {
   // std::filesystem::path input_path{"../../data/2025/input_04_mock.txt"};
@@ -66,7 +107,7 @@ int main() {
   auto data = reader.get_lines();
   std::cout << std::format("The answer to part one is: {}", part_one(data))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(data))
             << std::endl;
 
   return EXIT_SUCCESS;
