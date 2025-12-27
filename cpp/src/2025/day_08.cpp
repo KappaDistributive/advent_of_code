@@ -37,6 +37,7 @@ auto solve(const std::vector<Point> &data, int limit = -1) {
   for (auto point : data) {
     clusters.push_back({point});
   }
+  Point merge_left{}, merge_right;
   int steps{0};
   for (const auto &[point_pair, _] : distance_vec) {
     ++steps;
@@ -54,10 +55,15 @@ auto solve(const std::vector<Point> &data, int limit = -1) {
       }
     }
     if (left_idx != right_idx) {
+      merge_left = left;
+      merge_right = right;
       for (const auto &point : clusters[right_idx]) {
         clusters[left_idx].push_back(point);
       }
       clusters.erase(clusters.begin() + right_idx);
+      if (clusters.size() == 1) {
+        return left.coordinates()[0] * right.coordinates()[0];
+      }
     }
     if (limit >= 0 && steps >= limit) {
       break;
@@ -66,16 +72,14 @@ auto solve(const std::vector<Point> &data, int limit = -1) {
 
   std::sort(clusters.begin(), clusters.end(),
             [](const auto &a, const auto &b) { return a.size() > b.size(); });
-  for (auto cluster : clusters) {
-    std::cout << "Cluster of size " << cluster.size() << std::endl;
-  }
 
-  return clusters[0].size() * clusters[1].size() * clusters[2].size();
+  return static_cast<int64_t>(clusters[0].size() * clusters[1].size() *
+                              clusters[2].size());
 }
 
 auto part_one(const std::vector<Point> &data) { return solve(data, 1000); }
 
-auto part_two() { return 2; }
+auto part_two(const std::vector<Point> &data) { return solve(data); }
 
 int main() {
   // std::filesystem::path input_path{"../../data/2025/input_08_mock.txt"};
@@ -84,7 +88,7 @@ int main() {
   auto data = parse_input(reader.get_lines());
   std::cout << std::format("The answer to part one is: {}", part_one(data))
             << std::endl;
-  std::cout << std::format("The answer to part two is: {}", part_two())
+  std::cout << std::format("The answer to part two is: {}", part_two(data))
             << std::endl;
 
   return EXIT_SUCCESS;
