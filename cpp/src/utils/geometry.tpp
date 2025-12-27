@@ -240,6 +240,19 @@ std::ostream &operator<<(std::ostream &os, const Point<T, d> &point) {
 }
 
 template <typename T, size_t d>
+T Point<T, d>::euclidean_distance_squared(const Point<T, d> &other) const {
+  T distance{0};
+  auto lhs = this->coordinates();
+  auto rhs = other.coordinates();
+  for (size_t index{0}; index < d; ++index) {
+    T diff = static_cast<T>(std::abs(lhs[index] - rhs[index]));
+    distance += diff * diff;
+  }
+  return distance;
+}
+
+
+template <typename T, size_t d>
 T Point<T, d>::manhatten_distance(const Point<T, d> &other) const {
   T distance{0};
   auto lhs = this->coordinates();
@@ -249,6 +262,12 @@ T Point<T, d>::manhatten_distance(const Point<T, d> &other) const {
   }
 
   return distance;
+}
+
+template <typename T, size_t d> std::string Point<T, d>::to_string() const {
+  std::stringstream ss;
+  ss << *this;
+  return ss.str();
 }
 
 template <typename T, size_t d>

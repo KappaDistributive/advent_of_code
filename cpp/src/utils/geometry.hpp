@@ -57,7 +57,11 @@ public:
 
   std::array<T, d> coordinates() const;
 
+  T euclidean_distance_squared(const Point<T, d> &other) const;
+
   T manhatten_distance(const Point<T, d> &other) const;
+
+  std::string to_string() const;
 
   template <typename T_, size_t d_>
   friend Point<T_, d_> operator+(const Point<T_, d_> &lhs,
