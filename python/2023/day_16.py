@@ -66,9 +66,8 @@ def display(positions: list[tuple[int, int, str]], data: list[str]) -> None:
         print(row)
 
 
-def part_one(data: list[str]) -> int:
+def energy(data: list[str], active_positions: list[tuple[int, int, str]]) -> int:
     visited = set()
-    active_positions = [(-1, 0, ">")]
     n = 0
     while active_positions:
         new_positons = []
@@ -84,8 +83,24 @@ def part_one(data: list[str]) -> int:
     return len({pos[:2] for pos in visited})
 
 
+def part_one(data: list[str]) -> int:
+    return energy(data, [(-1, 0, ">")])
+
+
+def part_two(data: list[str]) -> int:
+    result = 0
+    for x in range(len(data[0])):
+        result = max(result, energy(data, [(x, -1, "v")]))
+        result = max(result, energy(data, [(x, len(data), "^")]))
+    for y in range(len(data)):
+        result = max(result, energy(data, [(-1, y, ">")]))
+        result = max(result, energy(data, [(len(data[0]), y, "<")]))
+    return result
+
+
 if __name__ == "__main__":
     path = Path(__file__).parent.parent.parent / "data/2023/input_16.txt"
     with open(path, "r") as f:
         data = [line.strip() for line in f.readlines()]
     print(f"Part One: {part_one(data)}")
+    print(f"Part Two: {part_two(data)}")
