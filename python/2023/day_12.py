@@ -1,33 +1,51 @@
-from itertools import product
 from pathlib import Path
-from typing import Iterator
+from functools import cache
 
-def parse(data: list[str]) -> list[tuple[str, tuple[int]]]:
-    parsed = []
-    for line in data:
-        parts = line.split(" ")
-        assert len(parts) == 2
-        command = parts[0]
-        values = tuple(map(int, parts[1].split(',')))
-        parsed.append((command, values))
-    return parsed
+@cache
+def num_valid_solutions(record: str, groups: tuple[int, ...]) -> int:
+    if not record:
+        return len(groups) == 0
 
-def is_valid(springs: str, groups: tuple[int]) -> bool:
-    return tuple(x for x in map(len, springs.split('.')) if x != 0) == groups
+    if not groups:
+        return "#" not in record
 
-def expand_qmarks(s: str) -> Iterator[str]:
-    q = s.count('?')
-    for repl in product('.#', repeat=q):
-        it = iter(repl)
-        yield ''.join(next(it) if c == '?' else c for c in s)
+    char, rest_of_record = record[0], record[1:]
 
-def part_one(data: list[tuple[str, tuple[int]]]) -> int:
-    result = 0
-    for springs, groups in data:
-        result += sum([is_valid(x, groups) for x in expand_qmarks(springs)])
-    return result 
+    if char == ".":
+        return num_valid_solutions(rest_of_record, groups)
+
+    if char == "#":
+        group = groups[0]
+        if (
+            len(record) >= group
+            and all(c != "." for c in record[:group])
+            and (len(record) == group or record[group] != "#")
+        ):
+            return num_valid_solutions(record[group + 1 :], groups[1:])
+
+        return 0
+
+    if char == "?":
+        return num_valid_solutions(f"#{rest_of_record}", groups) + num_valid_solutions(
+            f".{rest_of_record}", groups
+        )
+
+    raise ValueError(f"unknown char: {char}")
+
+
+def solve_line(line: str, with_multiplier=False) -> int:
+    record, raw_shape = line.split()
+    shape = tuple(map(int, raw_shape.split(",")))
+
+    if with_multiplier:
+        record = "?".join([record] * 5)
+        shape *= 5
+
+    return num_valid_solutions(record, shape)
+
 
 if __name__ == "__main__":
-    with open(Path(__file__).parent.parent.parent / "data/2023/input_12.txt", "r") as file:
-        data = parse(file.readlines())
-        print(f"Part one: {part_one(data)}")
+    path = Path(__file__).parent.parent.parent / "data/2023/input_12.txt"
+    print(f"Part one: {sum(solve_line(line) for line in open(path).read().strip().splitlines())}")
+    print(f"Part one: {sum(solve_line(line, True) for line in open(path).read().strip().splitlines())}")
+
