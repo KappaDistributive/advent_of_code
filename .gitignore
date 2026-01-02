@@ -10,6 +10,7 @@ cpp/compile_commands.json
 cpp/.cache/
 cpp/debug/
 cpp/release/
+python/**/__pycache__/
 .ccls
 .ccls-cache
 .mypy_cache  
