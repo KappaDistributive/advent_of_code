@@ -57,8 +57,27 @@ def part_one(data: list[str]) -> float:
 
     return min_distance
 
+def part_two(data: list[str]) -> float:
+    locations = coords(data)
+    distances = calculate_distances(data, locations)
+    idx = list(range(1, len(locations)))
+    min_distance = float('inf')
+
+    for perm in permutations(idx):
+        dist: float = 0
+        current: int = 0
+        for next_loc in perm:
+            dist += distances[(current, next_loc)]
+            current = next_loc
+        dist += distances[(current, 0)] # Return to start
+        min_distance = min(min_distance, dist)
+
+    return min_distance
+
+
 if __name__ == "__main__":
     path = Path(__file__).parent.parent.parent / "data/2016/input_24.txt"
     with open(path, "r") as f:
         data = [line.strip() for line in f.readlines()]
     print(part_one(data))
+    print(part_two(data))
