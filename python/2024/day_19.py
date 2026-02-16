@@ -2,21 +2,25 @@ from functools import cache
 from pathlib import Path
 
 
-def solve(design: str, towels: tuple[str, ...]) -> bool:
+def solve(design: str, towels: tuple[str, ...]) -> int:
     @cache
-    def can_make(remaining: str) -> bool:
+    def count_ways(remaining: str) -> int:
         if not remaining:
-            return True
+            return 1
+        total = 0
         for towel in towels:
             if remaining.startswith(towel):
-                if can_make(remaining[len(towel) :]):
-                    return True
-        return False
+                total += count_ways(remaining[len(towel) :])
+        return total
 
-    return can_make(design)
+    return count_ways(design)
 
 
 def part_one(designs: list[str], towels: tuple[str, ...]) -> int:
+    return sum(solve(design, towels) > 0 for design in designs)
+
+
+def part_two(designs: list[str], towels: tuple[str, ...]) -> int:
     return sum(solve(design, towels) for design in designs)
 
 
@@ -27,3 +31,4 @@ if __name__ == "__main__":
     towels = tuple(t.strip() for t in data[0].split(","))
     designs = data[2:]
     print(f"Part one: {part_one(designs, towels)}")
+    print(f"Part two: {part_two(designs, towels)}")
