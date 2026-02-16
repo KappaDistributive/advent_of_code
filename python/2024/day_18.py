@@ -33,7 +33,7 @@ def part_one(data: list[tuple[int, ...]], grid_size: int = 71, num_bytes: int = 
 
 def part_two(data: list[tuple[int, ...]]) -> tuple[int, ...]:
     index = 1024
-    while (dist := part_one(data, grid_size=71, num_bytes=index)) != -1:
+    while part_one(data, grid_size=71, num_bytes=index) != -1:
         index += 1
     return data[index - 1]
 
