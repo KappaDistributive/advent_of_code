@@ -31,9 +31,16 @@ def part_one(data: list[tuple[int, ...]], grid_size: int = 71, num_bytes: int = 
     return -1  # No path found
 
 
+def part_two(data: list[tuple[int, ...]]) -> tuple[int, ...]:
+    index = 1024
+    while (dist := part_one(data, grid_size=71, num_bytes=index)) != -1:
+        index += 1
+    return data[index - 1]
+
+
 if __name__ == "__main__":
     path = Path(__file__).parent.parent.parent / "data/2024/input_18.txt"
     with open(path, "r") as f:
         data = [tuple(map(int, lines.strip().split(","))) for lines in f.readlines()]
     print(f"Part one: {part_one(data)}")
-    # print(f"Part two: {part_two(data)}")
+    print(f"Part two: {part_two(data)}")
