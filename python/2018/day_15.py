@@ -17,7 +17,9 @@ class Unit:
         return self.hp > 0
 
 
-def parse_grid(data: list[str]) -> tuple[set[tuple[int, int]], list[Unit]]:
+def parse_grid(
+    data: list[str], elf_attack: int = 4
+) -> tuple[set[tuple[int, int]], list[Unit]]:
     walls: set[tuple[int, int]] = set()
     units: list[Unit] = []
     for r, row in enumerate(data):
@@ -25,7 +27,7 @@ def parse_grid(data: list[str]) -> tuple[set[tuple[int, int]], list[Unit]]:
             if ch == "#":
                 walls.add((r, c))
             elif ch in "EG":
-                units.append(Unit(ch, r, c))
+                units.append(Unit(ch, r, c, attack=elf_attack if ch == "E" else 3))
     return walls, units
 
 
@@ -81,7 +83,11 @@ def find_move(
 def find_attack_target(unit: Unit, units: list[Unit]) -> Unit | None:
     adjacent_positions = set(adjacent(*unit.pos()))
     enemy_kind = "G" if unit.kind == "E" else "E"
-    enemies = [u for u in units if u.kind == enemy_kind and u.is_alive() and u.pos() in adjacent_positions]
+    enemies = [
+        u
+        for u in units
+        if u.kind == enemy_kind and u.is_alive() and u.pos() in adjacent_positions
+    ]
     if not enemies:
         return None
     enemies.sort(key=lambda u: (u.hp, u.pos()))
@@ -120,8 +126,23 @@ def part_one(data: list[str]) -> int:
     return rounds * total_hp
 
 
+def part_two(data: list[str]) -> int:
+    elf_attack = 4
+    walls, units = parse_grid(data, elf_attack=elf_attack)
+    num_elfs = sum(1 for u in units if u.kind == "E")
+
+    while True:
+        rounds, remaining = simulate(walls, units)
+        if sum(1 for u in remaining if u.kind == "E") == num_elfs:
+            total_hp = sum(u.hp for u in remaining if u.is_alive())
+            return rounds * total_hp
+        elf_attack += 1
+        walls, units = parse_grid(data, elf_attack=elf_attack)
+
+
 if __name__ == "__main__":
     path = Path(__file__).parent.parent.parent / "data/2018/input_15.txt"
     with open(path, "r") as f:
         data = [line.strip() for line in f.readlines()]
     print(f"Part one: {part_one(data)}")
+    print(f"Part two: {part_two(data)}")
