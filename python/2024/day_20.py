@@ -38,30 +38,32 @@ def bfs_distances(
     return distances
 
 
-def part_one(data: list[str], min_save: int = 100) -> int:
+def solve(data: list[str], max_cheat: int, min_save: int = 100) -> int:
     grid, start, _ = parse_grid(data)
     distances = bfs_distances(grid, start)
 
     cheats = 0
     for (r, c), d1 in distances.items():
-        for dr, dc in [
-            (-2, 0),
-            (2, 0),
-            (0, -2),
-            (0, 2),
-            (-1, -1),
-            (-1, 1),
-            (1, -1),
-            (1, 1),
-        ]:
-            nr, nc = r + dr, c + dc
-            target = (nr, nc)
-            if target in distances:
-                d2 = distances[target]
-                saved = d2 - d1 - 2
-                if saved >= min_save:
-                    cheats += 1
+        for dr in range(-max_cheat, max_cheat + 1):
+            for dc in range(-max_cheat, max_cheat + 1):
+                cheat_dist = abs(dr) + abs(dc)
+                if cheat_dist < 2 or cheat_dist > max_cheat:
+                    continue
+                target = (r + dr, c + dc)
+                if target in distances:
+                    d2 = distances[target]
+                    saved = d2 - d1 - cheat_dist
+                    if saved >= min_save:
+                        cheats += 1
     return cheats
+
+
+def part_one(data: list[str]) -> int:
+    return solve(data, max_cheat=2)
+
+
+def part_two(data: list[str]) -> int:
+    return solve(data, max_cheat=20)
 
 
 if __name__ == "__main__":
@@ -69,3 +71,4 @@ if __name__ == "__main__":
     with open(path, "r") as f:
         data = [line.strip() for line in f.readlines()]
     print(f"Part one: {part_one(data)}")
+    print(f"Part two: {part_two(data)}")
