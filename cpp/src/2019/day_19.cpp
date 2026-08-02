@@ -359,6 +359,21 @@ void print(const std::map<Point, char> &map, size_t width, size_t height) {
   std::flush(std::cout);
 }
 
+int64_t run(std::vector<int64_t> intcodes, std::vector<int64_t> inputs) {
+  CPU cpu(intcodes, inputs, false);
+  cpu.run();
+  auto output = cpu.get_output();
+  if (output.has_value()) {
+    return output.value();
+  } else {
+    throw std::runtime_error("No output produced");
+  }
+}
+
+bool is_pulled(const std::vector<int64_t> &intcodes, int64_t x, int64_t y) {
+  return run(intcodes, {x, y}) == 1;
+}
+
 auto part_one(const std::vector<std::string> &input) {
   auto intcodes = prepare_input(input);
   std::vector<int64_t> inputs{0, 0};
@@ -366,14 +381,10 @@ auto part_one(const std::vector<std::string> &input) {
   for (int64_t y{0}; y < 50; ++y) {
     for (int64_t x{0}; x < 50; ++x) {
       inputs = {x, y};
-      auto cpu = CPU(intcodes, inputs, false);
-      cpu.run();
-      auto output = cpu.get_output();
-      if (output.has_value()) {
-        std::cout << (output.value() == 1 ? '#' : '.');
-        if (output.value() == 1) {
-          sum++;
-        }
+      auto output = run(intcodes, inputs);
+      std::cout << (output == 1 ? '#' : '.');
+      if (output == 1) {
+        sum++;
       }
     }
     std::cout << std::endl;
@@ -381,10 +392,20 @@ auto part_one(const std::vector<std::string> &input) {
   return sum;
 }
 
-// auto
-// part_two(const std::vector<std::string>& input) {
-//   return 2;
-// }
+auto part_two(const std::vector<std::string> &input) {
+  auto intcodes = prepare_input(input);
+  const int64_t size{100};
+  int64_t x{0}, y{size};
+  while (true) {
+    while (!is_pulled(intcodes, x, y)) {
+      ++x;
+    }
+    if (is_pulled(intcodes, x + size - 1, y - (size - 1))) {
+      return x * 10000 + (y - (size - 1));
+    }
+    ++y;
+  }
+}
 
 int main() {
   utils::Reader reader(std::filesystem::path("../../data/2019/input_19.txt"));
@@ -392,7 +413,7 @@ int main() {
 
   auto answer_one = part_one(input);
   std::cout << "The answer to part one is: " << answer_one << std::endl;
-  // auto answer_two =  part_two(input);
-  // std::cout << "The answer to part two is: " << answer_two << std::endl;
+  auto answer_two = part_two(input);
+  std::cout << "The answer to part two is: " << answer_two << std::endl;
   return 0;
 }
